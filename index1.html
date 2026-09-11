@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programa de Vida y Ministerio Cristiano</title>
+<link rel="stylesheet" href="jwicon.css">
+<style>
+:root {
+  /* Colores de texto */
+  --txt-encabezado: #6a1b9a;
+  --txt-semana: #6a1b9a;
+  --txt-apertura: #000000;
+  --txt-cierre: #000000;
+  --txt-secciones: #ffffff;
+  --txt-tabla: #000000;
+  
+  /* Colores de fondo */
+  --bg-encabezado: #ffffff;
+  --bg-semana: #ffffff;
+  --bg-apertura: #f3e5f5;
+  --bg-cierre: #f3e5f5;
+  --bg-tesoros: #2A6B77;
+  --bg-maestros: #9B6D17;
+  --bg-vida: #942926;
+  
+  /* Tamaños */
+  --size-encabezado: 18px;
+  --size-semana: 12px;
+  --size-apertura: 10px;
+  --size-cierre: 10px;
+  --size-secciones: 11px;
+  --size-tabla: 10px;
+  --size-iconos: 14px;
+  --align-secciones: center;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: #e8e8e8; color: #333; }
+
+/* ==========================================
+   PANEL DE CONTROLES
+   ========================================== */
+#panel-controles {
+  background: #f8f9fa;
+  border-bottom: 2px solid #ddd;
+  padding: 8px 15px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.panel-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-control {
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.btn-control:hover { background: #e9ecef; }
+.btn-control.active { background: #6a1b9a; color: white; border-color: #6a1b9a; }
+
+.btn-print {
+  background: #1e88e5;
+  color: white;
+  border-color: #1e88e5;
+}
+.btn-print:hover { background: #1565c0; }
+
+.subpanel {
+  display: none;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 15px;
+  margin-top: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.subpanel.visible { display: block; }
+
+.subpanel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.control-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  border: 1px solid #eee;
+}
+.control-item label {
+  font-size: 12px;
+  font-weight: 500;
+  flex: 1;
+}
+.control-item input[type="color"] {
+  width: 40px;
+  height: 28px;
+  border: none;
+  cursor: pointer;
+}
+.control-item input[type="number"] {
+  width: 70px;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+/* Botones de alineación */
+.align-buttons {
+  display: flex;
+  gap: 4px;
+}
+.align-btn {
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+.align-btn:hover { background: #e9ecef; }
+.align-btn.active { background: #6a1b9a; color: white; border-color: #6a1b9a; }
+
+/* Toggle Switch */
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+}
+.toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #ccc;
+  border-radius: 24px;
+  transition: 0.3s;
+}
+.toggle-slider:before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+.toggle-switch input:checked + .toggle-slider { background: #6a1b9a; }
+.toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); }
+
+/* ==========================================
+   ÁREA DE CONTENIDO
+   ========================================== */
+#area-contenido {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.hoja {
+  width: 210mm;
+  min-height: 297mm;
+  background: white;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  padding: 20mm;
+  position: relative;
+}
+
+/* Encabezado de hoja (documento) */
+.encabezado-doc {
+  text-align: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid var(--txt-encabezado);
+  background: var(--bg-encabezado);
+}
+.encabezado-doc h1 {
+  font-size: var(--size-encabezado);
+  color: var(--txt-encabezado);
+  margin-bottom: 8px;
+}
+.encabezado-doc h2 {
+  font-size: 14px;
+  font-weight: normal;
+  color: var(--txt-tabla);
+}
+.encabezado-doc h2 input {
+  border: none;
+  border-bottom: 1px solid #999;
+  font-size: 14px;
+  text-align: center;
+  width: 300px;
+  padding: 3px;
+  background: transparent;
+}
+.encabezado-doc h2 input:focus {
+  outline: none;
+  border-bottom: 2px solid var(--txt-encabezado);
+}
+
+/* Tablas de programa */
+.tabla-programa {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+  page-break-inside: avoid;
+  font-size: var(--size-tabla);
+}
+
+.tabla-programa td {
+  border: 1px solid #333;
+  padding: 3px 5px;
+  vertical-align: middle;
+  color: var(--txt-tabla);
+}
+
+.fila-apertura {
+  background: var(--bg-apertura) !important;
+}
+.fila-apertura td {
+  color: var(--txt-apertura);
+  font-size: var(--size-apertura);
+  padding: 4px 5px;
+}
+
+.fila-cierre {
+  background: var(--bg-cierre) !important;
+}
+.fila-cierre td {
+  color: var(--txt-cierre);
+  font-size: var(--size-cierre);
+  padding: 4px 5px;
+}
+
+.titulo-seccion td {
+  color: var(--txt-secciones);
+  font-weight: bold;
+  font-size: var(--size-secciones);
+  text-align: var(--align-secciones);
+  padding: 4px;
+}
+.titulo-tesoros { background: var(--bg-tesoros) !important; }
+.titulo-maestros { background: var(--bg-maestros) !important; }
+.titulo-vida { background: var(--bg-vida) !important; }
+
+.tabla-programa input {
+  width: 100%;
+  border: none;
+  padding: 2px;
+  font-size: inherit;
+  font-family: inherit;
+  background: transparent;
+  color: inherit;
+}
+.tabla-programa input:focus {
+  outline: 1px solid #6a1b9a;
+  background: rgba(255, 249, 196, 0.3);
+}
+
+.input-asignacion {
+  width: 100%;
+  border: none;
+  padding: 2px;
+  font-size: inherit;
+  font-family: inherit;
+  background: transparent;
+  color: inherit;
+}
+.input-asignacion:focus {
+  outline: 1px solid #6a1b9a;
+  background: rgba(255, 249, 196, 0.3);
+}
+
+/* ==========================================
+   ENCABEZADO DE SEMANA (Independiente, con Presidente)
+   ========================================== */
+.encabezado-semana {
+  font-size: var(--size-semana);
+  font-weight: bold;
+  color: var(--txt-semana);
+  background: var(--bg-semana);
+  margin-bottom: 8px;
+  padding: 5px 8px;
+  border-bottom: 2px solid var(--txt-semana);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.encabezado-semana .info-semana {
+  flex: 1;
+  min-width: 150px;
+}
+
+.encabezado-semana .presidente-row {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  font-size: inherit;
+  font-weight: normal;
+  white-space: nowrap;
+}
+
+.encabezado-semana .presidente-row .jw-icon {
+  margin-right: 2px;
+}
+
+.encabezado-semana .presidente-row input {
+  border: none;
+  border-bottom: 1px solid #999;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: normal;
+  width: 120px;
+  padding: 1px 4px;
+  background: transparent;
+  color: inherit;
+}
+.encabezado-semana .presidente-row input:focus {
+  outline: none;
+  border-bottom: 2px solid var(--txt-semana);
+}
+
+/* Iconos */
+.jw-icon {
+  font-size: var(--size-iconos);
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 3px;
+}
+
+/* ==========================================
+   RESPONSIVE (Móvil)
+   ========================================== */
+@media (max-width: 768px) {
+  .hoja {
+    width: 100%;
+    min-height: auto;
+    padding: 10px;
+  }
+  #panel-controles { padding: 5px 10px; }
+  .panel-toolbar { gap: 5px; }
+  .btn-control { padding: 6px 10px; font-size: 11px; }
+  .subpanel-grid { grid-template-columns: 1fr; }
+  .encabezado-doc h2 input { width: 200px; }
+  .encabezado-semana { flex-direction: column; align-items: flex-start; gap: 4px; }
+}
+
+/* ==========================================
+   IMPRESIÓN (Forzar colores)
+   ========================================== */
+@media print {
+  @page {
+    size: A4;
+    margin: 2cm;
+  }
+  
+  body { background: white; }
+  #panel-controles { display: none !important; }
+  
+  #area-contenido {
+    padding: 0;
+    gap: 0;
+  }
+  
+  .hoja {
+    width: 100%;
+    min-height: auto;
+    box-shadow: none;
+    padding: 0;
+    page-break-after: always;
+  }
+  .hoja:last-child { page-break-after: auto; }
+  
+  .tabla-programa {
+    width: 100%;
+    page-break-inside: avoid;
+  }
+  
+  /* FORZAR COLORES EN IMPRESIÓN */
+  .titulo-seccion td,
+  .fila-apertura,
+  .fila-apertura td,
+  .fila-cierre,
+  .fila-cierre td,
+  .titulo-tesoros,
+  .titulo-maestros,
+  .titulo-vida,
+  .encabezado-doc,
+  .encabezado-semana {
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  .tabla-programa input {
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+  
+  .hoja:not(:first-child) .encabezado-doc.oculto {
+    display: none !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ==========================================
+     PANEL DE CONTROLES
+     ========================================== -->
+<div id="panel-controles">
+  <div class="panel-toolbar">
+    <button class="btn-control" onclick="togglePanel('panel-colores-texto', this)">🎨 Colores de Texto</button>
+    <button class="btn-control" onclick="togglePanel('panel-colores-fondo', this)">🖌️ Colores de Fondo</button>
+    <button class="btn-control" onclick="togglePanel('panel-tamanos', this)">📏 Tamaño de Textos</button>
+    <button class="btn-control" onclick="togglePanel('panel-semanas', this)">📅 Configuración de Semanas</button>
+    <button class="btn-control btn-print" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+  </div>
+
+  <!-- Subpanel: Colores de Texto -->
+  <div id="panel-colores-texto" class="subpanel">
+    <div class="subpanel-grid">
+      <div class="control-item">
+        <label>Encabezado de Hoja</label>
+        <input type="color" value="#6a1b9a" onchange="setVar('--txt-encabezado', this.value)">
+      </div>
+      <div class="control-item">
+        <label>Encabezado de Semana</label>
+        <input type="color" value="#6a1b9a" onchange="setVar('--txt-semana', this.value)">
+      </div>
+      <div class="control-item">
+        <label>Texto de Apertura</label>
+        <input type="color" value="#000000" onchange="setVar('--txt-apertura', this.value)">
+      </div>
+      <div class="control-item">
+        <label>Texto de Cierre</label>
+        <input type="color" value="#000000" onchange="setVar('--txt-cierre', this.value)">
+      </div>
+      <div class="control-item">
+        <label>Texto de Secciones</label>
+        <input type="color" value="#ffffff" onchange="setVar('--txt-secciones', this.value)">
+      </div>
+      <div class="control-item">
+        <label>Texto de Tabla</label>
+        <input type="color" value="#000000" onchange="setVar('--txt-tabla', this.value)">
+      </div>
+    </div>
+  </div>
+
+  <!-- Subpanel: Colores de Fondo -->
+  <div id="panel-colores-fondo" class="subpanel">
+    <div class="subpanel-grid">
+      <div class="control-item">
+        <label>Fondo Encabezado de Hoja</label>
+        <input type="color" value="#ffffff" onchange="setVar('--bg-encabezado', this.value)">
+      </div>
+      <div class="control-item">
+        <label>Fondo Encabezado de Semana</label>
+        <input type="color" value="#ffffff" onchange="setVar('--bg-semana', this.value)">
+      </div>
+      <div class="control-item">
+        <label>Fondo Apertura</label>
+        <input type="color" value="#f3e5f5" onchange="setVar('--bg-apertura', this.value)">
+      </div>
+      <div class="control-item">
+        <label>Fondo Cierre</label>
+        <input type="color" value="#f3e5f5" onchange="setVar('--bg-cierre', this.value)">
+      </div>
+      <div class="control-item">
+        <label>Fondo Tesoros</label>
+        <input type="color" value="#2A6B77" onchange="setVar('--bg-tesoros', this.value)">
+      </div>
+      <div class="control-item">
+        <label>Fondo Maestros</label>
+        <input type="color" value="#9B6D17" onchange="setVar('--bg-maestros', this.value)">
+      </div>
+      <div class="control-item">
+        <label>Fondo Vida Cristiana</label>
+        <input type="color" value="#942926" onchange="setVar('--bg-vida', this.value)">
+      </div>
+    </div>
+  </div>
+
+  <!-- Subpanel: Tamaño de Textos -->
+  <div id="panel-tamanos" class="subpanel">
+    <div class="subpanel-grid">
+      <div class="control-item">
+        <label>Encabezado de Hoja (px)</label>
+        <input type="number" min="10" max="32" value="18" onchange="setVar('--size-encabezado', this.value + 'px')">
+      </div>
+      <div class="control-item">
+        <label>Encabezado de Semana (px)</label>
+        <input type="number" min="8" max="24" value="12" onchange="setVar('--size-semana', this.value + 'px')">
+      </div>
+      <div class="control-item">
+        <label>Apertura (px)</label>
+        <input type="number" min="8" max="20" value="10" onchange="setVar('--size-apertura', this.value + 'px')">
+      </div>
+      <div class="control-item">
+        <label>Cierre (px)</label>
+        <input type="number" min="8" max="20" value="10" onchange="setVar('--size-cierre', this.value + 'px')">
+      </div>
+      <div class="control-item">
+        <label>Secciones (px)</label>
+        <input type="number" min="8" max="20" value="11" onchange="setVar('--size-secciones', this.value + 'px')">
+      </div>
+      <div class="control-item">
+        <label>Tabla/Asignaciones (px)</label>
+        <input type="number" min="8" max="20" value="10" onchange="setVar('--size-tabla', this.value + 'px')">
+      </div>
+      <div class="control-item">
+        <label>Iconos (px)</label>
+        <input type="number" min="8" max="32" value="14" onchange="setVar('--size-iconos', this.value + 'px')">
+      </div>
+      <div class="control-item">
+        <label>Alineación de Secciones</label>
+        <div class="align-buttons">
+          <button class="align-btn" onclick="setAlign('left', this)">⬅️ Izq</button>
+          <button class="align-btn active" onclick="setAlign('center', this)">↔️ Centro</button>
+          <button class="align-btn" onclick="setAlign('right', this)">➡️ Der</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subpanel: Configuración de Semanas -->
+  <div id="panel-semanas" class="subpanel">
+    <div class="subpanel-grid">
+      <div class="control-item">
+        <label>Semana inicial</label>
+        <input type="number" id="semana-inicial" value="37" min="1" max="53">
+      </div>
+      <div class="control-item">
+        <label>Semana final</label>
+        <input type="number" id="semana-final" value="42" min="1" max="53">
+      </div>
+      <div class="control-item">
+        <button class="btn-control" onclick="renderizarSemanas()" style="width:100%">🔄 Cargar Semanas</button>
+      </div>
+    </div>
+    <div style="margin-top: 12px;">
+      <div class="toggle-container">
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-apertura-cierre" checked onchange="renderizarSemanas()">
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="font-size: 13px;">Mostrar textos de Apertura y Cierre</span>
+      </div>
+      <div class="toggle-container">
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-repetir-titulo" checked onchange="renderizarSemanas()">
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="font-size: 13px;">Repetir Título y Congregación en todas las hojas</span>
+      </div>
+      <div class="toggle-container">
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-numero-semana" checked onchange="renderizarSemanas()">
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="font-size: 13px;">Mostrar número de semana</span>
+      </div>
+      <div class="toggle-container">
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-tiempo" checked onchange="renderizarSemanas()">
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="font-size: 13px;">Mostrar tiempo de las asignaciones</span>
+      </div>
+      <div class="toggle-container">
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-iconos" checked onchange="renderizarSemanas()">
+          <span class="toggle-slider"></span>
+        </label>
+        <span style="font-size: 13px;">Mostrar iconos</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==========================================
+     ÁREA DE CONTENIDO
+     ========================================== -->
+<div id="area-contenido"></div>
+
+<!-- ==========================================
+     JAVASCRIPT
+     ========================================== -->
+<script>
+let datosJSON = null;
+
+function setVar(nombre, valor) {
+  document.documentElement.style.setProperty(nombre, valor);
+}
+
+function setAlign(valor, boton) {
+  document.documentElement.style.setProperty('--align-secciones', valor);
+  // Actualizar estado activo de botones
+  document.querySelectorAll('.align-btn').forEach(btn => btn.classList.remove('active'));
+  boton.classList.add('active');
+}
+
+function togglePanel(id, boton) {
+  const panel = document.getElementById(id);
+  const todosPaneles = document.querySelectorAll('.subpanel');
+  const todosBotones = document.querySelectorAll('.btn-control:not(.btn-print)');
+  
+  todosPaneles.forEach(p => {
+    if (p.id !== id) p.classList.remove('visible');
+  });
+  
+  panel.classList.toggle('visible');
+  
+  todosBotones.forEach(btn => btn.classList.remove('active'));
+  if (panel.classList.contains('visible')) {
+    boton.classList.add('active');
+  }
+}
+
+function quitarTiempo(texto) {
+  return texto.replace(/\s*\(\d+\s*mins?\.\)\s*/gi, '').trim();
+}
+
+async function cargarJSON() {
+  try {
+    const respuesta = await fetch('programas_reunion.json');
+    if (!respuesta.ok) throw new Error('No se encontró el archivo JSON');
+    datosJSON = await respuesta.json();
+    renderizarSemanas();
+  } catch (error) {
+    document.getElementById('area-contenido').innerHTML = 
+      '<div style="padding:40px;text-align:center;color:#e94560;">' +
+      '<h2>❌ Error al cargar el JSON</h2>' +
+      '<p>' + error.message + '</p>' +
+      '<p style="margin-top:10px;font-size:13px;">Asegúrate de que el archivo <strong>programas_reunion.json</strong> esté en la misma carpeta que este index.html</p>' +
+      '</div>';
+  }
+}
+
+function renderizarSemanas() {
+  if (!datosJSON) return;
+  
+  const semanaInicial = parseInt(document.getElementById('semana-inicial').value);
+  const semanaFinal = parseInt(document.getElementById('semana-final').value);
+  const mostrarAperturaCierre = document.getElementById('toggle-apertura-cierre').checked;
+  const repetirTitulo = document.getElementById('toggle-repetir-titulo').checked;
+  const mostrarNumeroSemana = document.getElementById('toggle-numero-semana').checked;
+  const mostrarTiempo = document.getElementById('toggle-tiempo').checked;
+  const mostrarIconos = document.getElementById('toggle-iconos').checked;
+  
+  const programas = datosJSON.programas.filter(p => 
+    p.semana >= semanaInicial && p.semana <= semanaFinal
+  );
+  
+  if (programas.length === 0) {
+    document.getElementById('area-contenido').innerHTML = 
+      '<div style="padding:40px;text-align:center;"><h2>⚠️ No hay programas en ese rango de semanas</h2></div>';
+    return;
+  }
+  
+  const areaContenido = document.getElementById('area-contenido');
+  areaContenido.innerHTML = '';
+  
+  const grupos = [];
+  for (let i = 0; i < programas.length; i += 2) {
+    grupos.push(programas.slice(i, i + 2));
+  }
+  
+  grupos.forEach((grupo, indice) => {
+    const hoja = document.createElement('div');
+    hoja.className = 'hoja';
+    
+    const esPrimeraHoja = indice === 0;
+    const mostrarEncabezado = esPrimeraHoja || repetirTitulo;
+    
+    let htmlEncabezado = '';
+    if (mostrarEncabezado) {
+      htmlEncabezado = `
+        <div class="encabezado-doc">
+          <h1>Programa de Vida y Ministerio Cristiano</h1>
+          <h2>Congregación: <input type="text" class="input-congregacion" placeholder="Nombre de la congregación" oninput="sincronizarCongregacion(this.value)"></h2>
+        </div>
+      `;
+    }
+    
+    let htmlTablas = '';
+    grupo.forEach(programa => {
+      htmlTablas += generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSemana, mostrarTiempo, mostrarIconos);
+    });
+    
+    hoja.innerHTML = htmlEncabezado + htmlTablas;
+    areaContenido.appendChild(hoja);
+  });
+  
+  const primerInput = document.querySelector('.input-congregacion');
+  if (primerInput && primerInput.value) {
+    sincronizarCongregacion(primerInput.value);
+  }
+}
+
+function generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSemana, mostrarTiempo, mostrarIconos) {
+  let html = '';
+  
+  const iconoPresidente = mostrarIconos ? '<span class="jw-icon jwico-d"></span>' : '';
+  const iconoTesoros = mostrarIconos ? '<span class="jw-icon jwico-a"></span>' : '';
+  const iconoMaestros = mostrarIconos ? '<span class="jw-icon jwico-b"></span>' : '';
+  const iconoVida = mostrarIconos ? '<span class="jw-icon jwico-c"></span>' : '';
+  
+  // Encabezado de semana con Presidente
+  let textoSemana = programa.encabezado;
+  if (mostrarNumeroSemana) {
+    textoSemana += ` | Semana ${programa.semana}`;
+  }
+  
+  html += `
+    <div class="encabezado-semana">
+      <span class="info-semana">${textoSemana}</span>
+      <span class="presidente-row">
+        ${iconoPresidente}<strong>Presidente:</strong>
+        <input type="text" placeholder="Nombre">
+      </span>
+    </div>
+  `;
+  
+  html += '<table class="tabla-programa">';
+  
+  // Apertura
+  if (mostrarAperturaCierre && programa.apertura) {
+    let textoApertura = mostrarTiempo ? programa.apertura : quitarTiempo(programa.apertura);
+    html += `
+      <tr class="fila-apertura">
+        <td colspan="2"><input type="text" class="input-asignacion" value="${textoApertura}"></td>
+        <td style="width:20%;"><input type="text" placeholder="Quién ora"></td>
+      </tr>
+    `;
+  }
+  
+  // TESOROS DE LA BIBLIA
+  html += `<tr class="titulo-seccion titulo-tesoros"><td colspan="3">${iconoTesoros}TESOROS DE LA BIBLIA</td></tr>`;
+  (programa.tesoros || []).forEach(item => {
+    let texto = mostrarTiempo ? item : quitarTiempo(item);
+    html += `
+      <tr>
+        <td colspan="2"><input type="text" class="input-asignacion" value="${texto}"></td>
+        <td><input type="text" placeholder="Hermano"></td>
+      </tr>
+    `;
+  });
+  
+  // SEAMOS MEJORES MAESTROS
+  html += `<tr class="titulo-seccion titulo-maestros"><td colspan="3">${iconoMaestros}SEAMOS MEJORES MAESTROS</td></tr>`;
+  (programa.maestros || []).forEach(item => {
+    let texto = mostrarTiempo ? item : quitarTiempo(item);
+    if (item.toLowerCase().includes('discurso')) {
+      html += `
+        <tr><td colspan="3"><input type="text" class="input-asignacion" value="${texto}"></td></tr>
+        <tr><td colspan="3"><input type="text" placeholder="Orador"></td></tr>
+      `;
+    } else {
+      html += `
+        <tr>
+          <td><input type="text" class="input-asignacion" value="${texto}"></td>
+          <td style="width:20%;"><input type="text" placeholder="Ayudante"></td>
+          <td style="width:20%;"><input type="text" placeholder="Estudiante"></td>
+        </tr>
+      `;
+    }
+  });
+  
+  // NUESTRA VIDA CRISTIANA
+  html += `<tr class="titulo-seccion titulo-vida"><td colspan="3">${iconoVida}NUESTRA VIDA CRISTIANA</td></tr>`;
+  (programa.vida_cristiana || []).forEach(item => {
+    let texto = mostrarTiempo ? item : quitarTiempo(item);
+    html += `
+      <tr>
+        <td colspan="2"><input type="text" class="input-asignacion" value="${texto}"></td>
+        <td><input type="text" placeholder="Hermano"></td>
+      </tr>
+    `;
+  });
+  
+  // Cierre
+  if (mostrarAperturaCierre && programa.cierre) {
+    let textoCierre = mostrarTiempo ? programa.cierre : quitarTiempo(programa.cierre);
+    html += `
+      <tr class="fila-cierre">
+        <td colspan="2"><input type="text" class="input-asignacion" value="${textoCierre}"></td>
+        <td><input type="text" placeholder="Quién ora"></td>
+      </tr>
+    `;
+  }
+  
+  html += '</table>';
+  return html;
+}
+
+function sincronizarCongregacion(valor) {
+  document.querySelectorAll('.input-congregacion').forEach(input => {
+    if (input.value !== valor) input.value = valor;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  cargarJSON();
+});
+</script>
+
+</body>
+</html>

@@ -7,15 +7,12 @@
 <link rel="stylesheet" href="jwicon.css">
 <style>
 :root {
-  /* Colores de texto */
   --txt-encabezado: #6a1b9a;
   --txt-semana: #6a1b9a;
   --txt-apertura: #000000;
   --txt-cierre: #000000;
   --txt-secciones: #ffffff;
   --txt-tabla: #000000;
-  
-  /* Colores de fondo */
   --bg-encabezado: #ffffff;
   --bg-semana: #ffffff;
   --bg-apertura: #f3e5f5;
@@ -23,8 +20,6 @@
   --bg-tesoros: #2A6B77;
   --bg-maestros: #9B6D17;
   --bg-vida: #942926;
-  
-  /* Tamaños */
   --size-encabezado: 18px;
   --size-semana: 12px;
   --size-apertura: 10px;
@@ -70,12 +65,7 @@ body { font-family: Arial, sans-serif; background: #e8e8e8; color: #333; }
 }
 .btn-control:hover { background: #e9ecef; }
 .btn-control.active { background: #6a1b9a; color: white; border-color: #6a1b9a; }
-
-.btn-print {
-  background: #1e88e5;
-  color: white;
-  border-color: #1e88e5;
-}
+.btn-print { background: #1e88e5; color: white; border-color: #1e88e5; }
 .btn-print:hover { background: #1565c0; }
 
 .subpanel {
@@ -104,30 +94,12 @@ body { font-family: Arial, sans-serif; background: #e8e8e8; color: #333; }
   border-radius: 4px;
   border: 1px solid #eee;
 }
-.control-item label {
-  font-size: 12px;
-  font-weight: 500;
-  flex: 1;
-}
-.control-item input[type="color"] {
-  width: 40px;
-  height: 28px;
-  border: none;
-  cursor: pointer;
-}
-.control-item input[type="number"] {
-  width: 70px;
-  padding: 4px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  font-size: 12px;
-}
+.control-item label { font-size: 12px; font-weight: 500; flex: 1; }
+.control-item input[type="color"] { width: 40px; height: 28px; border: none; cursor: pointer; }
+.control-item input[type="number"] { width: 70px; padding: 4px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; }
+.control-item select { padding: 4px 8px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; max-width: 100%; }
 
-/* Botones de alineación */
-.align-buttons {
-  display: flex;
-  gap: 4px;
-}
+.align-buttons { display: flex; gap: 4px; }
 .align-btn {
   padding: 4px 10px;
   border: 1px solid #ccc;
@@ -140,38 +112,16 @@ body { font-family: Arial, sans-serif; background: #e8e8e8; color: #333; }
 .align-btn:hover { background: #e9ecef; }
 .align-btn.active { background: #6a1b9a; color: white; border-color: #6a1b9a; }
 
-/* Toggle Switch */
-.toggle-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 10px;
-}
-.toggle-switch {
-  position: relative;
-  width: 44px;
-  height: 24px;
-  flex-shrink: 0;
-}
+.toggle-container { display: flex; align-items: center; gap: 10px; padding: 6px 10px; }
+.toggle-switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
 .toggle-switch input { opacity: 0; width: 0; height: 0; }
 .toggle-slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: #ccc;
-  border-radius: 24px;
-  transition: 0.3s;
+  position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+  background: #ccc; border-radius: 24px; transition: 0.3s;
 }
 .toggle-slider:before {
-  content: "";
-  position: absolute;
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background: white;
-  border-radius: 50%;
-  transition: 0.3s;
+  content: ""; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px;
+  background: white; border-radius: 50%; transition: 0.3s;
 }
 .toggle-switch input:checked + .toggle-slider { background: #6a1b9a; }
 .toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); }
@@ -179,197 +129,120 @@ body { font-family: Arial, sans-serif; background: #e8e8e8; color: #333; }
 /* ==========================================
    ÁREA DE CONTENIDO
    ========================================== */
-#area-contenido {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
+#area-contenido { padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
 
 .hoja {
-  width: 210mm;
-  min-height: 297mm;
-  background: white;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-  padding: 20mm;
-  position: relative;
+  width: 210mm; min-height: 297mm; background: white;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15); padding: 20mm; position: relative;
 }
 
-/* Encabezado de hoja (documento) */
 .encabezado-doc {
-  text-align: center;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 3px solid var(--txt-encabezado);
-  background: var(--bg-encabezado);
+  text-align: center; margin-bottom: 15px; padding-bottom: 10px;
+  border-bottom: 3px solid var(--txt-encabezado); background: var(--bg-encabezado);
 }
-.encabezado-doc h1 {
-  font-size: var(--size-encabezado);
-  color: var(--txt-encabezado);
-  margin-bottom: 8px;
-}
-.encabezado-doc h2 {
-  font-size: 14px;
-  font-weight: normal;
-  color: var(--txt-tabla);
-}
+.encabezado-doc h1 { font-size: var(--size-encabezado); color: var(--txt-encabezado); margin-bottom: 8px; }
+.encabezado-doc h2 { font-size: 14px; font-weight: normal; color: var(--txt-tabla); }
 .encabezado-doc h2 input {
-  border: none;
-  border-bottom: 1px solid #999;
-  font-size: 14px;
-  text-align: center;
-  width: 300px;
-  padding: 3px;
-  background: transparent;
+  border: none; border-bottom: 1px solid #999; font-size: 14px; text-align: center;
+  width: 300px; padding: 3px; background: transparent;
 }
-.encabezado-doc h2 input:focus {
-  outline: none;
-  border-bottom: 2px solid var(--txt-encabezado);
-}
+.encabezado-doc h2 input:focus { outline: none; border-bottom: 2px solid var(--txt-encabezado); }
 
-/* Tablas de programa */
 .tabla-programa {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 15px;
-  page-break-inside: avoid;
-  font-size: var(--size-tabla);
+  width: 100%; border-collapse: collapse; margin-bottom: 15px;
+  page-break-inside: avoid; font-size: var(--size-tabla);
 }
-
-.tabla-programa td {
-  border: 1px solid #333;
-  padding: 3px 5px;
-  vertical-align: middle;
-  color: var(--txt-tabla);
-}
-
-.fila-apertura {
-  background: var(--bg-apertura) !important;
-}
-.fila-apertura td {
-  color: var(--txt-apertura);
-  font-size: var(--size-apertura);
-  padding: 4px 5px;
-}
-
-.fila-cierre {
-  background: var(--bg-cierre) !important;
-}
-.fila-cierre td {
-  color: var(--txt-cierre);
-  font-size: var(--size-cierre);
-  padding: 4px 5px;
-}
-
-.titulo-seccion td {
-  color: var(--txt-secciones);
-  font-weight: bold;
-  font-size: var(--size-secciones);
-  text-align: var(--align-secciones);
-  padding: 4px;
-}
+.tabla-programa td { border: 1px solid #333; padding: 3px 5px; vertical-align: middle; color: var(--txt-tabla); }
+.fila-apertura { background: var(--bg-apertura) !important; }
+.fila-apertura td { color: var(--txt-apertura); font-size: var(--size-apertura); padding: 4px 5px; }
+.fila-cierre { background: var(--bg-cierre) !important; }
+.fila-cierre td { color: var(--txt-cierre); font-size: var(--size-cierre); padding: 4px 5px; }
+.titulo-seccion td { color: var(--txt-secciones); font-weight: bold; font-size: var(--size-secciones); text-align: var(--align-secciones); padding: 4px; }
 .titulo-tesoros { background: var(--bg-tesoros) !important; }
 .titulo-maestros { background: var(--bg-maestros) !important; }
 .titulo-vida { background: var(--bg-vida) !important; }
 
 .tabla-programa input {
-  width: 100%;
-  border: none;
-  padding: 2px;
-  font-size: inherit;
-  font-family: inherit;
-  background: transparent;
-  color: inherit;
+  width: 100%; border: none; padding: 2px; font-size: inherit;
+  font-family: inherit; background: transparent; color: inherit;
 }
-.tabla-programa input:focus {
-  outline: 1px solid #6a1b9a;
-  background: rgba(255, 249, 196, 0.3);
-}
+.tabla-programa input:focus { outline: 1px solid #6a1b9a; background: rgba(255,249,196,0.3); }
 
 .input-asignacion {
-  width: 100%;
-  border: none;
-  padding: 2px;
-  font-size: inherit;
-  font-family: inherit;
-  background: transparent;
-  color: inherit;
+  width: 100%; border: none; padding: 2px; font-size: inherit;
+  font-family: inherit; background: transparent; color: inherit;
 }
-.input-asignacion:focus {
-  outline: 1px solid #6a1b9a;
-  background: rgba(255, 249, 196, 0.3);
-}
+.input-asignacion:focus { outline: 1px solid #6a1b9a; background: rgba(255,249,196,0.3); }
 
 /* ==========================================
-   ENCABEZADO DE SEMANA (Independiente, con Presidente)
+   ENCABEZADO DE SEMANA
    ========================================== */
 .encabezado-semana {
-  font-size: var(--size-semana);
-  font-weight: bold;
-  color: var(--txt-semana);
-  background: var(--bg-semana);
-  margin-bottom: 8px;
-  padding: 5px 8px;
+  font-size: var(--size-semana); font-weight: bold; color: var(--txt-semana);
+  background: var(--bg-semana); margin-bottom: 8px; padding: 5px 8px;
   border-bottom: 2px solid var(--txt-semana);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 6px;
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px;
 }
-
-.encabezado-semana .info-semana {
-  flex: 1;
-  min-width: 150px;
-}
-
+.encabezado-semana .info-semana { flex: 1; min-width: 150px; }
 .encabezado-semana .presidente-row {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 3px;
-  font-size: inherit;
-  font-weight: normal;
-  white-space: nowrap;
+  display: inline-flex; align-items: baseline; gap: 3px;
+  font-size: inherit; font-weight: normal; white-space: nowrap;
 }
-
-.encabezado-semana .presidente-row .jw-icon {
-  margin-right: 2px;
-}
-
+.encabezado-semana .presidente-row .jw-icon { margin-right: 2px; }
 .encabezado-semana .presidente-row input {
-  border: none;
-  border-bottom: 1px solid #999;
-  font-size: inherit;
-  font-family: inherit;
-  font-weight: normal;
-  width: 120px;
-  padding: 1px 4px;
-  background: transparent;
-  color: inherit;
+  border: none; border-bottom: 1px solid #999; font-size: inherit; font-family: inherit;
+  font-weight: normal; width: 100px; padding: 1px 4px; background: transparent; color: inherit;
 }
-.encabezado-semana .presidente-row input:focus {
-  outline: none;
-  border-bottom: 2px solid var(--txt-semana);
-}
+.encabezado-semana .presidente-row input:focus { outline: none; border-bottom: 2px solid var(--txt-semana); }
 
-/* Iconos */
-.jw-icon {
-  font-size: var(--size-iconos);
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 3px;
-}
+.jw-icon { font-size: var(--size-iconos); display: inline-block; vertical-align: middle; margin-right: 3px; }
 
 /* ==========================================
-   RESPONSIVE (Móvil)
+   AUTOCOMPLETADO (Sugerencias)
+   ========================================== */
+.autocomplete-wrapper { position: relative; display: inline-block; width: 100%; }
+.autocomplete-list {
+  position: absolute; top: 100%; left: 0; right: 0;
+  background: white; border: 1px solid #ccc; border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 9999;
+  max-height: 150px; overflow-y: auto; display: none;
+}
+.autocomplete-list.visible { display: block; }
+.autocomplete-item {
+  padding: 6px 10px; cursor: pointer; font-size: 12px;
+  border-bottom: 1px solid #eee;
+}
+.autocomplete-item:hover { background: #f0f0f0; }
+.autocomplete-item:last-child { border-bottom: none; }
+
+/* ==========================================
+   MODAL DE CONFIRMACIÓN
+   ========================================== */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 10000;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-overlay.hidden { display: none; }
+.modal-box {
+  background: white; border-radius: 8px; padding: 25px;
+  max-width: 400px; width: 90%; box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.modal-box h3 { margin-bottom: 15px; color: #333; }
+.modal-box p { margin-bottom: 15px; font-size: 14px; color: #555; }
+.modal-box .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; }
+.modal-box button {
+  padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;
+}
+.modal-box .btn-si { background: #4caf50; color: white; }
+.modal-box .btn-no { background: #f44336; color: white; }
+.modal-box .btn-cancelar { background: #9e9e9e; color: white; }
+
+/* ==========================================
+   RESPONSIVE
    ========================================== */
 @media (max-width: 768px) {
-  .hoja {
-    width: 100%;
-    min-height: auto;
-    padding: 10px;
-  }
+  .hoja { width: 100%; min-height: auto; padding: 10px; }
   #panel-controles { padding: 5px 10px; }
   .panel-toolbar { gap: 5px; }
   .btn-control { padding: 6px 10px; font-size: 11px; }
@@ -379,172 +252,70 @@ body { font-family: Arial, sans-serif; background: #e8e8e8; color: #333; }
 }
 
 /* ==========================================
-   IMPRESIÓN (Forzar colores)
+   IMPRESIÓN
    ========================================== */
 @media print {
-  @page {
-    size: A4;
-    margin: 2cm;
-  }
-  
+  @page { size: A4; margin: 2cm; }
   body { background: white; }
   #panel-controles { display: none !important; }
-  
-  #area-contenido {
-    padding: 0;
-    gap: 0;
-  }
-  
-  .hoja {
-    width: 100%;
-    min-height: auto;
-    box-shadow: none;
-    padding: 0;
-    page-break-after: always;
-  }
+  .autocomplete-list { display: none !important; }
+  #area-contenido { padding: 0; gap: 0; }
+  .hoja { width: 100%; min-height: auto; box-shadow: none; padding: 0; page-break-after: always; }
   .hoja:last-child { page-break-after: auto; }
-  
-  .tabla-programa {
-    width: 100%;
-    page-break-inside: avoid;
+  .tabla-programa { width: 100%; page-break-inside: avoid; }
+  .titulo-seccion td, .fila-apertura, .fila-apertura td, .fila-cierre, .fila-cierre td,
+  .titulo-tesoros, .titulo-maestros, .titulo-vida, .encabezado-doc, .encabezado-semana {
+    print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important;
   }
-  
-  /* FORZAR COLORES EN IMPRESIÓN */
-  .titulo-seccion td,
-  .fila-apertura,
-  .fila-apertura td,
-  .fila-cierre,
-  .fila-cierre td,
-  .titulo-tesoros,
-  .titulo-maestros,
-  .titulo-vida,
-  .encabezado-doc,
-  .encabezado-semana {
-    print-color-adjust: exact !important;
-    -webkit-print-color-adjust: exact !important;
-    color-adjust: exact !important;
-  }
-  
-  .tabla-programa input {
-    print-color-adjust: exact !important;
-    -webkit-print-color-adjust: exact !important;
-  }
-  
-  .hoja:not(:first-child) .encabezado-doc.oculto {
-    display: none !important;
-  }
+  .tabla-programa input { print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important; }
+  .hoja:not(:first-child) .encabezado-doc.oculto { display: none !important; }
 }
 </style>
 </head>
 <body>
 
-<!-- ==========================================
-     PANEL DE CONTROLES
-     ========================================== -->
+<!-- PANEL DE CONTROLES -->
 <div id="panel-controles">
   <div class="panel-toolbar">
     <button class="btn-control" onclick="togglePanel('panel-colores-texto', this)">🎨 Colores de Texto</button>
     <button class="btn-control" onclick="togglePanel('panel-colores-fondo', this)">🖌️ Colores de Fondo</button>
     <button class="btn-control" onclick="togglePanel('panel-tamanos', this)">📏 Tamaño de Textos</button>
     <button class="btn-control" onclick="togglePanel('panel-semanas', this)">📅 Configuración de Semanas</button>
-    <button class="btn-control btn-print" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+    <button class="btn-control btn-print" onclick="manejarImpresion()">🖨️ Imprimir / Guardar PDF</button>
   </div>
 
-  <!-- Subpanel: Colores de Texto -->
   <div id="panel-colores-texto" class="subpanel">
     <div class="subpanel-grid">
-      <div class="control-item">
-        <label>Encabezado de Hoja</label>
-        <input type="color" value="#6a1b9a" onchange="setVar('--txt-encabezado', this.value)">
-      </div>
-      <div class="control-item">
-        <label>Encabezado de Semana</label>
-        <input type="color" value="#6a1b9a" onchange="setVar('--txt-semana', this.value)">
-      </div>
-      <div class="control-item">
-        <label>Texto de Apertura</label>
-        <input type="color" value="#000000" onchange="setVar('--txt-apertura', this.value)">
-      </div>
-      <div class="control-item">
-        <label>Texto de Cierre</label>
-        <input type="color" value="#000000" onchange="setVar('--txt-cierre', this.value)">
-      </div>
-      <div class="control-item">
-        <label>Texto de Secciones</label>
-        <input type="color" value="#ffffff" onchange="setVar('--txt-secciones', this.value)">
-      </div>
-      <div class="control-item">
-        <label>Texto de Tabla</label>
-        <input type="color" value="#000000" onchange="setVar('--txt-tabla', this.value)">
-      </div>
+      <div class="control-item"><label>Encabezado de Hoja</label><input type="color" id="c-txt-encabezado" value="#6a1b9a" onchange="setVar('--txt-encabezado', this.value)"></div>
+      <div class="control-item"><label>Encabezado de Semana</label><input type="color" id="c-txt-semana" value="#6a1b9a" onchange="setVar('--txt-semana', this.value)"></div>
+      <div class="control-item"><label>Texto de Apertura</label><input type="color" id="c-txt-apertura" value="#000000" onchange="setVar('--txt-apertura', this.value)"></div>
+      <div class="control-item"><label>Texto de Cierre</label><input type="color" id="c-txt-cierre" value="#000000" onchange="setVar('--txt-cierre', this.value)"></div>
+      <div class="control-item"><label>Texto de Secciones</label><input type="color" id="c-txt-secciones" value="#ffffff" onchange="setVar('--txt-secciones', this.value)"></div>
+      <div class="control-item"><label>Texto de Tabla</label><input type="color" id="c-txt-tabla" value="#000000" onchange="setVar('--txt-tabla', this.value)"></div>
     </div>
   </div>
 
-  <!-- Subpanel: Colores de Fondo -->
   <div id="panel-colores-fondo" class="subpanel">
     <div class="subpanel-grid">
-      <div class="control-item">
-        <label>Fondo Encabezado de Hoja</label>
-        <input type="color" value="#ffffff" onchange="setVar('--bg-encabezado', this.value)">
-      </div>
-      <div class="control-item">
-        <label>Fondo Encabezado de Semana</label>
-        <input type="color" value="#ffffff" onchange="setVar('--bg-semana', this.value)">
-      </div>
-      <div class="control-item">
-        <label>Fondo Apertura</label>
-        <input type="color" value="#f3e5f5" onchange="setVar('--bg-apertura', this.value)">
-      </div>
-      <div class="control-item">
-        <label>Fondo Cierre</label>
-        <input type="color" value="#f3e5f5" onchange="setVar('--bg-cierre', this.value)">
-      </div>
-      <div class="control-item">
-        <label>Fondo Tesoros</label>
-        <input type="color" value="#2A6B77" onchange="setVar('--bg-tesoros', this.value)">
-      </div>
-      <div class="control-item">
-        <label>Fondo Maestros</label>
-        <input type="color" value="#9B6D17" onchange="setVar('--bg-maestros', this.value)">
-      </div>
-      <div class="control-item">
-        <label>Fondo Vida Cristiana</label>
-        <input type="color" value="#942926" onchange="setVar('--bg-vida', this.value)">
-      </div>
+      <div class="control-item"><label>Fondo Encabezado de Hoja</label><input type="color" id="c-bg-encabezado" value="#ffffff" onchange="setVar('--bg-encabezado', this.value)"></div>
+      <div class="control-item"><label>Fondo Encabezado de Semana</label><input type="color" id="c-bg-semana" value="#ffffff" onchange="setVar('--bg-semana', this.value)"></div>
+      <div class="control-item"><label>Fondo Apertura</label><input type="color" id="c-bg-apertura" value="#f3e5f5" onchange="setVar('--bg-apertura', this.value)"></div>
+      <div class="control-item"><label>Fondo Cierre</label><input type="color" id="c-bg-cierre" value="#f3e5f5" onchange="setVar('--bg-cierre', this.value)"></div>
+      <div class="control-item"><label>Fondo Tesoros</label><input type="color" id="c-bg-tesoros" value="#2A6B77" onchange="setVar('--bg-tesoros', this.value)"></div>
+      <div class="control-item"><label>Fondo Maestros</label><input type="color" id="c-bg-maestros" value="#9B6D17" onchange="setVar('--bg-maestros', this.value)"></div>
+      <div class="control-item"><label>Fondo Vida Cristiana</label><input type="color" id="c-bg-vida" value="#942926" onchange="setVar('--bg-vida', this.value)"></div>
     </div>
   </div>
 
-  <!-- Subpanel: Tamaño de Textos -->
   <div id="panel-tamanos" class="subpanel">
     <div class="subpanel-grid">
-      <div class="control-item">
-        <label>Encabezado de Hoja (px)</label>
-        <input type="number" min="10" max="32" value="18" onchange="setVar('--size-encabezado', this.value + 'px')">
-      </div>
-      <div class="control-item">
-        <label>Encabezado de Semana (px)</label>
-        <input type="number" min="8" max="24" value="12" onchange="setVar('--size-semana', this.value + 'px')">
-      </div>
-      <div class="control-item">
-        <label>Apertura (px)</label>
-        <input type="number" min="8" max="20" value="10" onchange="setVar('--size-apertura', this.value + 'px')">
-      </div>
-      <div class="control-item">
-        <label>Cierre (px)</label>
-        <input type="number" min="8" max="20" value="10" onchange="setVar('--size-cierre', this.value + 'px')">
-      </div>
-      <div class="control-item">
-        <label>Secciones (px)</label>
-        <input type="number" min="8" max="20" value="11" onchange="setVar('--size-secciones', this.value + 'px')">
-      </div>
-      <div class="control-item">
-        <label>Tabla/Asignaciones (px)</label>
-        <input type="number" min="8" max="20" value="10" onchange="setVar('--size-tabla', this.value + 'px')">
-      </div>
-      <div class="control-item">
-        <label>Iconos (px)</label>
-        <input type="number" min="8" max="32" value="14" onchange="setVar('--size-iconos', this.value + 'px')">
-      </div>
+      <div class="control-item"><label>Encabezado de Hoja (px)</label><input type="number" id="s-encabezado" min="10" max="32" value="18" onchange="setVar('--size-encabezado', this.value + 'px')"></div>
+      <div class="control-item"><label>Encabezado de Semana (px)</label><input type="number" id="s-semana" min="8" max="24" value="12" onchange="setVar('--size-semana', this.value + 'px')"></div>
+      <div class="control-item"><label>Apertura (px)</label><input type="number" id="s-apertura" min="8" max="20" value="10" onchange="setVar('--size-apertura', this.value + 'px')"></div>
+      <div class="control-item"><label>Cierre (px)</label><input type="number" id="s-cierre" min="8" max="20" value="10" onchange="setVar('--size-cierre', this.value + 'px')"></div>
+      <div class="control-item"><label>Secciones (px)</label><input type="number" id="s-secciones" min="8" max="20" value="11" onchange="setVar('--size-secciones', this.value + 'px')"></div>
+      <div class="control-item"><label>Tabla/Asignaciones (px)</label><input type="number" id="s-tabla" min="8" max="20" value="10" onchange="setVar('--size-tabla', this.value + 'px')"></div>
+      <div class="control-item"><label>Iconos (px)</label><input type="number" id="s-iconos" min="8" max="32" value="14" onchange="setVar('--size-iconos', this.value + 'px')"></div>
       <div class="control-item">
         <label>Alineación de Secciones</label>
         <div class="align-buttons">
@@ -556,16 +327,15 @@ body { font-family: Arial, sans-serif; background: #e8e8e8; color: #333; }
     </div>
   </div>
 
-  <!-- Subpanel: Configuración de Semanas -->
   <div id="panel-semanas" class="subpanel">
     <div class="subpanel-grid">
       <div class="control-item">
         <label>Semana inicial</label>
-        <input type="number" id="semana-inicial" value="37" min="1" max="53">
+        <select id="semana-inicial" onchange="renderizarSemanas()"></select>
       </div>
       <div class="control-item">
         <label>Semana final</label>
-        <input type="number" id="semana-final" value="42" min="1" max="53">
+        <select id="semana-final" onchange="renderizarSemanas()"></select>
       </div>
       <div class="control-item">
         <button class="btn-control" onclick="renderizarSemanas()" style="width:100%">🔄 Cargar Semanas</button>
@@ -573,64 +343,231 @@ body { font-family: Arial, sans-serif; background: #e8e8e8; color: #333; }
     </div>
     <div style="margin-top: 12px;">
       <div class="toggle-container">
-        <label class="toggle-switch">
-          <input type="checkbox" id="toggle-apertura-cierre" checked onchange="renderizarSemanas()">
-          <span class="toggle-slider"></span>
-        </label>
+        <label class="toggle-switch"><input type="checkbox" id="toggle-apertura-cierre" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
         <span style="font-size: 13px;">Mostrar textos de Apertura y Cierre</span>
       </div>
       <div class="toggle-container">
-        <label class="toggle-switch">
-          <input type="checkbox" id="toggle-repetir-titulo" checked onchange="renderizarSemanas()">
-          <span class="toggle-slider"></span>
-        </label>
+        <label class="toggle-switch"><input type="checkbox" id="toggle-repetir-titulo" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
         <span style="font-size: 13px;">Repetir Título y Congregación en todas las hojas</span>
       </div>
       <div class="toggle-container">
-        <label class="toggle-switch">
-          <input type="checkbox" id="toggle-numero-semana" checked onchange="renderizarSemanas()">
-          <span class="toggle-slider"></span>
-        </label>
+        <label class="toggle-switch"><input type="checkbox" id="toggle-numero-semana" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
         <span style="font-size: 13px;">Mostrar número de semana</span>
       </div>
       <div class="toggle-container">
-        <label class="toggle-switch">
-          <input type="checkbox" id="toggle-tiempo" checked onchange="renderizarSemanas()">
-          <span class="toggle-slider"></span>
-        </label>
+        <label class="toggle-switch"><input type="checkbox" id="toggle-tiempo" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
         <span style="font-size: 13px;">Mostrar tiempo de las asignaciones</span>
       </div>
       <div class="toggle-container">
-        <label class="toggle-switch">
-          <input type="checkbox" id="toggle-iconos" checked onchange="renderizarSemanas()">
-          <span class="toggle-slider"></span>
-        </label>
+        <label class="toggle-switch"><input type="checkbox" id="toggle-iconos" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
         <span style="font-size: 13px;">Mostrar iconos</span>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ==========================================
-     ÁREA DE CONTENIDO
-     ========================================== -->
+<!-- ÁREA DE CONTENIDO -->
 <div id="area-contenido"></div>
 
-<!-- ==========================================
-     JAVASCRIPT
-     ========================================== -->
-<script>
-let datosJSON = null;
+<!-- MODAL DE GUARDADO -->
+<div id="modal-guardar" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3>💾 ¿Guardar nombres para futuros rellenos?</h3>
+    <p>Se han detectado nombres en los campos de asignación. ¿Deseas guardarlos para sugerencias futuras?</p>
+    <div class="toggle-container" style="margin-bottom: 15px;">
+      <label class="toggle-switch"><input type="checkbox" id="toggle-no-preguntar"><span class="toggle-slider"></span></label>
+      <span style="font-size: 13px;">No volver a preguntar</span>
+    </div>
+    <div class="modal-buttons">
+      <button class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-no" onclick="imprimirSinGuardar()">No guardar</button>
+      <button class="btn-si" onclick="guardarEImprimir()">✅ Guardar</button>
+    </div>
+  </div>
+</div>
 
+<script>
+// ==========================================
+// VARIABLES GLOBALES
+// ==========================================
+let datosJSON = null;
+let db = null;
+
+// ==========================================
+// INDEXEDDB (Para sugerencias sin límite)
+// ==========================================
+function abrirIndexedDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('ProgramaReunionDB', 1);
+    
+    request.onupgradeneeded = (e) => {
+      const database = e.target.result;
+      if (!database.objectStoreNames.contains('sugerencias')) {
+        database.createObjectStore('sugerencias', { keyPath: 'id', autoIncrement: true });
+      }
+    };
+    
+    request.onsuccess = (e) => {
+      db = e.target.result;
+      resolve(db);
+    };
+    
+    request.onerror = (e) => reject(e);
+  });
+}
+
+function guardarSugerencia(nombre) {
+  if (!db || !nombre || nombre.trim() === '') return;
+  
+  const tx = db.transaction(['sugerencias'], 'readwrite');
+  const store = tx.objectStore('sugerencias');
+  
+  // Verificar si ya existe
+  const getAll = store.getAll();
+  getAll.onsuccess = () => {
+    const existentes = getAll.result.map(r => r.nombre.toLowerCase());
+    if (!existentes.includes(nombre.toLowerCase().trim())) {
+      store.add({ nombre: nombre.trim(), fecha: new Date().toISOString() });
+    }
+  };
+}
+
+function obtenerSugerencias(filtro = '') {
+  return new Promise((resolve) => {
+    if (!db) return resolve([]);
+    
+    const tx = db.transaction(['sugerencias'], 'readonly');
+    const store = tx.objectStore('sugerencias');
+    const getAll = store.getAll();
+    
+    getAll.onsuccess = () => {
+      let resultados = getAll.result;
+      if (filtro) {
+        resultados = resultados.filter(r => 
+          r.nombre.toLowerCase().includes(filtro.toLowerCase())
+        );
+      }
+      // Ordenar alfabéticamente y limitar a 10
+      resultados.sort((a, b) => a.nombre.localeCompare(b.nombre));
+      resolve(resultos.slice(0, 10));
+    };
+    
+    getAll.onerror = () => resolve([]);
+  });
+}
+
+// ==========================================
+// LOCALSTORAGE (Para configuraciones)
+// ==========================================
+function guardarConfiguracion() {
+  const config = {
+    coloresTexto: {
+      '--txt-encabezado': document.getElementById('c-txt-encabezado').value,
+      '--txt-semana': document.getElementById('c-txt-semana').value,
+      '--txt-apertura': document.getElementById('c-txt-apertura').value,
+      '--txt-cierre': document.getElementById('c-txt-cierre').value,
+      '--txt-secciones': document.getElementById('c-txt-secciones').value,
+      '--txt-tabla': document.getElementById('c-txt-tabla').value
+    },
+    coloresFondo: {
+      '--bg-encabezado': document.getElementById('c-bg-encabezado').value,
+      '--bg-semana': document.getElementById('c-bg-semana').value,
+      '--bg-apertura': document.getElementById('c-bg-apertura').value,
+      '--bg-cierre': document.getElementById('c-bg-cierre').value,
+      '--bg-tesoros': document.getElementById('c-bg-tesoros').value,
+      '--bg-maestros': document.getElementById('c-bg-maestros').value,
+      '--bg-vida': document.getElementById('c-bg-vida').value
+    },
+    tamanos: {
+      '--size-encabezado': document.getElementById('s-encabezado').value + 'px',
+      '--size-semana': document.getElementById('s-semana').value + 'px',
+      '--size-apertura': document.getElementById('s-apertura').value + 'px',
+      '--size-cierre': document.getElementById('s-cierre').value + 'px',
+      '--size-secciones': document.getElementById('s-secciones').value + 'px',
+      '--size-tabla': document.getElementById('s-tabla').value + 'px',
+      '--size-iconos': document.getElementById('s-iconos').value + 'px',
+      '--align-secciones': getComputedStyle(document.documentElement).getPropertyValue('--align-secciones').trim()
+    },
+    toggles: {
+      'toggle-apertura-cierre': document.getElementById('toggle-apertura-cierre').checked,
+      'toggle-repetir-titulo': document.getElementById('toggle-repetir-titulo').checked,
+      'toggle-numero-semana': document.getElementById('toggle-numero-semana').checked,
+      'toggle-tiempo': document.getElementById('toggle-tiempo').checked,
+      'toggle-iconos': document.getElementById('toggle-iconos').checked
+    },
+    noPreguntarGuardar: localStorage.getItem('noPreguntarGuardar') === 'true'
+  };
+  
+  localStorage.setItem('configPrograma', JSON.stringify(config));
+}
+
+function cargarConfiguracion() {
+  const configStr = localStorage.getItem('configPrograma');
+  if (!configStr) return;
+  
+  try {
+    const config = JSON.parse(configStr);
+    
+    // Aplicar colores de texto
+    if (config.coloresTexto) {
+      for (let [varName, value] of Object.entries(config.coloresTexto)) {
+        document.documentElement.style.setProperty(varName, value);
+        const inputId = 'c-' + varName.replace('--txt-', 'txt-');
+        const input = document.getElementById(inputId);
+        if (input) input.value = value;
+      }
+    }
+    
+    // Aplicar colores de fondo
+    if (config.coloresFondo) {
+      for (let [varName, value] of Object.entries(config.coloresFondo)) {
+        document.documentElement.style.setProperty(varName, value);
+        const inputId = 'c-' + varName.replace('--bg-', 'bg-');
+        const input = document.getElementById(inputId);
+        if (input) input.value = value;
+      }
+    }
+    
+    // Aplicar tamaños
+    if (config.tamanos) {
+      for (let [varName, value] of Object.entries(config.tamanos)) {
+        if (varName === '--align-secciones') {
+          document.documentElement.style.setProperty(varName, value);
+        } else {
+          document.documentElement.style.setProperty(varName, value);
+          const inputId = 's-' + varName.replace('--size-', '');
+          const input = document.getElementById(inputId);
+          if (input) input.value = parseInt(value);
+        }
+      }
+    }
+    
+    // Aplicar toggles
+    if (config.toggles) {
+      for (let [toggleId, checked] of Object.entries(config.toggles)) {
+        const toggle = document.getElementById(toggleId);
+        if (toggle) toggle.checked = checked;
+      }
+    }
+    
+  } catch (e) {
+    console.error('Error cargando configuración:', e);
+  }
+}
+
+// ==========================================
+// UTILIDADES
+// ==========================================
 function setVar(nombre, valor) {
   document.documentElement.style.setProperty(nombre, valor);
+  guardarConfiguracion();
 }
 
 function setAlign(valor, boton) {
   document.documentElement.style.setProperty('--align-secciones', valor);
-  // Actualizar estado activo de botones
   document.querySelectorAll('.align-btn').forEach(btn => btn.classList.remove('active'));
   boton.classList.add('active');
+  guardarConfiguracion();
 }
 
 function togglePanel(id, boton) {
@@ -638,40 +575,211 @@ function togglePanel(id, boton) {
   const todosPaneles = document.querySelectorAll('.subpanel');
   const todosBotones = document.querySelectorAll('.btn-control:not(.btn-print)');
   
-  todosPaneles.forEach(p => {
-    if (p.id !== id) p.classList.remove('visible');
-  });
-  
+  todosPaneles.forEach(p => { if (p.id !== id) p.classList.remove('visible'); });
   panel.classList.toggle('visible');
-  
   todosBotones.forEach(btn => btn.classList.remove('active'));
-  if (panel.classList.contains('visible')) {
-    boton.classList.add('active');
-  }
+  if (panel.classList.contains('visible')) boton.classList.add('active');
 }
 
 function quitarTiempo(texto) {
   return texto.replace(/\s*\(\d+\s*mins?\.\)\s*/gi, '').trim();
 }
 
+// ==========================================
+// SEMANA ACTUAL
+// ==========================================
+function obtenerSemanaActual() {
+  const ahora = new Date();
+  const inicio = new Date(ahora.getFullYear(), 0, 1);
+  const dias = Math.floor((ahora - inicio) / (24 * 60 * 60 * 1000));
+  return Math.ceil((dias + inicio.getDay() + 1) / 7);
+}
+
+// ==========================================
+// AUTOCOMPLETADO
+// ==========================================
+function crearAutocomplete(input) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'autocomplete-wrapper';
+  
+  const list = document.createElement('div');
+  list.className = 'autocomplete-list';
+  
+  input.parentNode.insertBefore(wrapper, input);
+  wrapper.appendChild(input);
+  wrapper.appendChild(list);
+  
+  input.addEventListener('input', async () => {
+    const valor = input.value.trim();
+    if (valor.length < 1) {
+      list.classList.remove('visible');
+      return;
+    }
+    
+    const sugerencias = await obtenerSugerencias(valor);
+    if (sugerencias.length === 0) {
+      list.classList.remove('visible');
+      return;
+    }
+    
+    list.innerHTML = sugerencias.map(s => 
+      `<div class="autocomplete-item" data-nombre="${s.nombre}">${s.nombre}</div>`
+    ).join('');
+    
+    list.classList.add('visible');
+    
+    list.querySelectorAll('.autocomplete-item').forEach(item => {
+      item.addEventListener('click', () => {
+        input.value = item.dataset.nombre;
+        list.classList.remove('visible');
+      });
+    });
+  });
+  
+  input.addEventListener('blur', () => {
+    setTimeout(() => list.classList.remove('visible'), 200);
+  });
+  
+  input.addEventListener('focus', () => {
+    if (input.value.trim().length >= 1) {
+      input.dispatchEvent(new Event('input'));
+    }
+  });
+}
+
+// ==========================================
+// IMPRESIÓN Y GUARDADO
+// ==========================================
+function obtenerNombresDeInputs() {
+  const nombres = new Set();
+  document.querySelectorAll('.tabla-programa input[type="text"]').forEach(input => {
+    const valor = input.value.trim();
+    if (valor && valor !== '' && !input.placeholder.includes('ora')) {
+      nombres.add(valor);
+    }
+  });
+  return Array.from(nombres);
+}
+
+function manejarImpresion() {
+  guardarConfiguracion();
+  
+  const noPreguntar = localStorage.getItem('noPreguntarGuardar') === 'true';
+  const nombres = obtenerNombresDeInputs();
+  
+  if (noPreguntar) {
+    // Guardar automáticamente si hay nombres
+    if (nombres.length > 0) {
+      nombres.forEach(nombre => guardarSugerencia(nombre));
+    }
+    window.print();
+  } else if (nombres.length > 0) {
+    document.getElementById('modal-guardar').classList.remove('hidden');
+  } else {
+    window.print();
+  }
+}
+
+function guardarEImprimir() {
+  const noPreguntar = document.getElementById('toggle-no-preguntar').checked;
+  if (noPreguntar) {
+    localStorage.setItem('noPreguntarGuardar', 'true');
+  }
+  
+  const nombres = obtenerNombresDeInputs();
+  nombres.forEach(nombre => guardarSugerencia(nombre));
+  
+  cerrarModal();
+  window.print();
+}
+
+function imprimirSinGuardar() {
+  const noPreguntar = document.getElementById('toggle-no-preguntar').checked;
+  if (noPreguntar) {
+    localStorage.setItem('noPreguntarGuardar', 'true');
+  }
+  cerrarModal();
+  window.print();
+}
+
+function cerrarModal() {
+  document.getElementById('modal-guardar').classList.add('hidden');
+}
+
+// ==========================================
+// CARGAR JSON
+// ==========================================
 async function cargarJSON() {
   try {
     const respuesta = await fetch('programas_reunion.json');
     if (!respuesta.ok) throw new Error('No se encontró el archivo JSON');
     datosJSON = await respuesta.json();
+    inicializarSelects();
     renderizarSemanas();
   } catch (error) {
     document.getElementById('area-contenido').innerHTML = 
       '<div style="padding:40px;text-align:center;color:#e94560;">' +
-      '<h2>❌ Error al cargar el JSON</h2>' +
-      '<p>' + error.message + '</p>' +
-      '<p style="margin-top:10px;font-size:13px;">Asegúrate de que el archivo <strong>programas_reunion.json</strong> esté en la misma carpeta que este index.html</p>' +
-      '</div>';
+      '<h2>❌ Error al cargar el JSON</h2><p>' + error.message + '</p></div>';
   }
 }
 
+// ==========================================
+// INICIALIZAR SELECTS DE SEMANAS
+// ==========================================
+function inicializarSelects() {
+  if (!datosJSON || !datosJSON.programas) return;
+  
+  const selectInicial = document.getElementById('semana-inicial');
+  const selectFinal = document.getElementById('semana-final');
+  
+  selectInicial.innerHTML = '';
+  selectFinal.innerHTML = '';
+  
+  const programas = datosJSON.programas.sort((a, b) => a.semana - b.semana);
+  
+  programas.forEach(p => {
+    const texto = `Semana ${p.semana} - ${p.encabezado}`;
+    
+    const opt1 = document.createElement('option');
+    opt1.value = p.semana;
+    opt1.textContent = texto;
+    selectInicial.appendChild(opt1);
+    
+    const opt2 = document.createElement('option');
+    opt2.value = p.semana;
+    opt2.textContent = texto;
+    selectFinal.appendChild(opt2);
+  });
+  
+  // Auto-seleccionar semana actual y +4 semanas
+  const semanaActual = obtenerSemanaActual();
+  const semanaFinalAuto = semanaActual + 4;
+  
+  // Buscar la semana más cercana a la actual
+  const semanasDisponibles = programas.map(p => p.semana);
+  
+  let mejorInicial = semanasDisponibles[0];
+  for (let s of semanasDisponibles) {
+    if (s >= semanaActual) { mejorInicial = s; break; }
+    mejorInicial = s;
+  }
+  
+  let mejorFinal = semanasDisponibles[semanasDisponibles.length - 1];
+  for (let s of semanasDisponibles) {
+    if (s >= semanaFinalAuto) { mejorFinal = s; break; }
+  }
+  
+  selectInicial.value = mejorInicial;
+  selectFinal.value = mejorFinal;
+}
+
+// ==========================================
+// RENDERIZAR SEMANAS
+// ==========================================
 function renderizarSemanas() {
   if (!datosJSON) return;
+  
+  guardarConfiguracion();
   
   const semanaInicial = parseInt(document.getElementById('semana-inicial').value);
   const semanaFinal = parseInt(document.getElementById('semana-final').value);
@@ -683,11 +791,11 @@ function renderizarSemanas() {
   
   const programas = datosJSON.programas.filter(p => 
     p.semana >= semanaInicial && p.semana <= semanaFinal
-  );
+  ).sort((a, b) => a.semana - b.semana);
   
   if (programas.length === 0) {
     document.getElementById('area-contenido').innerHTML = 
-      '<div style="padding:40px;text-align:center;"><h2>⚠️ No hay programas en ese rango de semanas</h2></div>';
+      '<div style="padding:40px;text-align:center;"><h2>⚠️ No hay programas en ese rango</h2></div>';
     return;
   }
   
@@ -725,12 +833,24 @@ function renderizarSemanas() {
     areaContenido.appendChild(hoja);
   });
   
+  // Aplicar autocompletado a todos los inputs de asignación
+  setTimeout(() => {
+    document.querySelectorAll('.tabla-programa input[type="text"]').forEach(input => {
+      if (!input.closest('.autocomplete-wrapper')) {
+        crearAutocomplete(input);
+      }
+    });
+  }, 100);
+  
   const primerInput = document.querySelector('.input-congregacion');
   if (primerInput && primerInput.value) {
     sincronizarCongregacion(primerInput.value);
   }
 }
 
+// ==========================================
+// GENERAR TABLA
+// ==========================================
 function generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSemana, mostrarTiempo, mostrarIconos) {
   let html = '';
   
@@ -739,11 +859,8 @@ function generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSema
   const iconoMaestros = mostrarIconos ? '<span class="jw-icon jwico-b"></span>' : '';
   const iconoVida = mostrarIconos ? '<span class="jw-icon jwico-c"></span>' : '';
   
-  // Encabezado de semana con Presidente
   let textoSemana = programa.encabezado;
-  if (mostrarNumeroSemana) {
-    textoSemana += ` | Semana ${programa.semana}`;
-  }
+  if (mostrarNumeroSemana) textoSemana += ` | Semana ${programa.semana}`;
   
   html += `
     <div class="encabezado-semana">
@@ -757,7 +874,6 @@ function generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSema
   
   html += '<table class="tabla-programa">';
   
-  // Apertura
   if (mostrarAperturaCierre && programa.apertura) {
     let textoApertura = mostrarTiempo ? programa.apertura : quitarTiempo(programa.apertura);
     html += `
@@ -768,51 +884,28 @@ function generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSema
     `;
   }
   
-  // TESOROS DE LA BIBLIA
   html += `<tr class="titulo-seccion titulo-tesoros"><td colspan="3">${iconoTesoros}TESOROS DE LA BIBLIA</td></tr>`;
   (programa.tesoros || []).forEach(item => {
     let texto = mostrarTiempo ? item : quitarTiempo(item);
-    html += `
-      <tr>
-        <td colspan="2"><input type="text" class="input-asignacion" value="${texto}"></td>
-        <td><input type="text" placeholder="Hermano"></td>
-      </tr>
-    `;
+    html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${texto}"></td><td><input type="text" placeholder="Hermano"></td></tr>`;
   });
   
-  // SEAMOS MEJORES MAESTROS
   html += `<tr class="titulo-seccion titulo-maestros"><td colspan="3">${iconoMaestros}SEAMOS MEJORES MAESTROS</td></tr>`;
   (programa.maestros || []).forEach(item => {
     let texto = mostrarTiempo ? item : quitarTiempo(item);
     if (item.toLowerCase().includes('discurso')) {
-      html += `
-        <tr><td colspan="3"><input type="text" class="input-asignacion" value="${texto}"></td></tr>
-        <tr><td colspan="3"><input type="text" placeholder="Orador"></td></tr>
-      `;
+      html += `<tr><td colspan="3"><input type="text" class="input-asignacion" value="${texto}"></td></tr><tr><td colspan="3"><input type="text" placeholder="Orador"></td></tr>`;
     } else {
-      html += `
-        <tr>
-          <td><input type="text" class="input-asignacion" value="${texto}"></td>
-          <td style="width:20%;"><input type="text" placeholder="Ayudante"></td>
-          <td style="width:20%;"><input type="text" placeholder="Estudiante"></td>
-        </tr>
-      `;
+      html += `<tr><td><input type="text" class="input-asignacion" value="${texto}"></td><td style="width:20%;"><input type="text" placeholder="Ayudante"></td><td style="width:20%;"><input type="text" placeholder="Estudiante"></td></tr>`;
     }
   });
   
-  // NUESTRA VIDA CRISTIANA
   html += `<tr class="titulo-seccion titulo-vida"><td colspan="3">${iconoVida}NUESTRA VIDA CRISTIANA</td></tr>`;
   (programa.vida_cristiana || []).forEach(item => {
     let texto = mostrarTiempo ? item : quitarTiempo(item);
-    html += `
-      <tr>
-        <td colspan="2"><input type="text" class="input-asignacion" value="${texto}"></td>
-        <td><input type="text" placeholder="Hermano"></td>
-      </tr>
-    `;
+    html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${texto}"></td><td><input type="text" placeholder="Hermano"></td></tr>`;
   });
   
-  // Cierre
   if (mostrarAperturaCierre && programa.cierre) {
     let textoCierre = mostrarTiempo ? programa.cierre : quitarTiempo(programa.cierre);
     html += `
@@ -833,8 +926,13 @@ function sincronizarCongregacion(valor) {
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  cargarJSON();
+// ==========================================
+// INICIALIZACIÓN
+// ==========================================
+document.addEventListener('DOMContentLoaded', async () => {
+  await abrirIndexedDB();
+  cargarConfiguracion();
+  await cargarJSON();
 });
 </script>
 

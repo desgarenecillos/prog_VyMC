@@ -28,103 +28,260 @@
   --size-tabla: 10px;
   --size-iconos: 14px;
   --align-secciones: center;
+  
+  /* Ribbon colors */
+  --ribbon-bg: #f3f3f3;
+  --ribbon-border: #d6d6d6;
+  --ribbon-tab-bg: #f8f8f8;
+  --ribbon-tab-active: #ffffff;
+  --ribbon-accent: #6a1b9a;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: Arial, sans-serif; background: #e8e8e8; color: #333; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #333; }
 
 /* ==========================================
-   PANEL DE CONTROLES
+   RIBBON (Estilo Office)
    ========================================== */
-#panel-controles {
-  background: #f8f9fa;
-  border-bottom: 2px solid #ddd;
-  padding: 8px 15px;
+#ribbon {
+  background: var(--ribbon-bg);
+  border-bottom: 1px solid var(--ribbon-border);
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  user-select: none;
 }
 
-.panel-toolbar {
+/* Barra de pestañas */
+.ribbon-tabs {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
+  align-items: stretch;
+  background: #e8e8e8;
+  border-bottom: 1px solid var(--ribbon-border);
+  padding: 0 8px;
+  overflow-x: auto;
 }
 
-.btn-control {
-  padding: 8px 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #fff;
+.ribbon-tab {
+  padding: 8px 18px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #444;
   cursor: pointer;
-  font-size: 13px;
+  border: none;
+  background: transparent;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.ribbon-tab:hover {
+  background: #ddd;
+}
+.ribbon-tab.active {
+  background: var(--ribbon-bg);
+  color: var(--ribbon-accent);
+  border-bottom: 2px solid var(--ribbon-accent);
   font-weight: 600;
-  transition: all 0.2s;
-}
-.btn-control:hover { background: #e9ecef; }
-.btn-control.active { background: #6a1b9a; color: white; border-color: #6a1b9a; }
-.btn-print { background: #1e88e5; color: white; border-color: #1e88e5; }
-.btn-print:hover { background: #1565c0; }
-
-.subpanel {
-  display: none;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 15px;
-  margin-top: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-.subpanel.visible { display: block; }
-
-.subpanel-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
 }
 
-.control-item {
+/* Botones de acción rápida (siempre visibles) */
+.quick-actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 6px 10px;
-  background: #f8f9fa;
-  border-radius: 4px;
-  border: 1px solid #eee;
+  gap: 4px;
+  margin-left: auto;
+  padding: 4px 8px;
 }
-.control-item label { font-size: 12px; font-weight: 500; flex: 1; }
-.control-item input[type="color"] { width: 40px; height: 28px; border: none; cursor: pointer; }
-.control-item input[type="number"] { width: 70px; padding: 4px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; }
-.control-item select { padding: 4px 8px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; max-width: 100%; }
 
-.align-buttons { display: flex; gap: 4px; }
-.align-btn {
-  padding: 4px 10px;
+.quick-btn {
+  padding: 5px 12px;
   border: 1px solid #ccc;
   border-radius: 3px;
-  background: #fff;
+  background: white;
   cursor: pointer;
-  font-size: 12px;
-  transition: all 0.2s;
+  font-size: 11px;
+  font-weight: 500;
+  color: #333;
+  transition: all 0.15s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.quick-btn:hover { background: #e9ecef; border-color: #aaa; }
+.quick-btn.print { background: #1e88e5; color: white; border-color: #1e88e5; }
+.quick-btn.print:hover { background: #1565c0; }
+
+/* Panel del ribbon (se expande/colapsa) */
+.ribbon-panel {
+  display: none;
+  background: var(--ribbon-bg);
+  padding: 10px 12px 6px;
+  border-bottom: 1px solid var(--ribbon-border);
+  animation: ribbonSlide 0.15s ease-out;
+}
+.ribbon-panel.visible { display: block; }
+
+@keyframes ribbonSlide {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Grupos dentro del panel */
+.ribbon-groups {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.ribbon-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 14px;
+  border-right: 1px solid #ddd;
+  flex-shrink: 0;
+}
+.ribbon-group:last-child { border-right: none; }
+
+.ribbon-group-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.ribbon-group-label {
+  font-size: 9px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 6px;
+  padding-top: 4px;
+  border-top: 1px solid #e0e0e0;
+  text-align: center;
+  width: 100%;
+}
+
+/* Controles del ribbon */
+.ribbon-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.ribbon-control:hover { background: #e8e8e8; }
+
+.ribbon-control label {
+  font-size: 9px;
+  color: #666;
+  text-align: center;
+  line-height: 1.2;
+  max-width: 65px;
+}
+
+.ribbon-control input[type="color"] {
+  width: 32px;
+  height: 24px;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 1px;
+}
+
+.ribbon-control input[type="number"] {
+  width: 52px;
+  padding: 3px 4px;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  font-size: 11px;
+  text-align: center;
+  font-family: inherit;
+}
+
+.ribbon-control select {
+  padding: 3px 6px;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  font-size: 11px;
+  font-family: inherit;
+  max-width: 160px;
+}
+
+/* Botones de alineación */
+.align-group {
+  display: flex;
+  gap: 2px;
+}
+.align-btn {
+  width: 30px;
+  height: 28px;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  background: white;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s;
 }
 .align-btn:hover { background: #e9ecef; }
-.align-btn.active { background: #6a1b9a; color: white; border-color: #6a1b9a; }
+.align-btn.active { background: var(--ribbon-accent); color: white; border-color: var(--ribbon-accent); }
 
-.toggle-container { display: flex; align-items: center; gap: 10px; padding: 6px 10px; }
-.toggle-switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+/* Toggles en ribbon */
+.ribbon-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.ribbon-toggle:hover { background: #e8e8e8; }
+
+.toggle-switch {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+}
 .toggle-switch input { opacity: 0; width: 0; height: 0; }
 .toggle-slider {
   position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-  background: #ccc; border-radius: 24px; transition: 0.3s;
+  background: #ccc; border-radius: 20px; transition: 0.3s;
 }
 .toggle-slider:before {
-  content: ""; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px;
+  content: ""; position: absolute; height: 14px; width: 14px; left: 3px; bottom: 3px;
   background: white; border-radius: 50%; transition: 0.3s;
 }
-.toggle-switch input:checked + .toggle-slider { background: #6a1b9a; }
-.toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); }
+.toggle-switch input:checked + .toggle-slider { background: var(--ribbon-accent); }
+.toggle-switch input:checked + .toggle-slider:before { transform: translateX(16px); }
+
+.ribbon-toggle span { font-size: 11px; color: #444; white-space: nowrap; }
+
+/* Botón de cargar */
+.ribbon-action-btn {
+  padding: 6px 14px;
+  border: 1px solid #bbb;
+  border-radius: 3px;
+  background: white;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  color: #333;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.ribbon-action-btn:hover { background: #e9ecef; }
+.ribbon-action-btn.accent { background: var(--ribbon-accent); color: white; border-color: var(--ribbon-accent); }
+.ribbon-action-btn.accent:hover { opacity: 0.9; }
 
 /* ==========================================
    ÁREA DE CONTENIDO
@@ -174,9 +331,6 @@ body { font-family: Arial, sans-serif; background: #e8e8e8; color: #333; }
 }
 .input-asignacion:focus { outline: 1px solid #6a1b9a; background: rgba(255,249,196,0.3); }
 
-/* ==========================================
-   ENCABEZADO DE SEMANA
-   ========================================== */
 .encabezado-semana {
   font-size: var(--size-semana); font-weight: bold; color: var(--txt-semana);
   background: var(--bg-semana); margin-bottom: 8px; padding: 5px 8px;
@@ -191,14 +345,14 @@ body { font-family: Arial, sans-serif; background: #e8e8e8; color: #333; }
 .encabezado-semana .presidente-row .jw-icon { margin-right: 2px; }
 .encabezado-semana .presidente-row input {
   border: none; border-bottom: 1px solid #999; font-size: inherit; font-family: inherit;
-  font-weight: normal; width: 100px; padding: 1px 4px; background: transparent; color: inherit;
+  font-weight: normal; width: 120px; padding: 1px 4px; background: transparent; color: inherit;
 }
 .encabezado-semana .presidente-row input:focus { outline: none; border-bottom: 2px solid var(--txt-semana); }
 
 .jw-icon { font-size: var(--size-iconos); display: inline-block; vertical-align: middle; margin-right: 3px; }
 
 /* ==========================================
-   AUTOCOMPLETADO (Sugerencias)
+   AUTOCOMPLETADO
    ========================================== */
 .autocomplete-wrapper { position: relative; display: inline-block; width: 100%; }
 .autocomplete-list {
@@ -209,14 +363,13 @@ body { font-family: Arial, sans-serif; background: #e8e8e8; color: #333; }
 }
 .autocomplete-list.visible { display: block; }
 .autocomplete-item {
-  padding: 6px 10px; cursor: pointer; font-size: 12px;
-  border-bottom: 1px solid #eee;
+  padding: 6px 10px; cursor: pointer; font-size: 12px; border-bottom: 1px solid #eee;
 }
 .autocomplete-item:hover { background: #f0f0f0; }
 .autocomplete-item:last-child { border-bottom: none; }
 
 /* ==========================================
-   MODAL DE CONFIRMACIÓN
+   MODAL
    ========================================== */
 .modal-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -231,9 +384,7 @@ body { font-family: Arial, sans-serif; background: #e8e8e8; color: #333; }
 .modal-box h3 { margin-bottom: 15px; color: #333; }
 .modal-box p { margin-bottom: 15px; font-size: 14px; color: #555; }
 .modal-box .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; }
-.modal-box button {
-  padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px;
-}
+.modal-box button { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-family: inherit; }
 .modal-box .btn-si { background: #4caf50; color: white; }
 .modal-box .btn-no { background: #f44336; color: white; }
 .modal-box .btn-cancelar { background: #9e9e9e; color: white; }
@@ -243,10 +394,11 @@ body { font-family: Arial, sans-serif; background: #e8e8e8; color: #333; }
    ========================================== */
 @media (max-width: 768px) {
   .hoja { width: 100%; min-height: auto; padding: 10px; }
-  #panel-controles { padding: 5px 10px; }
-  .panel-toolbar { gap: 5px; }
-  .btn-control { padding: 6px 10px; font-size: 11px; }
-  .subpanel-grid { grid-template-columns: 1fr; }
+  .ribbon-groups { flex-wrap: nowrap; }
+  .ribbon-group { padding: 0 8px; }
+  .ribbon-control label { max-width: 50px; font-size: 8px; }
+  .ribbon-control input[type="color"] { width: 26px; height: 20px; }
+  .ribbon-control input[type="number"] { width: 42px; }
   .encabezado-doc h2 input { width: 200px; }
   .encabezado-semana { flex-direction: column; align-items: flex-start; gap: 4px; }
 }
@@ -257,7 +409,7 @@ body { font-family: Arial, sans-serif; background: #e8e8e8; color: #333; }
 @media print {
   @page { size: A4; margin: 2cm; }
   body { background: white; }
-  #panel-controles { display: none !important; }
+  #ribbon { display: none !important; }
   .autocomplete-list { display: none !important; }
   #area-contenido { padding: 0; gap: 0; }
   .hoja { width: 100%; min-height: auto; box-shadow: none; padding: 0; page-break-after: always; }
@@ -274,93 +426,230 @@ body { font-family: Arial, sans-serif; background: #e8e8e8; color: #333; }
 </head>
 <body>
 
-<!-- PANEL DE CONTROLES -->
-<div id="panel-controles">
-  <div class="panel-toolbar">
-    <button class="btn-control" onclick="togglePanel('panel-colores-texto', this)">🎨 Colores de Texto</button>
-    <button class="btn-control" onclick="togglePanel('panel-colores-fondo', this)">🖌️ Colores de Fondo</button>
-    <button class="btn-control" onclick="togglePanel('panel-tamanos', this)">📏 Tamaño de Textos</button>
-    <button class="btn-control" onclick="togglePanel('panel-semanas', this)">📅 Configuración de Semanas</button>
-    <button class="btn-control btn-print" onclick="manejarImpresion()">🖨️ Imprimir / Guardar PDF</button>
-  </div>
-
-  <div id="panel-colores-texto" class="subpanel">
-    <div class="subpanel-grid">
-      <div class="control-item"><label>Encabezado de Hoja</label><input type="color" id="c-txt-encabezado" value="#6a1b9a" onchange="setVar('--txt-encabezado', this.value)"></div>
-      <div class="control-item"><label>Encabezado de Semana</label><input type="color" id="c-txt-semana" value="#6a1b9a" onchange="setVar('--txt-semana', this.value)"></div>
-      <div class="control-item"><label>Texto de Apertura</label><input type="color" id="c-txt-apertura" value="#000000" onchange="setVar('--txt-apertura', this.value)"></div>
-      <div class="control-item"><label>Texto de Cierre</label><input type="color" id="c-txt-cierre" value="#000000" onchange="setVar('--txt-cierre', this.value)"></div>
-      <div class="control-item"><label>Texto de Secciones</label><input type="color" id="c-txt-secciones" value="#ffffff" onchange="setVar('--txt-secciones', this.value)"></div>
-      <div class="control-item"><label>Texto de Tabla</label><input type="color" id="c-txt-tabla" value="#000000" onchange="setVar('--txt-tabla', this.value)"></div>
+<!-- ==========================================
+     RIBBON
+     ========================================== -->
+<div id="ribbon">
+  <div class="ribbon-tabs">
+    <button class="ribbon-tab" onclick="toggleRibbon('tab-colores-texto', this)">🎨 Colores Texto</button>
+    <button class="ribbon-tab" onclick="toggleRibbon('tab-colores-fondo', this)">🖌️ Colores Fondo</button>
+    <button class="ribbon-tab" onclick="toggleRibbon('tab-tamanos', this)">📏 Tamaños</button>
+    <button class="ribbon-tab" onclick="toggleRibbon('tab-semanas', this)">📅 Semanas</button>
+    <div class="quick-actions">
+      <button class="quick-btn print" onclick="manejarImpresion()">🖨️ Imprimir / PDF</button>
     </div>
   </div>
 
-  <div id="panel-colores-fondo" class="subpanel">
-    <div class="subpanel-grid">
-      <div class="control-item"><label>Fondo Encabezado de Hoja</label><input type="color" id="c-bg-encabezado" value="#ffffff" onchange="setVar('--bg-encabezado', this.value)"></div>
-      <div class="control-item"><label>Fondo Encabezado de Semana</label><input type="color" id="c-bg-semana" value="#ffffff" onchange="setVar('--bg-semana', this.value)"></div>
-      <div class="control-item"><label>Fondo Apertura</label><input type="color" id="c-bg-apertura" value="#f3e5f5" onchange="setVar('--bg-apertura', this.value)"></div>
-      <div class="control-item"><label>Fondo Cierre</label><input type="color" id="c-bg-cierre" value="#f3e5f5" onchange="setVar('--bg-cierre', this.value)"></div>
-      <div class="control-item"><label>Fondo Tesoros</label><input type="color" id="c-bg-tesoros" value="#2A6B77" onchange="setVar('--bg-tesoros', this.value)"></div>
-      <div class="control-item"><label>Fondo Maestros</label><input type="color" id="c-bg-maestros" value="#9B6D17" onchange="setVar('--bg-maestros', this.value)"></div>
-      <div class="control-item"><label>Fondo Vida Cristiana</label><input type="color" id="c-bg-vida" value="#942926" onchange="setVar('--bg-vida', this.value)"></div>
-    </div>
-  </div>
-
-  <div id="panel-tamanos" class="subpanel">
-    <div class="subpanel-grid">
-      <div class="control-item"><label>Encabezado de Hoja (px)</label><input type="number" id="s-encabezado" min="10" max="32" value="18" onchange="setVar('--size-encabezado', this.value + 'px')"></div>
-      <div class="control-item"><label>Encabezado de Semana (px)</label><input type="number" id="s-semana" min="8" max="24" value="12" onchange="setVar('--size-semana', this.value + 'px')"></div>
-      <div class="control-item"><label>Apertura (px)</label><input type="number" id="s-apertura" min="8" max="20" value="10" onchange="setVar('--size-apertura', this.value + 'px')"></div>
-      <div class="control-item"><label>Cierre (px)</label><input type="number" id="s-cierre" min="8" max="20" value="10" onchange="setVar('--size-cierre', this.value + 'px')"></div>
-      <div class="control-item"><label>Secciones (px)</label><input type="number" id="s-secciones" min="8" max="20" value="11" onchange="setVar('--size-secciones', this.value + 'px')"></div>
-      <div class="control-item"><label>Tabla/Asignaciones (px)</label><input type="number" id="s-tabla" min="8" max="20" value="10" onchange="setVar('--size-tabla', this.value + 'px')"></div>
-      <div class="control-item"><label>Iconos (px)</label><input type="number" id="s-iconos" min="8" max="32" value="14" onchange="setVar('--size-iconos', this.value + 'px')"></div>
-      <div class="control-item">
-        <label>Alineación de Secciones</label>
-        <div class="align-buttons">
-          <button class="align-btn" onclick="setAlign('left', this)">⬅️ Izq</button>
-          <button class="align-btn active" onclick="setAlign('center', this)">↔️ Centro</button>
-          <button class="align-btn" onclick="setAlign('right', this)">➡️ Der</button>
+  <!-- TAB: Colores de Texto -->
+  <div id="tab-colores-texto" class="ribbon-panel">
+    <div class="ribbon-groups">
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control">
+            <label>Encabezado Hoja</label>
+            <input type="color" id="c-txt-encabezado" value="#6a1b9a" onchange="setVar('--txt-encabezado', this.value)">
+          </div>
+          <div class="ribbon-control">
+            <label>Encabezado Semana</label>
+            <input type="color" id="c-txt-semana" value="#6a1b9a" onchange="setVar('--txt-semana', this.value)">
+          </div>
         </div>
+        <div class="ribbon-group-label">Encabezados</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control">
+            <label>Apertura</label>
+            <input type="color" id="c-txt-apertura" value="#000000" onchange="setVar('--txt-apertura', this.value)">
+          </div>
+          <div class="ribbon-control">
+            <label>Cierre</label>
+            <input type="color" id="c-txt-cierre" value="#000000" onchange="setVar('--txt-cierre', this.value)">
+          </div>
+        </div>
+        <div class="ribbon-group-label">Apertura / Cierre</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control">
+            <label>Secciones</label>
+            <input type="color" id="c-txt-secciones" value="#ffffff" onchange="setVar('--txt-secciones', this.value)">
+          </div>
+          <div class="ribbon-control">
+            <label>Tabla</label>
+            <input type="color" id="c-txt-tabla" value="#000000" onchange="setVar('--txt-tabla', this.value)">
+          </div>
+        </div>
+        <div class="ribbon-group-label">Contenido</div>
       </div>
     </div>
   </div>
 
-  <div id="panel-semanas" class="subpanel">
-    <div class="subpanel-grid">
-      <div class="control-item">
-        <label>Semana inicial</label>
-        <select id="semana-inicial" onchange="renderizarSemanas()"></select>
+  <!-- TAB: Colores de Fondo -->
+  <div id="tab-colores-fondo" class="ribbon-panel">
+    <div class="ribbon-groups">
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control">
+            <label>Enc. Hoja</label>
+            <input type="color" id="c-bg-encabezado" value="#ffffff" onchange="setVar('--bg-encabezado', this.value)">
+          </div>
+          <div class="ribbon-control">
+            <label>Enc. Semana</label>
+            <input type="color" id="c-bg-semana" value="#ffffff" onchange="setVar('--bg-semana', this.value)">
+          </div>
+        </div>
+        <div class="ribbon-group-label">Encabezados</div>
       </div>
-      <div class="control-item">
-        <label>Semana final</label>
-        <select id="semana-final" onchange="renderizarSemanas()"></select>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control">
+            <label>Apertura</label>
+            <input type="color" id="c-bg-apertura" value="#f3e5f5" onchange="setVar('--bg-apertura', this.value)">
+          </div>
+          <div class="ribbon-control">
+            <label>Cierre</label>
+            <input type="color" id="c-bg-cierre" value="#f3e5f5" onchange="setVar('--bg-cierre', this.value)">
+          </div>
+        </div>
+        <div class="ribbon-group-label">Apertura / Cierre</div>
       </div>
-      <div class="control-item">
-        <button class="btn-control" onclick="renderizarSemanas()" style="width:100%">🔄 Cargar Semanas</button>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control">
+            <label>Tesoros</label>
+            <input type="color" id="c-bg-tesoros" value="#2A6B77" onchange="setVar('--bg-tesoros', this.value)">
+          </div>
+          <div class="ribbon-control">
+            <label>Maestros</label>
+            <input type="color" id="c-bg-maestros" value="#9B6D17" onchange="setVar('--bg-maestros', this.value)">
+          </div>
+          <div class="ribbon-control">
+            <label>Vida</label>
+            <input type="color" id="c-bg-vida" value="#942926" onchange="setVar('--bg-vida', this.value)">
+          </div>
+        </div>
+        <div class="ribbon-group-label">Secciones</div>
       </div>
     </div>
-    <div style="margin-top: 12px;">
-      <div class="toggle-container">
-        <label class="toggle-switch"><input type="checkbox" id="toggle-apertura-cierre" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
-        <span style="font-size: 13px;">Mostrar textos de Apertura y Cierre</span>
+  </div>
+
+  <!-- TAB: Tamaños -->
+  <div id="tab-tamanos" class="ribbon-panel">
+    <div class="ribbon-groups">
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control">
+            <label>Enc. Hoja</label>
+            <input type="number" id="s-encabezado" min="10" max="32" value="18" onchange="setVar('--size-encabezado', this.value + 'px')">
+          </div>
+          <div class="ribbon-control">
+            <label>Enc. Semana</label>
+            <input type="number" id="s-semana" min="8" max="24" value="12" onchange="setVar('--size-semana', this.value + 'px')">
+          </div>
+        </div>
+        <div class="ribbon-group-label">Encabezados (px)</div>
       </div>
-      <div class="toggle-container">
-        <label class="toggle-switch"><input type="checkbox" id="toggle-repetir-titulo" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
-        <span style="font-size: 13px;">Repetir Título y Congregación en todas las hojas</span>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control">
+            <label>Apertura</label>
+            <input type="number" id="s-apertura" min="8" max="20" value="10" onchange="setVar('--size-apertura', this.value + 'px')">
+          </div>
+          <div class="ribbon-control">
+            <label>Cierre</label>
+            <input type="number" id="s-cierre" min="8" max="20" value="10" onchange="setVar('--size-cierre', this.value + 'px')">
+          </div>
+          <div class="ribbon-control">
+            <label>Secciones</label>
+            <input type="number" id="s-secciones" min="8" max="20" value="11" onchange="setVar('--size-secciones', this.value + 'px')">
+          </div>
+        </div>
+        <div class="ribbon-group-label">Contenido (px)</div>
       </div>
-      <div class="toggle-container">
-        <label class="toggle-switch"><input type="checkbox" id="toggle-numero-semana" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
-        <span style="font-size: 13px;">Mostrar número de semana</span>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control">
+            <label>Tabla</label>
+            <input type="number" id="s-tabla" min="8" max="20" value="10" onchange="setVar('--size-tabla', this.value + 'px')">
+          </div>
+          <div class="ribbon-control">
+            <label>Iconos</label>
+            <input type="number" id="s-iconos" min="8" max="32" value="14" onchange="setVar('--size-iconos', this.value + 'px')">
+          </div>
+        </div>
+        <div class="ribbon-group-label">Tabla / Iconos (px)</div>
       </div>
-      <div class="toggle-container">
-        <label class="toggle-switch"><input type="checkbox" id="toggle-tiempo" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
-        <span style="font-size: 13px;">Mostrar tiempo de las asignaciones</span>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control">
+            <label>Alineación Secciones</label>
+            <div class="align-group">
+              <button class="align-btn" onclick="setAlign('left', this)" title="Izquierda">⬅</button>
+              <button class="align-btn active" onclick="setAlign('center', this)" title="Centro">↔</button>
+              <button class="align-btn" onclick="setAlign('right', this)" title="Derecha">➡</button>
+            </div>
+          </div>
+        </div>
+        <div class="ribbon-group-label">Alineación</div>
       </div>
-      <div class="toggle-container">
-        <label class="toggle-switch"><input type="checkbox" id="toggle-iconos" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
-        <span style="font-size: 13px;">Mostrar iconos</span>
+    </div>
+  </div>
+
+  <!-- TAB: Semanas -->
+  <div id="tab-semanas" class="ribbon-panel">
+    <div class="ribbon-groups">
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control">
+            <label>Desde</label>
+            <select id="semana-inicial" onchange="renderizarSemanas()"></select>
+          </div>
+          <div class="ribbon-control">
+            <label>Hasta</label>
+            <select id="semana-final" onchange="renderizarSemanas()"></select>
+          </div>
+          <div class="ribbon-control">
+            <label>&nbsp;</label>
+            <button class="ribbon-action-btn accent" onclick="renderizarSemanas()">🔄 Cargar</button>
+          </div>
+        </div>
+        <div class="ribbon-group-label">Rango de Semanas</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content" style="flex-direction: column; align-items: flex-start; gap: 2px;">
+          <div class="ribbon-toggle">
+            <label class="toggle-switch"><input type="checkbox" id="toggle-apertura-cierre" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
+            <span>Apertura y Cierre</span>
+          </div>
+          <div class="ribbon-toggle">
+            <label class="toggle-switch"><input type="checkbox" id="toggle-repetir-titulo" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
+            <span>Repetir título en hojas</span>
+          </div>
+        </div>
+        <div class="ribbon-group-label">Visualización</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content" style="flex-direction: column; align-items: flex-start; gap: 2px;">
+          <div class="ribbon-toggle">
+            <label class="toggle-switch"><input type="checkbox" id="toggle-numero-semana" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
+            <span>Número de semana</span>
+          </div>
+          <div class="ribbon-toggle">
+            <label class="toggle-switch"><input type="checkbox" id="toggle-tiempo" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
+            <span>Tiempo asignaciones</span>
+          </div>
+        </div>
+        <div class="ribbon-group-label">Contenido</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-toggle">
+            <label class="toggle-switch"><input type="checkbox" id="toggle-iconos" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
+            <span>Iconos</span>
+          </div>
+        </div>
+        <div class="ribbon-group-label">Iconos</div>
       </div>
     </div>
   </div>
@@ -369,14 +658,16 @@ body { font-family: Arial, sans-serif; background: #e8e8e8; color: #333; }
 <!-- ÁREA DE CONTENIDO -->
 <div id="area-contenido"></div>
 
-<!-- MODAL DE GUARDADO -->
+<!-- MODAL -->
 <div id="modal-guardar" class="modal-overlay hidden">
   <div class="modal-box">
     <h3>💾 ¿Guardar nombres para futuros rellenos?</h3>
     <p>Se han detectado nombres en los campos de asignación. ¿Deseas guardarlos para sugerencias futuras?</p>
-    <div class="toggle-container" style="margin-bottom: 15px;">
-      <label class="toggle-switch"><input type="checkbox" id="toggle-no-preguntar"><span class="toggle-slider"></span></label>
-      <span style="font-size: 13px;">No volver a preguntar</span>
+    <div style="margin-bottom: 15px;">
+      <div class="ribbon-toggle">
+        <label class="toggle-switch"><input type="checkbox" id="toggle-no-preguntar"><span class="toggle-slider"></span></label>
+        <span>No volver a preguntar</span>
+      </div>
     </div>
     <div class="modal-buttons">
       <button class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
@@ -387,42 +678,30 @@ body { font-family: Arial, sans-serif; background: #e8e8e8; color: #333; }
 </div>
 
 <script>
-// ==========================================
-// VARIABLES GLOBALES
-// ==========================================
 let datosJSON = null;
 let db = null;
 
 // ==========================================
-// INDEXEDDB (Para sugerencias sin límite)
+// INDEXEDDB
 // ==========================================
 function abrirIndexedDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open('ProgramaReunionDB', 1);
-    
     request.onupgradeneeded = (e) => {
       const database = e.target.result;
       if (!database.objectStoreNames.contains('sugerencias')) {
         database.createObjectStore('sugerencias', { keyPath: 'id', autoIncrement: true });
       }
     };
-    
-    request.onsuccess = (e) => {
-      db = e.target.result;
-      resolve(db);
-    };
-    
+    request.onsuccess = (e) => { db = e.target.result; resolve(db); };
     request.onerror = (e) => reject(e);
   });
 }
 
 function guardarSugerencia(nombre) {
   if (!db || !nombre || nombre.trim() === '') return;
-  
   const tx = db.transaction(['sugerencias'], 'readwrite');
   const store = tx.objectStore('sugerencias');
-  
-  // Verificar si ya existe
   const getAll = store.getAll();
   getAll.onsuccess = () => {
     const existentes = getAll.result.map(r => r.nombre.toLowerCase());
@@ -435,29 +714,21 @@ function guardarSugerencia(nombre) {
 function obtenerSugerencias(filtro = '') {
   return new Promise((resolve) => {
     if (!db) return resolve([]);
-    
     const tx = db.transaction(['sugerencias'], 'readonly');
     const store = tx.objectStore('sugerencias');
     const getAll = store.getAll();
-    
     getAll.onsuccess = () => {
       let resultados = getAll.result;
-      if (filtro) {
-        resultados = resultados.filter(r => 
-          r.nombre.toLowerCase().includes(filtro.toLowerCase())
-        );
-      }
-      // Ordenar alfabéticamente y limitar a 10
+      if (filtro) resultados = resultados.filter(r => r.nombre.toLowerCase().includes(filtro.toLowerCase()));
       resultados.sort((a, b) => a.nombre.localeCompare(b.nombre));
-      resolve(resultos.slice(0, 10));
+      resolve(resultados.slice(0, 10));
     };
-    
     getAll.onerror = () => resolve([]);
   });
 }
 
 // ==========================================
-// LOCALSTORAGE (Para configuraciones)
+// LOCALSTORAGE
 // ==========================================
 function guardarConfiguracion() {
   const config = {
@@ -494,21 +765,16 @@ function guardarConfiguracion() {
       'toggle-numero-semana': document.getElementById('toggle-numero-semana').checked,
       'toggle-tiempo': document.getElementById('toggle-tiempo').checked,
       'toggle-iconos': document.getElementById('toggle-iconos').checked
-    },
-    noPreguntarGuardar: localStorage.getItem('noPreguntarGuardar') === 'true'
+    }
   };
-  
   localStorage.setItem('configPrograma', JSON.stringify(config));
 }
 
 function cargarConfiguracion() {
   const configStr = localStorage.getItem('configPrograma');
   if (!configStr) return;
-  
   try {
     const config = JSON.parse(configStr);
-    
-    // Aplicar colores de texto
     if (config.coloresTexto) {
       for (let [varName, value] of Object.entries(config.coloresTexto)) {
         document.documentElement.style.setProperty(varName, value);
@@ -517,8 +783,6 @@ function cargarConfiguracion() {
         if (input) input.value = value;
       }
     }
-    
-    // Aplicar colores de fondo
     if (config.coloresFondo) {
       for (let [varName, value] of Object.entries(config.coloresFondo)) {
         document.documentElement.style.setProperty(varName, value);
@@ -527,37 +791,44 @@ function cargarConfiguracion() {
         if (input) input.value = value;
       }
     }
-    
-    // Aplicar tamaños
     if (config.tamanos) {
       for (let [varName, value] of Object.entries(config.tamanos)) {
-        if (varName === '--align-secciones') {
-          document.documentElement.style.setProperty(varName, value);
-        } else {
-          document.documentElement.style.setProperty(varName, value);
+        document.documentElement.style.setProperty(varName, value);
+        if (varName !== '--align-secciones') {
           const inputId = 's-' + varName.replace('--size-', '');
           const input = document.getElementById(inputId);
           if (input) input.value = parseInt(value);
         }
       }
     }
-    
-    // Aplicar toggles
     if (config.toggles) {
       for (let [toggleId, checked] of Object.entries(config.toggles)) {
         const toggle = document.getElementById(toggleId);
         if (toggle) toggle.checked = checked;
       }
     }
-    
-  } catch (e) {
-    console.error('Error cargando configuración:', e);
-  }
+  } catch (e) { console.error('Error cargando configuración:', e); }
 }
 
 // ==========================================
-// UTILIDADES
+// RIBBON
 // ==========================================
+function toggleRibbon(tabId, boton) {
+  const panel = document.getElementById(tabId);
+  const todosPaneles = document.querySelectorAll('.ribbon-panel');
+  const todosBotones = document.querySelectorAll('.ribbon-tab');
+  
+  const estabaVisible = panel.classList.contains('visible');
+  
+  todosPaneles.forEach(p => p.classList.remove('visible'));
+  todosBotones.forEach(b => b.classList.remove('active'));
+  
+  if (!estabaVisible) {
+    panel.classList.add('visible');
+    boton.classList.add('active');
+  }
+}
+
 function setVar(nombre, valor) {
   document.documentElement.style.setProperty(nombre, valor);
   guardarConfiguracion();
@@ -568,17 +839,6 @@ function setAlign(valor, boton) {
   document.querySelectorAll('.align-btn').forEach(btn => btn.classList.remove('active'));
   boton.classList.add('active');
   guardarConfiguracion();
-}
-
-function togglePanel(id, boton) {
-  const panel = document.getElementById(id);
-  const todosPaneles = document.querySelectorAll('.subpanel');
-  const todosBotones = document.querySelectorAll('.btn-control:not(.btn-print)');
-  
-  todosPaneles.forEach(p => { if (p.id !== id) p.classList.remove('visible'); });
-  panel.classList.toggle('visible');
-  todosBotones.forEach(btn => btn.classList.remove('active'));
-  if (panel.classList.contains('visible')) boton.classList.add('active');
 }
 
 function quitarTiempo(texto) {
@@ -601,7 +861,6 @@ function obtenerSemanaActual() {
 function crearAutocomplete(input) {
   const wrapper = document.createElement('div');
   wrapper.className = 'autocomplete-wrapper';
-  
   const list = document.createElement('div');
   list.className = 'autocomplete-list';
   
@@ -611,40 +870,18 @@ function crearAutocomplete(input) {
   
   input.addEventListener('input', async () => {
     const valor = input.value.trim();
-    if (valor.length < 1) {
-      list.classList.remove('visible');
-      return;
-    }
-    
+    if (valor.length < 1) { list.classList.remove('visible'); return; }
     const sugerencias = await obtenerSugerencias(valor);
-    if (sugerencias.length === 0) {
-      list.classList.remove('visible');
-      return;
-    }
-    
-    list.innerHTML = sugerencias.map(s => 
-      `<div class="autocomplete-item" data-nombre="${s.nombre}">${s.nombre}</div>`
-    ).join('');
-    
+    if (sugerencias.length === 0) { list.classList.remove('visible'); return; }
+    list.innerHTML = sugerencias.map(s => `<div class="autocomplete-item" data-nombre="${s.nombre}">${s.nombre}</div>`).join('');
     list.classList.add('visible');
-    
     list.querySelectorAll('.autocomplete-item').forEach(item => {
-      item.addEventListener('click', () => {
-        input.value = item.dataset.nombre;
-        list.classList.remove('visible');
-      });
+      item.addEventListener('click', () => { input.value = item.dataset.nombre; list.classList.remove('visible'); });
     });
   });
   
-  input.addEventListener('blur', () => {
-    setTimeout(() => list.classList.remove('visible'), 200);
-  });
-  
-  input.addEventListener('focus', () => {
-    if (input.value.trim().length >= 1) {
-      input.dispatchEvent(new Event('input'));
-    }
-  });
+  input.addEventListener('blur', () => setTimeout(() => list.classList.remove('visible'), 200));
+  input.addEventListener('focus', () => { if (input.value.trim().length >= 1) input.dispatchEvent(new Event('input')); });
 }
 
 // ==========================================
@@ -654,24 +891,17 @@ function obtenerNombresDeInputs() {
   const nombres = new Set();
   document.querySelectorAll('.tabla-programa input[type="text"]').forEach(input => {
     const valor = input.value.trim();
-    if (valor && valor !== '' && !input.placeholder.includes('ora')) {
-      nombres.add(valor);
-    }
+    if (valor && !input.placeholder.includes('ora')) nombres.add(valor);
   });
   return Array.from(nombres);
 }
 
 function manejarImpresion() {
   guardarConfiguracion();
-  
   const noPreguntar = localStorage.getItem('noPreguntarGuardar') === 'true';
   const nombres = obtenerNombresDeInputs();
-  
   if (noPreguntar) {
-    // Guardar automáticamente si hay nombres
-    if (nombres.length > 0) {
-      nombres.forEach(nombre => guardarSugerencia(nombre));
-    }
+    if (nombres.length > 0) nombres.forEach(n => guardarSugerencia(n));
     window.print();
   } else if (nombres.length > 0) {
     document.getElementById('modal-guardar').classList.remove('hidden');
@@ -681,30 +911,19 @@ function manejarImpresion() {
 }
 
 function guardarEImprimir() {
-  const noPreguntar = document.getElementById('toggle-no-preguntar').checked;
-  if (noPreguntar) {
-    localStorage.setItem('noPreguntarGuardar', 'true');
-  }
-  
-  const nombres = obtenerNombresDeInputs();
-  nombres.forEach(nombre => guardarSugerencia(nombre));
-  
+  if (document.getElementById('toggle-no-preguntar').checked) localStorage.setItem('noPreguntarGuardar', 'true');
+  obtenerNombresDeInputs().forEach(n => guardarSugerencia(n));
   cerrarModal();
   window.print();
 }
 
 function imprimirSinGuardar() {
-  const noPreguntar = document.getElementById('toggle-no-preguntar').checked;
-  if (noPreguntar) {
-    localStorage.setItem('noPreguntarGuardar', 'true');
-  }
+  if (document.getElementById('toggle-no-preguntar').checked) localStorage.setItem('noPreguntarGuardar', 'true');
   cerrarModal();
   window.print();
 }
 
-function cerrarModal() {
-  document.getElementById('modal-guardar').classList.add('hidden');
-}
+function cerrarModal() { document.getElementById('modal-guardar').classList.add('hidden'); }
 
 // ==========================================
 // CARGAR JSON
@@ -717,68 +936,43 @@ async function cargarJSON() {
     inicializarSelects();
     renderizarSemanas();
   } catch (error) {
-    document.getElementById('area-contenido').innerHTML = 
-      '<div style="padding:40px;text-align:center;color:#e94560;">' +
-      '<h2>❌ Error al cargar el JSON</h2><p>' + error.message + '</p></div>';
+    document.getElementById('area-contenido').innerHTML =
+      '<div style="padding:40px;text-align:center;color:#e94560;"><h2>❌ Error al cargar el JSON</h2><p>' + error.message + '</p></div>';
   }
 }
 
-// ==========================================
-// INICIALIZAR SELECTS DE SEMANAS
-// ==========================================
 function inicializarSelects() {
   if (!datosJSON || !datosJSON.programas) return;
-  
   const selectInicial = document.getElementById('semana-inicial');
   const selectFinal = document.getElementById('semana-final');
-  
   selectInicial.innerHTML = '';
   selectFinal.innerHTML = '';
   
-  const programas = datosJSON.programas.sort((a, b) => a.semana - b.semana);
+  const programas = [...datosJSON.programas].sort((a, b) => a.semana - b.semana);
   
   programas.forEach(p => {
-    const texto = `Semana ${p.semana} - ${p.encabezado}`;
-    
+    const texto = `Sem. ${p.semana} - ${p.encabezado}`;
     const opt1 = document.createElement('option');
-    opt1.value = p.semana;
-    opt1.textContent = texto;
-    selectInicial.appendChild(opt1);
-    
+    opt1.value = p.semana; opt1.textContent = texto; selectInicial.appendChild(opt1);
     const opt2 = document.createElement('option');
-    opt2.value = p.semana;
-    opt2.textContent = texto;
-    selectFinal.appendChild(opt2);
+    opt2.value = p.semana; opt2.textContent = texto; selectFinal.appendChild(opt2);
   });
   
-  // Auto-seleccionar semana actual y +4 semanas
   const semanaActual = obtenerSemanaActual();
   const semanaFinalAuto = semanaActual + 4;
-  
-  // Buscar la semana más cercana a la actual
   const semanasDisponibles = programas.map(p => p.semana);
   
   let mejorInicial = semanasDisponibles[0];
-  for (let s of semanasDisponibles) {
-    if (s >= semanaActual) { mejorInicial = s; break; }
-    mejorInicial = s;
-  }
-  
+  for (let s of semanasDisponibles) { if (s >= semanaActual) { mejorInicial = s; break; } mejorInicial = s; }
   let mejorFinal = semanasDisponibles[semanasDisponibles.length - 1];
-  for (let s of semanasDisponibles) {
-    if (s >= semanaFinalAuto) { mejorFinal = s; break; }
-  }
+  for (let s of semanasDisponibles) { if (s >= semanaFinalAuto) { mejorFinal = s; break; } }
   
   selectInicial.value = mejorInicial;
   selectFinal.value = mejorFinal;
 }
 
-// ==========================================
-// RENDERIZAR SEMANAS
-// ==========================================
 function renderizarSemanas() {
   if (!datosJSON) return;
-  
   guardarConfiguracion();
   
   const semanaInicial = parseInt(document.getElementById('semana-inicial').value);
@@ -789,13 +983,10 @@ function renderizarSemanas() {
   const mostrarTiempo = document.getElementById('toggle-tiempo').checked;
   const mostrarIconos = document.getElementById('toggle-iconos').checked;
   
-  const programas = datosJSON.programas.filter(p => 
-    p.semana >= semanaInicial && p.semana <= semanaFinal
-  ).sort((a, b) => a.semana - b.semana);
+  const programas = datosJSON.programas.filter(p => p.semana >= semanaInicial && p.semana <= semanaFinal).sort((a, b) => a.semana - b.semana);
   
   if (programas.length === 0) {
-    document.getElementById('area-contenido').innerHTML = 
-      '<div style="padding:40px;text-align:center;"><h2>⚠️ No hay programas en ese rango</h2></div>';
+    document.getElementById('area-contenido').innerHTML = '<div style="padding:40px;text-align:center;"><h2>⚠️ No hay programas en ese rango</h2></div>';
     return;
   }
   
@@ -803,57 +994,34 @@ function renderizarSemanas() {
   areaContenido.innerHTML = '';
   
   const grupos = [];
-  for (let i = 0; i < programas.length; i += 2) {
-    grupos.push(programas.slice(i, i + 2));
-  }
+  for (let i = 0; i < programas.length; i += 2) grupos.push(programas.slice(i, i + 2));
   
   grupos.forEach((grupo, indice) => {
     const hoja = document.createElement('div');
     hoja.className = 'hoja';
-    
-    const esPrimeraHoja = indice === 0;
-    const mostrarEncabezado = esPrimeraHoja || repetirTitulo;
-    
+    const mostrarEncabezado = indice === 0 || repetirTitulo;
     let htmlEncabezado = '';
     if (mostrarEncabezado) {
-      htmlEncabezado = `
-        <div class="encabezado-doc">
-          <h1>Programa de Vida y Ministerio Cristiano</h1>
-          <h2>Congregación: <input type="text" class="input-congregacion" placeholder="Nombre de la congregación" oninput="sincronizarCongregacion(this.value)"></h2>
-        </div>
-      `;
+      htmlEncabezado = `<div class="encabezado-doc"><h1>Programa de Vida y Ministerio Cristiano</h1><h2>Congregación: <input type="text" class="input-congregacion" placeholder="Nombre de la congregación" oninput="sincronizarCongregacion(this.value)"></h2></div>`;
     }
-    
     let htmlTablas = '';
-    grupo.forEach(programa => {
-      htmlTablas += generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSemana, mostrarTiempo, mostrarIconos);
-    });
-    
+    grupo.forEach(programa => { htmlTablas += generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSemana, mostrarTiempo, mostrarIconos); });
     hoja.innerHTML = htmlEncabezado + htmlTablas;
     areaContenido.appendChild(hoja);
   });
   
-  // Aplicar autocompletado a todos los inputs de asignación
   setTimeout(() => {
     document.querySelectorAll('.tabla-programa input[type="text"]').forEach(input => {
-      if (!input.closest('.autocomplete-wrapper')) {
-        crearAutocomplete(input);
-      }
+      if (!input.closest('.autocomplete-wrapper')) crearAutocomplete(input);
     });
   }, 100);
   
   const primerInput = document.querySelector('.input-congregacion');
-  if (primerInput && primerInput.value) {
-    sincronizarCongregacion(primerInput.value);
-  }
+  if (primerInput && primerInput.value) sincronizarCongregacion(primerInput.value);
 }
 
-// ==========================================
-// GENERAR TABLA
-// ==========================================
 function generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSemana, mostrarTiempo, mostrarIconos) {
   let html = '';
-  
   const iconoPresidente = mostrarIconos ? '<span class="jw-icon jwico-d"></span>' : '';
   const iconoTesoros = mostrarIconos ? '<span class="jw-icon jwico-a"></span>' : '';
   const iconoMaestros = mostrarIconos ? '<span class="jw-icon jwico-b"></span>' : '';
@@ -862,58 +1030,39 @@ function generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSema
   let textoSemana = programa.encabezado;
   if (mostrarNumeroSemana) textoSemana += ` | Semana ${programa.semana}`;
   
-  html += `
-    <div class="encabezado-semana">
-      <span class="info-semana">${textoSemana}</span>
-      <span class="presidente-row">
-        ${iconoPresidente}<strong>Presidente:</strong>
-        <input type="text" placeholder="Nombre">
-      </span>
-    </div>
-  `;
-  
+  html += `<div class="encabezado-semana"><span class="info-semana">${textoSemana}</span><span class="presidente-row">${iconoPresidente}<strong>Presidente:</strong><input type="text" placeholder="Nombre"></span></div>`;
   html += '<table class="tabla-programa">';
   
   if (mostrarAperturaCierre && programa.apertura) {
-    let textoApertura = mostrarTiempo ? programa.apertura : quitarTiempo(programa.apertura);
-    html += `
-      <tr class="fila-apertura">
-        <td colspan="2"><input type="text" class="input-asignacion" value="${textoApertura}"></td>
-        <td style="width:20%;"><input type="text" placeholder="Quién ora"></td>
-      </tr>
-    `;
+    let t = mostrarTiempo ? programa.apertura : quitarTiempo(programa.apertura);
+    html += `<tr class="fila-apertura"><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td style="width:20%;"><input type="text" placeholder="Quién ora"></td></tr>`;
   }
   
   html += `<tr class="titulo-seccion titulo-tesoros"><td colspan="3">${iconoTesoros}TESOROS DE LA BIBLIA</td></tr>`;
   (programa.tesoros || []).forEach(item => {
-    let texto = mostrarTiempo ? item : quitarTiempo(item);
-    html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${texto}"></td><td><input type="text" placeholder="Hermano"></td></tr>`;
+    let t = mostrarTiempo ? item : quitarTiempo(item);
+    html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Hermano"></td></tr>`;
   });
   
   html += `<tr class="titulo-seccion titulo-maestros"><td colspan="3">${iconoMaestros}SEAMOS MEJORES MAESTROS</td></tr>`;
   (programa.maestros || []).forEach(item => {
-    let texto = mostrarTiempo ? item : quitarTiempo(item);
+    let t = mostrarTiempo ? item : quitarTiempo(item);
     if (item.toLowerCase().includes('discurso')) {
-      html += `<tr><td colspan="3"><input type="text" class="input-asignacion" value="${texto}"></td></tr><tr><td colspan="3"><input type="text" placeholder="Orador"></td></tr>`;
+      html += `<tr><td colspan="3"><input type="text" class="input-asignacion" value="${t}"></td></tr><tr><td colspan="3"><input type="text" placeholder="Orador"></td></tr>`;
     } else {
-      html += `<tr><td><input type="text" class="input-asignacion" value="${texto}"></td><td style="width:20%;"><input type="text" placeholder="Ayudante"></td><td style="width:20%;"><input type="text" placeholder="Estudiante"></td></tr>`;
+      html += `<tr><td><input type="text" class="input-asignacion" value="${t}"></td><td style="width:20%;"><input type="text" placeholder="Estudiante"></td><td style="width:20%;"><input type="text" placeholder="Ayudante"></td></tr>`;
     }
   });
   
   html += `<tr class="titulo-seccion titulo-vida"><td colspan="3">${iconoVida}NUESTRA VIDA CRISTIANA</td></tr>`;
   (programa.vida_cristiana || []).forEach(item => {
-    let texto = mostrarTiempo ? item : quitarTiempo(item);
-    html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${texto}"></td><td><input type="text" placeholder="Hermano"></td></tr>`;
+    let t = mostrarTiempo ? item : quitarTiempo(item);
+    html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Hermano"></td></tr>`;
   });
   
   if (mostrarAperturaCierre && programa.cierre) {
-    let textoCierre = mostrarTiempo ? programa.cierre : quitarTiempo(programa.cierre);
-    html += `
-      <tr class="fila-cierre">
-        <td colspan="2"><input type="text" class="input-asignacion" value="${textoCierre}"></td>
-        <td><input type="text" placeholder="Quién ora"></td>
-      </tr>
-    `;
+    let t = mostrarTiempo ? programa.cierre : quitarTiempo(programa.cierre);
+    html += `<tr class="fila-cierre"><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Quién ora"></td></tr>`;
   }
   
   html += '</table>';
@@ -921,14 +1070,9 @@ function generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSema
 }
 
 function sincronizarCongregacion(valor) {
-  document.querySelectorAll('.input-congregacion').forEach(input => {
-    if (input.value !== valor) input.value = valor;
-  });
+  document.querySelectorAll('.input-congregacion').forEach(input => { if (input.value !== valor) input.value = valor; });
 }
 
-// ==========================================
-// INICIALIZACIÓN
-// ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
   await abrirIndexedDB();
   cargarConfiguracion();

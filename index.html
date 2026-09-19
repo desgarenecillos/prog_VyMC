@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 :root {
   --txt-encabezado: #6a1b9a;
@@ -39,23 +40,29 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #333; }
 
-/* ==========================================
-   MATERIAL ICONS
-   ========================================== */
-.material-icons {
-  font-size: 18px;
-  vertical-align: middle;
-  line-height: 1;
-}
+.material-icons { font-size: 18px; vertical-align: middle; line-height: 1; }
 .mi-sm { font-size: 14px; }
-.mi-lg { font-size: 20px; }
 
 /* ==========================================
-   RIBBON
+   TEXTO DE EXPORTACIÓN (reemplaza inputs al capturar)
    ========================================== */
+.texto-export {
+  display: inline-block;
+  width: 100%;
+  padding: 2px;
+  font-size: inherit;
+  font-family: inherit;
+  color: inherit;
+  line-height: 1.4;
+  vertical-align: middle;
+  box-sizing: border-box;
+  word-break: break-word;
+  background: transparent;
+}
+.texto-export.es-placeholder { color: #757575; }
+
 #ribbon {
-  background: var(--ribbon-bg);
-  border-bottom: 1px solid var(--ribbon-border);
+  background: var(--ribbon-bg); border-bottom: 1px solid var(--ribbon-border);
   position: sticky; top: 0; z-index: 1000; user-select: none;
 }
 
@@ -161,6 +168,34 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
 .ribbon-action-btn.orange { background: #f57c00; color: white; border-color: #f57c00; }
 .ribbon-action-btn.orange:hover { background: #e65100; }
 
+/* SUBMENÚ (por encima de todo) */
+.submenu-container { position: relative; display: inline-block; }
+
+.submenu {
+  display: none;
+  position: fixed;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  z-index: 99999;
+  min-width: 200px;
+  padding: 6px 0;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.submenu.visible { display: block; }
+
+.submenu-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px; cursor: pointer; font-size: 13px; color: #333;
+  transition: background 0.1s; border: none; background: none; width: 100%;
+  text-align: left; font-family: inherit;
+}
+.submenu-item:hover { background: #f0f0f0; }
+.submenu-item .material-icons { font-size: 18px; color: #666; }
+.submenu-divider { height: 1px; background: #e0e0e0; margin: 4px 0; }
+
 /* ==========================================
    ÁREA DE CONTENIDO
    ========================================== */
@@ -225,7 +260,6 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
 
 .jw-icon { font-size: var(--size-iconos); display: inline-block; vertical-align: middle; margin-right: 3px; }
 
-/* AUTOCOMPLETADO */
 .autocomplete-wrapper { position: relative; display: inline-block; width: 100%; }
 .autocomplete-list {
   position: absolute; top: 100%; left: 0; right: 0;
@@ -238,7 +272,6 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
 .autocomplete-item:hover { background: #f0f0f0; }
 .autocomplete-item:last-child { border-bottom: none; }
 
-/* MODAL */
 .modal-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0,0,0,0.5); z-index: 10000;
@@ -254,7 +287,6 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
 .modal-box .btn-no { background: #f44336; color: white; }
 .modal-box .btn-cancelar { background: #9e9e9e; color: white; }
 
-/* RESPONSIVE */
 @media (max-width: 768px) {
   .hoja { width: 100%; min-height: auto; padding: 10px; }
   .ribbon-groups { flex-wrap: nowrap; }
@@ -266,12 +298,11 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
   .encabezado-semana { flex-direction: column; align-items: flex-start; gap: 4px; }
 }
 
-/* IMPRESIÓN */
 @media print {
   @page { size: A4; margin: 2cm; }
   body { background: white; }
   #ribbon { display: none !important; }
-  .autocomplete-list { display: none !important; }
+  .autocomplete-list, .submenu { display: none !important; }
   #area-contenido { padding: 0; gap: 0; }
   .hoja { width: 100%; min-height: auto; box-shadow: none; padding: 0; page-break-after: always; }
   .hoja:last-child { page-break-after: auto; }
@@ -296,7 +327,6 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
     <button class="ribbon-tab" onclick="toggleRibbon('tab-exportar', this)"><span class="material-icons">save_alt</span>Guardar / Exportar</button>
   </div>
 
-  <!-- TAB: Colores de Texto -->
   <div id="tab-colores-texto" class="ribbon-panel">
     <div class="ribbon-groups">
       <div class="ribbon-group">
@@ -323,7 +353,6 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
     </div>
   </div>
 
-  <!-- TAB: Colores de Fondo -->
   <div id="tab-colores-fondo" class="ribbon-panel">
     <div class="ribbon-groups">
       <div class="ribbon-group">
@@ -351,7 +380,6 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
     </div>
   </div>
 
-  <!-- TAB: Tamaños -->
   <div id="tab-tamanos" class="ribbon-panel">
     <div class="ribbon-groups">
       <div class="ribbon-group">
@@ -392,9 +420,14 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
     </div>
   </div>
 
-  <!-- TAB: Configuración -->
   <div id="tab-configuracion" class="ribbon-panel">
     <div class="ribbon-groups">
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>Año</label><select id="select-anio" onchange="actualizarSelectsSemanas()"></select></div>
+        </div>
+        <div class="ribbon-group-label">Año</div>
+      </div>
       <div class="ribbon-group">
         <div class="ribbon-group-content">
           <div class="ribbon-control"><label>Desde</label><select id="semana-inicial" onchange="renderizarSemanas()"></select></div>
@@ -426,7 +459,6 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
     </div>
   </div>
 
-  <!-- TAB: Guardar / Exportar -->
   <div id="tab-exportar" class="ribbon-panel">
     <div class="ribbon-groups">
       <div class="ribbon-group">
@@ -443,9 +475,15 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
       </div>
       <div class="ribbon-group">
         <div class="ribbon-group-content">
-          <div class="ribbon-control"><label>Cada hoja por separado</label><button class="ribbon-action-btn orange" onclick="descargarImagenes()"><span class="material-icons mi-sm">image</span>Guardar Imágenes</button></div>
+          <div class="ribbon-control">
+            <label>Imágenes PNG</label>
+            <div class="submenu-container">
+              <button class="ribbon-action-btn orange" id="btn-submenu-imagenes" onclick="toggleSubmenuImagenes(event)"><span class="material-icons mi-sm">image</span>Guardar Imágenes<span class="material-icons mi-sm" style="margin-left:4px">expand_more</span></button>
+              <div id="submenu-imagenes" class="submenu"></div>
+            </div>
+          </div>
         </div>
-        <div class="ribbon-group-label">Imágenes (PNG)</div>
+        <div class="ribbon-group-label">Imágenes</div>
       </div>
       <div class="ribbon-group">
         <div class="ribbon-group-content">
@@ -459,7 +497,6 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
 
 <div id="area-contenido"></div>
 
-<!-- MODAL -->
 <div id="modal-guardar" class="modal-overlay hidden">
   <div class="modal-box">
     <h3>Guardar nombres para futuros rellenos</h3>
@@ -478,6 +515,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
 <script>
 let datosJSON = null;
 let db = null;
+let anioSeleccionado = null;
 
 // ==========================================
 // INDEXEDDB
@@ -606,7 +644,7 @@ function cargarConfiguracion() {
 }
 
 // ==========================================
-// RIBBON
+// RIBBON Y SUBMENÚS
 // ==========================================
 function toggleRibbon(tabId, boton) {
   const panel = document.getElementById(tabId);
@@ -616,8 +654,59 @@ function toggleRibbon(tabId, boton) {
   todosPaneles.forEach(p => p.classList.remove('visible'));
   todosBotones.forEach(b => b.classList.remove('active'));
   if (!estabaVisible) { panel.classList.add('visible'); boton.classList.add('active'); }
+  cerrarSubmenus();
 }
 
+function toggleSubmenuImagenes(event) {
+  event.stopPropagation();
+  const submenu = document.getElementById('submenu-imagenes');
+  const estabaVisible = submenu.classList.contains('visible');
+  cerrarSubmenus();
+  if (!estabaVisible) {
+    actualizarSubmenuImagenes();
+    const btn = document.getElementById('btn-submenu-imagenes');
+    const rect = btn.getBoundingClientRect();
+    submenu.style.top = (rect.bottom + 4) + 'px';
+    submenu.style.left = Math.max(10, rect.left - 60) + 'px';
+    submenu.classList.add('visible');
+  }
+}
+
+function cerrarSubmenus() {
+  document.querySelectorAll('.submenu').forEach(s => s.classList.remove('visible'));
+}
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.submenu-container')) cerrarSubmenus();
+});
+
+// ==========================================
+// SUBMENÚ DE IMÁGENES (un botón por hoja)
+// ==========================================
+function actualizarSubmenuImagenes() {
+  const hojas = document.querySelectorAll('.hoja');
+  const submenu = document.getElementById('submenu-imagenes');
+  let html = '';
+  
+  hojas.forEach((hoja, i) => {
+    html += `<button class="submenu-item" onclick="descargarImagenIndividual(${i}); cerrarSubmenus();"><span class="material-icons">image</span>Página ${i + 1}</button>`;
+  });
+  
+  if (hojas.length > 1) {
+    html += '<div class="submenu-divider"></div>';
+    html += `<button class="submenu-item" onclick="descargarImagenes(); cerrarSubmenus();"><span class="material-icons">collections</span>Todas (individual)</button>`;
+    html += `<button class="submenu-item" onclick="descargarZIP(); cerrarSubmenus();"><span class="material-icons">folder_zip</span>Descargar ZIP</button>`;
+  } else if (hojas.length === 1) {
+    html += '<div class="submenu-divider"></div>';
+    html += `<button class="submenu-item" onclick="descargarImagenes(); cerrarSubmenus();"><span class="material-icons">collections</span>Descargar</button>`;
+  }
+  
+  submenu.innerHTML = html;
+}
+
+// ==========================================
+// UTILIDADES
+// ==========================================
 function setVar(nombre, valor) { document.documentElement.style.setProperty(nombre, valor); guardarConfiguracion(); }
 
 function setAlign(valor, boton) {
@@ -636,18 +725,11 @@ function obtenerSemanaActual() {
   return Math.ceil((dias + inicio.getDay() + 1) / 7);
 }
 
-// ==========================================
-// PREPARAR PARA EXPORTAR (commitear inputs)
-// ==========================================
 function prepararParaExportar() {
   guardarConfiguracion();
-  // Forzar que todos los inputs tengan su valor actualizado en el DOM
-  document.querySelectorAll('input').forEach(input => {
-    input.setAttribute('value', input.value);
-    input.dispatchEvent(new Event('change'));
-  });
-  // Ocultar listas de autocompletado abiertas
+  document.querySelectorAll('input').forEach(input => { input.setAttribute('value', input.value); });
   document.querySelectorAll('.autocomplete-list').forEach(list => list.classList.remove('visible'));
+  cerrarSubmenus();
 }
 
 // ==========================================
@@ -678,6 +760,64 @@ function crearAutocomplete(input) {
 }
 
 // ==========================================
+// CAPTURAR HOJA (SIN CORTES DE TEXTO)
+// Clona la hoja y reemplaza inputs por texto visible
+// ==========================================
+async function capturarHoja(hoja) {
+  // 1. Clonar la hoja
+  const clone = hoja.cloneNode(true);
+  clone.style.position = 'absolute';
+  clone.style.left = '-10000px';
+  clone.style.top = '0';
+  clone.style.margin = '0';
+  clone.style.boxShadow = 'none';
+  clone.style.zIndex = '-9999';
+  document.body.appendChild(clone);
+
+  // 2. Quitar listas de autocompletado visibles del clon
+  clone.querySelectorAll('.autocomplete-list').forEach(l => l.classList.remove('visible'));
+
+  // 3. Reemplazar cada input por un span de texto (evita el corte de html2canvas)
+  clone.querySelectorAll('input').forEach(input => {
+    const span = document.createElement('span');
+    const tieneValor = input.value.trim() !== '';
+    span.textContent = tieneValor ? input.value : (input.placeholder || '');
+    span.className = 'texto-export' + (tieneValor ? '' : ' es-placeholder');
+
+    // Conservar apariencia de inputs con subrayado
+    if (input.classList.contains('input-congregacion')) {
+      span.style.textAlign = 'center';
+      span.style.borderBottom = '1px solid #999';
+      span.style.width = '300px';
+    } else if (input.closest('.presidente-row')) {
+      span.style.borderBottom = '1px solid #999';
+      span.style.width = '120px';
+    }
+    input.parentNode.replaceChild(span, input);
+  });
+
+  // 4. Esperar a que se apliquen estilos
+  await new Promise(r => setTimeout(r, 60));
+
+  // 5. Capturar el clon completo (sin cortes)
+  const canvas = await html2canvas(clone, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: '#ffffff',
+    scrollX: 0,
+    scrollY: 0,
+    width: clone.scrollWidth,
+    height: clone.scrollHeight,
+    windowWidth: clone.scrollWidth,
+    windowHeight: clone.scrollHeight
+  });
+
+  // 6. Eliminar el clon
+  document.body.removeChild(clone);
+  return canvas;
+}
+
+// ==========================================
 // EXPORTAR: PDF
 // ==========================================
 async function descargarPDF() {
@@ -690,18 +830,7 @@ async function descargarPDF() {
   
   for (let i = 0; i < hojas.length; i++) {
     if (i > 0) pdf.addPage();
-    const hoja = hojas[i];
-    const canvas = await html2canvas(hoja, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff',
-      scrollX: 0,
-      scrollY: 0,
-      windowWidth: hoja.offsetWidth,
-      windowHeight: hoja.offsetHeight,
-      width: hoja.offsetWidth,
-      height: hoja.offsetHeight
-    });
+    const canvas = await capturarHoja(hojas[i]);
     const imgData = canvas.toDataURL('image/png');
     const imgWidth = 210;
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
@@ -714,30 +843,52 @@ async function descargarPDF() {
 // ==========================================
 // EXPORTAR: IMÁGENES
 // ==========================================
+async function descargarImagenIndividual(indice) {
+  prepararParaExportar();
+  const hojas = document.querySelectorAll('.hoja');
+  if (indice >= hojas.length) return;
+  
+  const canvas = await capturarHoja(hojas[indice]);
+  const link = document.createElement('a');
+  link.download = `programa_pagina_${indice + 1}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
 async function descargarImagenes() {
   prepararParaExportar();
   const hojas = document.querySelectorAll('.hoja');
   if (hojas.length === 0) return alert('No hay contenido para exportar');
   
   for (let i = 0; i < hojas.length; i++) {
-    const hoja = hojas[i];
-    const canvas = await html2canvas(hoja, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff',
-      scrollX: 0,
-      scrollY: 0,
-      windowWidth: hoja.offsetWidth,
-      windowHeight: hoja.offsetHeight,
-      width: hoja.offsetWidth,
-      height: hoja.offsetHeight
-    });
+    const canvas = await capturarHoja(hojas[i]);
     const link = document.createElement('a');
     link.download = `programa_pagina_${i + 1}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
     await new Promise(r => setTimeout(r, 300));
   }
+}
+
+async function descargarZIP() {
+  prepararParaExportar();
+  const hojas = document.querySelectorAll('.hoja');
+  if (hojas.length === 0) return alert('No hay contenido para exportar');
+  
+  const zip = new JSZip();
+  
+  for (let i = 0; i < hojas.length; i++) {
+    const canvas = await capturarHoja(hojas[i]);
+    const imgData = canvas.toDataURL('image/png').split(',')[1];
+    zip.file(`programa_pagina_${i + 1}.png`, imgData, { base64: true });
+  }
+  
+  const blob = await zip.generateAsync({ type: 'blob' });
+  const link = document.createElement('a');
+  link.download = 'programa_reunion_imagenes.zip';
+  link.href = URL.createObjectURL(blob);
+  link.click();
+  URL.revokeObjectURL(link.href);
 }
 
 // ==========================================
@@ -801,16 +952,13 @@ function exportarJSON() {
         }
       });
       
-      programasExportados.push({
-        semana: infoSemana,
-        presidente: presidente,
-        asignaciones: asignaciones
-      });
+      programasExportados.push({ semana: infoSemana, presidente: presidente, asignaciones: asignaciones });
     });
   });
   
   const jsonExportado = {
     congregacion: congregacion,
+    anio: anioSeleccionado,
     fecha_exportacion: new Date().toISOString(),
     programas: programasExportados
   };
@@ -866,14 +1014,14 @@ function imprimirSinGuardar() {
 function cerrarModal() { document.getElementById('modal-guardar').classList.add('hidden'); }
 
 // ==========================================
-// CARGAR JSON Y RENDERIZAR
+// CARGAR JSON Y AÑOS
 // ==========================================
 async function cargarJSON() {
   try {
     const respuesta = await fetch('programas_reunion.json');
     if (!respuesta.ok) throw new Error('No se encontró el archivo JSON');
     datosJSON = await respuesta.json();
-    inicializarSelects();
+    inicializarSelectAnios();
     renderizarSemanas();
   } catch (error) {
     document.getElementById('area-contenido').innerHTML =
@@ -881,14 +1029,41 @@ async function cargarJSON() {
   }
 }
 
-function inicializarSelects() {
+function inicializarSelectAnios() {
   if (!datosJSON || !datosJSON.programas) return;
+  const anios = [...new Set(datosJSON.programas.map(p => p.anio || new Date().getFullYear()))].sort();
+  const selectAnio = document.getElementById('select-anio');
+  selectAnio.innerHTML = '';
+  anios.forEach(anio => {
+    const opt = document.createElement('option');
+    opt.value = anio; opt.textContent = anio; selectAnio.appendChild(opt);
+  });
+  const anioActual = new Date().getFullYear();
+  anioSeleccionado = anios.includes(anioActual) ? anioActual : anios[0];
+  selectAnio.value = anioSeleccionado;
+  actualizarSelectsSemanas();
+}
+
+function actualizarSelectsSemanas() {
+  if (!datosJSON) return;
+  anioSeleccionado = parseInt(document.getElementById('select-anio').value);
   const selectInicial = document.getElementById('semana-inicial');
   const selectFinal = document.getElementById('semana-final');
   selectInicial.innerHTML = '';
   selectFinal.innerHTML = '';
   
-  const programas = [...datosJSON.programas].sort((a, b) => a.semana - b.semana);
+  const programas = datosJSON.programas
+    .filter(p => (p.anio || new Date().getFullYear()) === anioSeleccionado)
+    .sort((a, b) => a.semana - b.semana);
+  
+  if (programas.length === 0) {
+    const opt = document.createElement('option');
+    opt.textContent = 'Sin semanas disponibles';
+    selectInicial.appendChild(opt);
+    selectFinal.appendChild(opt.cloneNode(true));
+    return;
+  }
+  
   programas.forEach(p => {
     const texto = `Sem. ${p.semana} - ${p.encabezado}`;
     const opt1 = document.createElement('option');
@@ -906,6 +1081,7 @@ function inicializarSelects() {
   for (let s of semanasDisponibles) { if (s >= semanaFinalAuto) { mejorFinal = s; break; } }
   selectInicial.value = mejorInicial;
   selectFinal.value = mejorFinal;
+  renderizarSemanas();
 }
 
 function renderizarSemanas() {
@@ -920,7 +1096,10 @@ function renderizarSemanas() {
   const mostrarTiempo = document.getElementById('toggle-tiempo').checked;
   const mostrarIconos = document.getElementById('toggle-iconos').checked;
   
-  const programas = datosJSON.programas.filter(p => p.semana >= semanaInicial && p.semana <= semanaFinal).sort((a, b) => a.semana - b.semana);
+  const programas = datosJSON.programas
+    .filter(p => (p.anio || new Date().getFullYear()) === anioSeleccionado)
+    .filter(p => p.semana >= semanaInicial && p.semana <= semanaFinal)
+    .sort((a, b) => a.semana - b.semana);
   
   if (programas.length === 0) {
     document.getElementById('area-contenido').innerHTML = '<div style="padding:40px;text-align:center;"><h2>No hay programas en ese rango</h2></div>';
@@ -999,7 +1178,7 @@ function generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSema
   
   if (mostrarAperturaCierre && programa.cierre) {
     let t = mostrarTiempo ? programa.cierre : quitarTiempo(programa.cierre);
-    html += `<tr class="fila-cierre"><td colspan="2">d<input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Quién ora"></td></tr>`;
+    html += `<tr class="fila-cierre"><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Quién ora"></td></tr>`;
   }
   
   html += '</table>';

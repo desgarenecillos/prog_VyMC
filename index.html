@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Programa de Vida y Ministerio Cristiano</title>
 <link rel="stylesheet" href="jwicon.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root {
   --txt-encabezado: #6a1b9a;
@@ -28,12 +31,8 @@
   --size-tabla: 10px;
   --size-iconos: 14px;
   --align-secciones: center;
-  
-  /* Ribbon colors */
   --ribbon-bg: #f3f3f3;
   --ribbon-border: #d6d6d6;
-  --ribbon-tab-bg: #f8f8f8;
-  --ribbon-tab-active: #ffffff;
   --ribbon-accent: #6a1b9a;
 }
 
@@ -41,83 +40,47 @@
 body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #333; }
 
 /* ==========================================
-   RIBBON (Estilo Office)
+   MATERIAL ICONS
+   ========================================== */
+.material-icons {
+  font-size: 18px;
+  vertical-align: middle;
+  line-height: 1;
+}
+.mi-sm { font-size: 14px; }
+.mi-lg { font-size: 20px; }
+
+/* ==========================================
+   RIBBON
    ========================================== */
 #ribbon {
   background: var(--ribbon-bg);
   border-bottom: 1px solid var(--ribbon-border);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  user-select: none;
+  position: sticky; top: 0; z-index: 1000; user-select: none;
 }
 
-/* Barra de pestañas */
 .ribbon-tabs {
-  display: flex;
-  align-items: stretch;
-  background: #e8e8e8;
-  border-bottom: 1px solid var(--ribbon-border);
-  padding: 0 8px;
-  overflow-x: auto;
+  display: flex; align-items: stretch; background: #e8e8e8;
+  border-bottom: 1px solid var(--ribbon-border); padding: 0 8px; overflow-x: auto;
 }
 
 .ribbon-tab {
-  padding: 8px 18px;
-  font-size: 12px;
-  font-weight: 500;
-  color: #444;
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  border-bottom: 2px solid transparent;
-  white-space: nowrap;
-  transition: all 0.15s;
-  font-family: inherit;
+  padding: 8px 16px; font-size: 12px; font-weight: 500; color: #444;
+  cursor: pointer; border: none; background: transparent;
+  border-bottom: 2px solid transparent; white-space: nowrap;
+  transition: all 0.15s; font-family: inherit;
+  display: flex; align-items: center; gap: 6px;
 }
-.ribbon-tab:hover {
-  background: #ddd;
-}
+.ribbon-tab:hover { background: #ddd; }
 .ribbon-tab.active {
-  background: var(--ribbon-bg);
-  color: var(--ribbon-accent);
-  border-bottom: 2px solid var(--ribbon-accent);
-  font-weight: 600;
+  background: var(--ribbon-bg); color: var(--ribbon-accent);
+  border-bottom: 2px solid var(--ribbon-accent); font-weight: 600;
 }
+.ribbon-tab .material-icons { font-size: 16px; }
 
-/* Botones de acción rápida (siempre visibles) */
-.quick-actions {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-left: auto;
-  padding: 4px 8px;
-}
-
-.quick-btn {
-  padding: 5px 12px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  background: white;
-  cursor: pointer;
-  font-size: 11px;
-  font-weight: 500;
-  color: #333;
-  transition: all 0.15s;
-  font-family: inherit;
-  white-space: nowrap;
-}
-.quick-btn:hover { background: #e9ecef; border-color: #aaa; }
-.quick-btn.print { background: #1e88e5; color: white; border-color: #1e88e5; }
-.quick-btn.print:hover { background: #1565c0; }
-
-/* Panel del ribbon (se expande/colapsa) */
 .ribbon-panel {
-  display: none;
-  background: var(--ribbon-bg);
-  padding: 10px 12px 6px;
-  border-bottom: 1px solid var(--ribbon-border);
-  animation: ribbonSlide 0.15s ease-out;
+  display: none; background: var(--ribbon-bg); padding: 10px 12px 6px;
+  border-bottom: 1px solid var(--ribbon-border); animation: ribbonSlide 0.15s ease-out;
 }
 .ribbon-panel.visible { display: block; }
 
@@ -126,132 +89,48 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Grupos dentro del panel */
-.ribbon-groups {
-  display: flex;
-  gap: 0;
-  overflow-x: auto;
-  padding-bottom: 2px;
-}
+.ribbon-groups { display: flex; gap: 0; overflow-x: auto; padding-bottom: 2px; }
 
 .ribbon-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0 14px;
-  border-right: 1px solid #ddd;
-  flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 0 14px; border-right: 1px solid #ddd; flex-shrink: 0;
 }
 .ribbon-group:last-child { border-right: none; }
 
 .ribbon-group-content {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  justify-content: center; flex: 1;
 }
 
 .ribbon-group-label {
-  font-size: 9px;
-  color: #888;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-top: 6px;
-  padding-top: 4px;
-  border-top: 1px solid #e0e0e0;
-  text-align: center;
-  width: 100%;
+  font-size: 9px; color: #888; text-transform: uppercase;
+  letter-spacing: 0.5px; margin-top: 6px; padding-top: 4px;
+  border-top: 1px solid #e0e0e0; text-align: center; width: 100%;
 }
 
-/* Controles del ribbon */
 .ribbon-control {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 4px 6px;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: background 0.1s;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 4px 6px; border-radius: 3px; cursor: pointer; transition: background 0.1s;
 }
 .ribbon-control:hover { background: #e8e8e8; }
+.ribbon-control label { font-size: 9px; color: #666; text-align: center; line-height: 1.2; max-width: 65px; }
+.ribbon-control input[type="color"] { width: 32px; height: 24px; border: 1px solid #bbb; border-radius: 3px; cursor: pointer; padding: 1px; }
+.ribbon-control input[type="number"] { width: 52px; padding: 3px 4px; border: 1px solid #bbb; border-radius: 3px; font-size: 11px; text-align: center; font-family: inherit; }
+.ribbon-control select { padding: 3px 6px; border: 1px solid #bbb; border-radius: 3px; font-size: 11px; font-family: inherit; max-width: 180px; }
 
-.ribbon-control label {
-  font-size: 9px;
-  color: #666;
-  text-align: center;
-  line-height: 1.2;
-  max-width: 65px;
-}
-
-.ribbon-control input[type="color"] {
-  width: 32px;
-  height: 24px;
-  border: 1px solid #bbb;
-  border-radius: 3px;
-  cursor: pointer;
-  padding: 1px;
-}
-
-.ribbon-control input[type="number"] {
-  width: 52px;
-  padding: 3px 4px;
-  border: 1px solid #bbb;
-  border-radius: 3px;
-  font-size: 11px;
-  text-align: center;
-  font-family: inherit;
-}
-
-.ribbon-control select {
-  padding: 3px 6px;
-  border: 1px solid #bbb;
-  border-radius: 3px;
-  font-size: 11px;
-  font-family: inherit;
-  max-width: 160px;
-}
-
-/* Botones de alineación */
-.align-group {
-  display: flex;
-  gap: 2px;
-}
+.align-group { display: flex; gap: 2px; }
 .align-btn {
-  width: 30px;
-  height: 28px;
-  border: 1px solid #bbb;
-  border-radius: 3px;
-  background: white;
-  cursor: pointer;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.1s;
+  width: 30px; height: 28px; border: 1px solid #bbb; border-radius: 3px;
+  background: white; cursor: pointer; font-size: 13px;
+  display: flex; align-items: center; justify-content: center; transition: all 0.1s;
 }
 .align-btn:hover { background: #e9ecef; }
 .align-btn.active { background: var(--ribbon-accent); color: white; border-color: var(--ribbon-accent); }
 
-/* Toggles en ribbon */
-.ribbon-toggle {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
-  border-radius: 3px;
-  cursor: pointer;
-}
+.ribbon-toggle { display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 3px; cursor: pointer; }
 .ribbon-toggle:hover { background: #e8e8e8; }
 
-.toggle-switch {
-  position: relative;
-  width: 36px;
-  height: 20px;
-  flex-shrink: 0;
-}
+.toggle-switch { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
 .toggle-switch input { opacity: 0; width: 0; height: 0; }
 .toggle-slider {
   position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
@@ -263,25 +142,24 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
 }
 .toggle-switch input:checked + .toggle-slider { background: var(--ribbon-accent); }
 .toggle-switch input:checked + .toggle-slider:before { transform: translateX(16px); }
-
 .ribbon-toggle span { font-size: 11px; color: #444; white-space: nowrap; }
 
-/* Botón de cargar */
 .ribbon-action-btn {
-  padding: 6px 14px;
-  border: 1px solid #bbb;
-  border-radius: 3px;
-  background: white;
-  cursor: pointer;
-  font-size: 11px;
-  font-weight: 600;
-  color: #333;
-  transition: all 0.15s;
-  font-family: inherit;
+  padding: 6px 14px; border: 1px solid #bbb; border-radius: 3px;
+  background: white; cursor: pointer; font-size: 11px; font-weight: 600;
+  color: #333; transition: all 0.15s; font-family: inherit; white-space: nowrap;
+  display: flex; align-items: center; gap: 4px;
 }
 .ribbon-action-btn:hover { background: #e9ecef; }
+.ribbon-action-btn .material-icons { font-size: 16px; }
 .ribbon-action-btn.accent { background: var(--ribbon-accent); color: white; border-color: var(--ribbon-accent); }
 .ribbon-action-btn.accent:hover { opacity: 0.9; }
+.ribbon-action-btn.blue { background: #1e88e5; color: white; border-color: #1e88e5; }
+.ribbon-action-btn.blue:hover { background: #1565c0; }
+.ribbon-action-btn.green { background: #43a047; color: white; border-color: #43a047; }
+.ribbon-action-btn.green:hover { background: #388e3c; }
+.ribbon-action-btn.orange { background: #f57c00; color: white; border-color: #f57c00; }
+.ribbon-action-btn.orange:hover { background: #e65100; }
 
 /* ==========================================
    ÁREA DE CONTENIDO
@@ -324,11 +202,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
   font-family: inherit; background: transparent; color: inherit;
 }
 .tabla-programa input:focus { outline: 1px solid #6a1b9a; background: rgba(255,249,196,0.3); }
-
-.input-asignacion {
-  width: 100%; border: none; padding: 2px; font-size: inherit;
-  font-family: inherit; background: transparent; color: inherit;
-}
+.input-asignacion { width: 100%; border: none; padding: 2px; font-size: inherit; font-family: inherit; background: transparent; color: inherit; }
 .input-asignacion:focus { outline: 1px solid #6a1b9a; background: rgba(255,249,196,0.3); }
 
 .encabezado-semana {
@@ -351,9 +225,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
 
 .jw-icon { font-size: var(--size-iconos); display: inline-block; vertical-align: middle; margin-right: 3px; }
 
-/* ==========================================
-   AUTOCOMPLETADO
-   ========================================== */
+/* AUTOCOMPLETADO */
 .autocomplete-wrapper { position: relative; display: inline-block; width: 100%; }
 .autocomplete-list {
   position: absolute; top: 100%; left: 0; right: 0;
@@ -362,25 +234,18 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
   max-height: 150px; overflow-y: auto; display: none;
 }
 .autocomplete-list.visible { display: block; }
-.autocomplete-item {
-  padding: 6px 10px; cursor: pointer; font-size: 12px; border-bottom: 1px solid #eee;
-}
+.autocomplete-item { padding: 6px 10px; cursor: pointer; font-size: 12px; border-bottom: 1px solid #eee; }
 .autocomplete-item:hover { background: #f0f0f0; }
 .autocomplete-item:last-child { border-bottom: none; }
 
-/* ==========================================
-   MODAL
-   ========================================== */
+/* MODAL */
 .modal-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0,0,0,0.5); z-index: 10000;
   display: flex; align-items: center; justify-content: center;
 }
 .modal-overlay.hidden { display: none; }
-.modal-box {
-  background: white; border-radius: 8px; padding: 25px;
-  max-width: 400px; width: 90%; box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-}
+.modal-box { background: white; border-radius: 8px; padding: 25px; max-width: 400px; width: 90%; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
 .modal-box h3 { margin-bottom: 15px; color: #333; }
 .modal-box p { margin-bottom: 15px; font-size: 14px; color: #555; }
 .modal-box .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; }
@@ -389,9 +254,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
 .modal-box .btn-no { background: #f44336; color: white; }
 .modal-box .btn-cancelar { background: #9e9e9e; color: white; }
 
-/* ==========================================
-   RESPONSIVE
-   ========================================== */
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .hoja { width: 100%; min-height: auto; padding: 10px; }
   .ribbon-groups { flex-wrap: nowrap; }
@@ -403,9 +266,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
   .encabezado-semana { flex-direction: column; align-items: flex-start; gap: 4px; }
 }
 
-/* ==========================================
-   IMPRESIÓN
-   ========================================== */
+/* IMPRESIÓN */
 @media print {
   @page { size: A4; margin: 2cm; }
   body { background: white; }
@@ -417,7 +278,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
   .tabla-programa { width: 100%; page-break-inside: avoid; }
   .titulo-seccion td, .fila-apertura, .fila-apertura td, .fila-cierre, .fila-cierre td,
   .titulo-tesoros, .titulo-maestros, .titulo-vida, .encabezado-doc, .encabezado-semana {
-    print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important; color-adjust: exact !important;
   }
   .tabla-programa input { print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important; }
   .hoja:not(:first-child) .encabezado-doc.oculto { display: none !important; }
@@ -426,18 +287,13 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
 </head>
 <body>
 
-<!-- ==========================================
-     RIBBON
-     ========================================== -->
 <div id="ribbon">
   <div class="ribbon-tabs">
-    <button class="ribbon-tab" onclick="toggleRibbon('tab-colores-texto', this)">🎨 Colores Texto</button>
-    <button class="ribbon-tab" onclick="toggleRibbon('tab-colores-fondo', this)">🖌️ Colores Fondo</button>
-    <button class="ribbon-tab" onclick="toggleRibbon('tab-tamanos', this)">📏 Tamaños</button>
-    <button class="ribbon-tab" onclick="toggleRibbon('tab-semanas', this)">📅 Semanas</button>
-    <div class="quick-actions">
-      <button class="quick-btn print" onclick="manejarImpresion()">🖨️ Imprimir / PDF</button>
-    </div>
+    <button class="ribbon-tab" onclick="toggleRibbon('tab-colores-texto', this)"><span class="material-icons">format_color_text</span>Colores Texto</button>
+    <button class="ribbon-tab" onclick="toggleRibbon('tab-colores-fondo', this)"><span class="material-icons">format_color_fill</span>Colores Fondo</button>
+    <button class="ribbon-tab" onclick="toggleRibbon('tab-tamanos', this)"><span class="material-icons">text_fields</span>Tamaños</button>
+    <button class="ribbon-tab" onclick="toggleRibbon('tab-configuracion', this)"><span class="material-icons">settings</span>Configuración</button>
+    <button class="ribbon-tab" onclick="toggleRibbon('tab-exportar', this)"><span class="material-icons">save_alt</span>Guardar / Exportar</button>
   </div>
 
   <!-- TAB: Colores de Texto -->
@@ -445,40 +301,22 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
     <div class="ribbon-groups">
       <div class="ribbon-group">
         <div class="ribbon-group-content">
-          <div class="ribbon-control">
-            <label>Encabezado Hoja</label>
-            <input type="color" id="c-txt-encabezado" value="#6a1b9a" onchange="setVar('--txt-encabezado', this.value)">
-          </div>
-          <div class="ribbon-control">
-            <label>Encabezado Semana</label>
-            <input type="color" id="c-txt-semana" value="#6a1b9a" onchange="setVar('--txt-semana', this.value)">
-          </div>
+          <div class="ribbon-control"><label>Encabezado Hoja</label><input type="color" id="c-txt-encabezado" value="#6a1b9a" onchange="setVar('--txt-encabezado', this.value)"></div>
+          <div class="ribbon-control"><label>Encabezado Semana</label><input type="color" id="c-txt-semana" value="#6a1b9a" onchange="setVar('--txt-semana', this.value)"></div>
         </div>
         <div class="ribbon-group-label">Encabezados</div>
       </div>
       <div class="ribbon-group">
         <div class="ribbon-group-content">
-          <div class="ribbon-control">
-            <label>Apertura</label>
-            <input type="color" id="c-txt-apertura" value="#000000" onchange="setVar('--txt-apertura', this.value)">
-          </div>
-          <div class="ribbon-control">
-            <label>Cierre</label>
-            <input type="color" id="c-txt-cierre" value="#000000" onchange="setVar('--txt-cierre', this.value)">
-          </div>
+          <div class="ribbon-control"><label>Apertura</label><input type="color" id="c-txt-apertura" value="#000000" onchange="setVar('--txt-apertura', this.value)"></div>
+          <div class="ribbon-control"><label>Cierre</label><input type="color" id="c-txt-cierre" value="#000000" onchange="setVar('--txt-cierre', this.value)"></div>
         </div>
         <div class="ribbon-group-label">Apertura / Cierre</div>
       </div>
       <div class="ribbon-group">
         <div class="ribbon-group-content">
-          <div class="ribbon-control">
-            <label>Secciones</label>
-            <input type="color" id="c-txt-secciones" value="#ffffff" onchange="setVar('--txt-secciones', this.value)">
-          </div>
-          <div class="ribbon-control">
-            <label>Tabla</label>
-            <input type="color" id="c-txt-tabla" value="#000000" onchange="setVar('--txt-tabla', this.value)">
-          </div>
+          <div class="ribbon-control"><label>Secciones</label><input type="color" id="c-txt-secciones" value="#ffffff" onchange="setVar('--txt-secciones', this.value)"></div>
+          <div class="ribbon-control"><label>Tabla</label><input type="color" id="c-txt-tabla" value="#000000" onchange="setVar('--txt-tabla', this.value)"></div>
         </div>
         <div class="ribbon-group-label">Contenido</div>
       </div>
@@ -490,44 +328,23 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
     <div class="ribbon-groups">
       <div class="ribbon-group">
         <div class="ribbon-group-content">
-          <div class="ribbon-control">
-            <label>Enc. Hoja</label>
-            <input type="color" id="c-bg-encabezado" value="#ffffff" onchange="setVar('--bg-encabezado', this.value)">
-          </div>
-          <div class="ribbon-control">
-            <label>Enc. Semana</label>
-            <input type="color" id="c-bg-semana" value="#ffffff" onchange="setVar('--bg-semana', this.value)">
-          </div>
+          <div class="ribbon-control"><label>Enc. Hoja</label><input type="color" id="c-bg-encabezado" value="#ffffff" onchange="setVar('--bg-encabezado', this.value)"></div>
+          <div class="ribbon-control"><label>Enc. Semana</label><input type="color" id="c-bg-semana" value="#ffffff" onchange="setVar('--bg-semana', this.value)"></div>
         </div>
         <div class="ribbon-group-label">Encabezados</div>
       </div>
       <div class="ribbon-group">
         <div class="ribbon-group-content">
-          <div class="ribbon-control">
-            <label>Apertura</label>
-            <input type="color" id="c-bg-apertura" value="#f3e5f5" onchange="setVar('--bg-apertura', this.value)">
-          </div>
-          <div class="ribbon-control">
-            <label>Cierre</label>
-            <input type="color" id="c-bg-cierre" value="#f3e5f5" onchange="setVar('--bg-cierre', this.value)">
-          </div>
+          <div class="ribbon-control"><label>Apertura</label><input type="color" id="c-bg-apertura" value="#f3e5f5" onchange="setVar('--bg-apertura', this.value)"></div>
+          <div class="ribbon-control"><label>Cierre</label><input type="color" id="c-bg-cierre" value="#f3e5f5" onchange="setVar('--bg-cierre', this.value)"></div>
         </div>
         <div class="ribbon-group-label">Apertura / Cierre</div>
       </div>
       <div class="ribbon-group">
         <div class="ribbon-group-content">
-          <div class="ribbon-control">
-            <label>Tesoros</label>
-            <input type="color" id="c-bg-tesoros" value="#2A6B77" onchange="setVar('--bg-tesoros', this.value)">
-          </div>
-          <div class="ribbon-control">
-            <label>Maestros</label>
-            <input type="color" id="c-bg-maestros" value="#9B6D17" onchange="setVar('--bg-maestros', this.value)">
-          </div>
-          <div class="ribbon-control">
-            <label>Vida</label>
-            <input type="color" id="c-bg-vida" value="#942926" onchange="setVar('--bg-vida', this.value)">
-          </div>
+          <div class="ribbon-control"><label>Tesoros</label><input type="color" id="c-bg-tesoros" value="#2A6B77" onchange="setVar('--bg-tesoros', this.value)"></div>
+          <div class="ribbon-control"><label>Maestros</label><input type="color" id="c-bg-maestros" value="#9B6D17" onchange="setVar('--bg-maestros', this.value)"></div>
+          <div class="ribbon-control"><label>Vida</label><input type="color" id="c-bg-vida" value="#942926" onchange="setVar('--bg-vida', this.value)"></div>
         </div>
         <div class="ribbon-group-label">Secciones</div>
       </div>
@@ -539,44 +356,23 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
     <div class="ribbon-groups">
       <div class="ribbon-group">
         <div class="ribbon-group-content">
-          <div class="ribbon-control">
-            <label>Enc. Hoja</label>
-            <input type="number" id="s-encabezado" min="10" max="32" value="18" onchange="setVar('--size-encabezado', this.value + 'px')">
-          </div>
-          <div class="ribbon-control">
-            <label>Enc. Semana</label>
-            <input type="number" id="s-semana" min="8" max="24" value="12" onchange="setVar('--size-semana', this.value + 'px')">
-          </div>
+          <div class="ribbon-control"><label>Enc. Hoja</label><input type="number" id="s-encabezado" min="10" max="32" value="18" onchange="setVar('--size-encabezado', this.value + 'px')"></div>
+          <div class="ribbon-control"><label>Enc. Semana</label><input type="number" id="s-semana" min="8" max="24" value="12" onchange="setVar('--size-semana', this.value + 'px')"></div>
         </div>
         <div class="ribbon-group-label">Encabezados (px)</div>
       </div>
       <div class="ribbon-group">
         <div class="ribbon-group-content">
-          <div class="ribbon-control">
-            <label>Apertura</label>
-            <input type="number" id="s-apertura" min="8" max="20" value="10" onchange="setVar('--size-apertura', this.value + 'px')">
-          </div>
-          <div class="ribbon-control">
-            <label>Cierre</label>
-            <input type="number" id="s-cierre" min="8" max="20" value="10" onchange="setVar('--size-cierre', this.value + 'px')">
-          </div>
-          <div class="ribbon-control">
-            <label>Secciones</label>
-            <input type="number" id="s-secciones" min="8" max="20" value="11" onchange="setVar('--size-secciones', this.value + 'px')">
-          </div>
+          <div class="ribbon-control"><label>Apertura</label><input type="number" id="s-apertura" min="8" max="20" value="10" onchange="setVar('--size-apertura', this.value + 'px')"></div>
+          <div class="ribbon-control"><label>Cierre</label><input type="number" id="s-cierre" min="8" max="20" value="10" onchange="setVar('--size-cierre', this.value + 'px')"></div>
+          <div class="ribbon-control"><label>Secciones</label><input type="number" id="s-secciones" min="8" max="20" value="11" onchange="setVar('--size-secciones', this.value + 'px')"></div>
         </div>
         <div class="ribbon-group-label">Contenido (px)</div>
       </div>
       <div class="ribbon-group">
         <div class="ribbon-group-content">
-          <div class="ribbon-control">
-            <label>Tabla</label>
-            <input type="number" id="s-tabla" min="8" max="20" value="10" onchange="setVar('--size-tabla', this.value + 'px')">
-          </div>
-          <div class="ribbon-control">
-            <label>Iconos</label>
-            <input type="number" id="s-iconos" min="8" max="32" value="14" onchange="setVar('--size-iconos', this.value + 'px')">
-          </div>
+          <div class="ribbon-control"><label>Tabla</label><input type="number" id="s-tabla" min="8" max="20" value="10" onchange="setVar('--size-tabla', this.value + 'px')"></div>
+          <div class="ribbon-control"><label>Iconos</label><input type="number" id="s-iconos" min="8" max="32" value="14" onchange="setVar('--size-iconos', this.value + 'px')"></div>
         </div>
         <div class="ribbon-group-label">Tabla / Iconos (px)</div>
       </div>
@@ -585,9 +381,9 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
           <div class="ribbon-control">
             <label>Alineación Secciones</label>
             <div class="align-group">
-              <button class="align-btn" onclick="setAlign('left', this)" title="Izquierda">⬅</button>
-              <button class="align-btn active" onclick="setAlign('center', this)" title="Centro">↔</button>
-              <button class="align-btn" onclick="setAlign('right', this)" title="Derecha">➡</button>
+              <button class="align-btn" onclick="setAlign('left', this)" title="Izquierda"><span class="material-icons mi-sm">format_align_left</span></button>
+              <button class="align-btn active" onclick="setAlign('center', this)" title="Centro"><span class="material-icons mi-sm">format_align_center</span></button>
+              <button class="align-btn" onclick="setAlign('right', this)" title="Derecha"><span class="material-icons mi-sm">format_align_right</span></button>
             </div>
           </div>
         </div>
@@ -596,83 +392,85 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
     </div>
   </div>
 
-  <!-- TAB: Semanas -->
-  <div id="tab-semanas" class="ribbon-panel">
+  <!-- TAB: Configuración -->
+  <div id="tab-configuracion" class="ribbon-panel">
     <div class="ribbon-groups">
       <div class="ribbon-group">
         <div class="ribbon-group-content">
-          <div class="ribbon-control">
-            <label>Desde</label>
-            <select id="semana-inicial" onchange="renderizarSemanas()"></select>
-          </div>
-          <div class="ribbon-control">
-            <label>Hasta</label>
-            <select id="semana-final" onchange="renderizarSemanas()"></select>
-          </div>
-          <div class="ribbon-control">
-            <label>&nbsp;</label>
-            <button class="ribbon-action-btn accent" onclick="renderizarSemanas()">🔄 Cargar</button>
-          </div>
+          <div class="ribbon-control"><label>Desde</label><select id="semana-inicial" onchange="renderizarSemanas()"></select></div>
+          <div class="ribbon-control"><label>Hasta</label><select id="semana-final" onchange="renderizarSemanas()"></select></div>
+          <div class="ribbon-control"><label>&nbsp;</label><button class="ribbon-action-btn accent" onclick="renderizarSemanas()"><span class="material-icons mi-sm">refresh</span>Cargar</button></div>
         </div>
         <div class="ribbon-group-label">Rango de Semanas</div>
       </div>
       <div class="ribbon-group">
         <div class="ribbon-group-content" style="flex-direction: column; align-items: flex-start; gap: 2px;">
-          <div class="ribbon-toggle">
-            <label class="toggle-switch"><input type="checkbox" id="toggle-apertura-cierre" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
-            <span>Apertura y Cierre</span>
-          </div>
-          <div class="ribbon-toggle">
-            <label class="toggle-switch"><input type="checkbox" id="toggle-repetir-titulo" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
-            <span>Repetir título en hojas</span>
-          </div>
+          <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-apertura-cierre" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label><span>Apertura y Cierre</span></div>
+          <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-repetir-titulo" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label><span>Repetir título en hojas</span></div>
         </div>
         <div class="ribbon-group-label">Visualización</div>
       </div>
       <div class="ribbon-group">
         <div class="ribbon-group-content" style="flex-direction: column; align-items: flex-start; gap: 2px;">
-          <div class="ribbon-toggle">
-            <label class="toggle-switch"><input type="checkbox" id="toggle-numero-semana" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
-            <span>Número de semana</span>
-          </div>
-          <div class="ribbon-toggle">
-            <label class="toggle-switch"><input type="checkbox" id="toggle-tiempo" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
-            <span>Tiempo asignaciones</span>
-          </div>
+          <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-numero-semana" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label><span>Número de semana</span></div>
+          <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-tiempo" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label><span>Tiempo asignaciones</span></div>
         </div>
         <div class="ribbon-group-label">Contenido</div>
       </div>
       <div class="ribbon-group">
         <div class="ribbon-group-content">
-          <div class="ribbon-toggle">
-            <label class="toggle-switch"><input type="checkbox" id="toggle-iconos" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label>
-            <span>Iconos</span>
-          </div>
+          <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-iconos" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label><span>Iconos</span></div>
         </div>
         <div class="ribbon-group-label">Iconos</div>
       </div>
     </div>
   </div>
+
+  <!-- TAB: Guardar / Exportar -->
+  <div id="tab-exportar" class="ribbon-panel">
+    <div class="ribbon-groups">
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>Impresión directa</label><button class="ribbon-action-btn blue" onclick="manejarImpresion()"><span class="material-icons mi-sm">print</span>Imprimir</button></div>
+        </div>
+        <div class="ribbon-group-label">Impresión</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>Documento completo</label><button class="ribbon-action-btn accent" onclick="descargarPDF()"><span class="material-icons mi-sm">picture_as_pdf</span>Guardar PDF</button></div>
+        </div>
+        <div class="ribbon-group-label">PDF</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>Cada hoja por separado</label><button class="ribbon-action-btn orange" onclick="descargarImagenes()"><span class="material-icons mi-sm">image</span>Guardar Imágenes</button></div>
+        </div>
+        <div class="ribbon-group-label">Imágenes (PNG)</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>Asignaciones + nombres</label><button class="ribbon-action-btn green" onclick="exportarJSON()"><span class="material-icons mi-sm">data_object</span>Exportar JSON</button></div>
+        </div>
+        <div class="ribbon-group-label">Datos (JSON)</div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- ÁREA DE CONTENIDO -->
 <div id="area-contenido"></div>
 
 <!-- MODAL -->
 <div id="modal-guardar" class="modal-overlay hidden">
   <div class="modal-box">
-    <h3>💾 ¿Guardar nombres para futuros rellenos?</h3>
+    <h3>Guardar nombres para futuros rellenos</h3>
     <p>Se han detectado nombres en los campos de asignación. ¿Deseas guardarlos para sugerencias futuras?</p>
     <div style="margin-bottom: 15px;">
-      <div class="ribbon-toggle">
-        <label class="toggle-switch"><input type="checkbox" id="toggle-no-preguntar"><span class="toggle-slider"></span></label>
-        <span>No volver a preguntar</span>
-      </div>
+      <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-no-preguntar"><span class="toggle-slider"></span></label><span>No volver a preguntar</span></div>
     </div>
     <div class="modal-buttons">
       <button class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
       <button class="btn-no" onclick="imprimirSinGuardar()">No guardar</button>
-      <button class="btn-si" onclick="guardarEImprimir()">✅ Guardar</button>
+      <button class="btn-si" onclick="guardarEImprimir()">Guardar</button>
     </div>
   </div>
 </div>
@@ -776,35 +574,32 @@ function cargarConfiguracion() {
   try {
     const config = JSON.parse(configStr);
     if (config.coloresTexto) {
-      for (let [varName, value] of Object.entries(config.coloresTexto)) {
-        document.documentElement.style.setProperty(varName, value);
-        const inputId = 'c-' + varName.replace('--txt-', 'txt-');
-        const input = document.getElementById(inputId);
-        if (input) input.value = value;
+      for (let [v, val] of Object.entries(config.coloresTexto)) {
+        document.documentElement.style.setProperty(v, val);
+        const inp = document.getElementById('c-' + v.replace('--txt-', 'txt-'));
+        if (inp) inp.value = val;
       }
     }
     if (config.coloresFondo) {
-      for (let [varName, value] of Object.entries(config.coloresFondo)) {
-        document.documentElement.style.setProperty(varName, value);
-        const inputId = 'c-' + varName.replace('--bg-', 'bg-');
-        const input = document.getElementById(inputId);
-        if (input) input.value = value;
+      for (let [v, val] of Object.entries(config.coloresFondo)) {
+        document.documentElement.style.setProperty(v, val);
+        const inp = document.getElementById('c-' + v.replace('--bg-', 'bg-'));
+        if (inp) inp.value = val;
       }
     }
     if (config.tamanos) {
-      for (let [varName, value] of Object.entries(config.tamanos)) {
-        document.documentElement.style.setProperty(varName, value);
-        if (varName !== '--align-secciones') {
-          const inputId = 's-' + varName.replace('--size-', '');
-          const input = document.getElementById(inputId);
-          if (input) input.value = parseInt(value);
+      for (let [v, val] of Object.entries(config.tamanos)) {
+        document.documentElement.style.setProperty(v, val);
+        if (v !== '--align-secciones') {
+          const inp = document.getElementById('s-' + v.replace('--size-', ''));
+          if (inp) inp.value = parseInt(val);
         }
       }
     }
     if (config.toggles) {
-      for (let [toggleId, checked] of Object.entries(config.toggles)) {
-        const toggle = document.getElementById(toggleId);
-        if (toggle) toggle.checked = checked;
+      for (let [id, checked] of Object.entries(config.toggles)) {
+        const t = document.getElementById(id);
+        if (t) t.checked = checked;
       }
     }
   } catch (e) { console.error('Error cargando configuración:', e); }
@@ -817,42 +612,42 @@ function toggleRibbon(tabId, boton) {
   const panel = document.getElementById(tabId);
   const todosPaneles = document.querySelectorAll('.ribbon-panel');
   const todosBotones = document.querySelectorAll('.ribbon-tab');
-  
   const estabaVisible = panel.classList.contains('visible');
-  
   todosPaneles.forEach(p => p.classList.remove('visible'));
   todosBotones.forEach(b => b.classList.remove('active'));
-  
-  if (!estabaVisible) {
-    panel.classList.add('visible');
-    boton.classList.add('active');
-  }
+  if (!estabaVisible) { panel.classList.add('visible'); boton.classList.add('active'); }
 }
 
-function setVar(nombre, valor) {
-  document.documentElement.style.setProperty(nombre, valor);
-  guardarConfiguracion();
-}
+function setVar(nombre, valor) { document.documentElement.style.setProperty(nombre, valor); guardarConfiguracion(); }
 
 function setAlign(valor, boton) {
   document.documentElement.style.setProperty('--align-secciones', valor);
-  document.querySelectorAll('.align-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.align-btn').forEach(b => b.classList.remove('active'));
   boton.classList.add('active');
   guardarConfiguracion();
 }
 
-function quitarTiempo(texto) {
-  return texto.replace(/\s*\(\d+\s*mins?\.\)\s*/gi, '').trim();
-}
+function quitarTiempo(texto) { return texto.replace(/\s*\(\d+\s*mins?\.\)\s*/gi, '').trim(); }
 
-// ==========================================
-// SEMANA ACTUAL
-// ==========================================
 function obtenerSemanaActual() {
   const ahora = new Date();
   const inicio = new Date(ahora.getFullYear(), 0, 1);
-  const dias = Math.floor((ahora - inicio) / (24 * 60 * 60 * 1000));
+  const dias = Math.floor((ahora - inicio) / (24*60*60*1000));
   return Math.ceil((dias + inicio.getDay() + 1) / 7);
+}
+
+// ==========================================
+// PREPARAR PARA EXPORTAR (commitear inputs)
+// ==========================================
+function prepararParaExportar() {
+  guardarConfiguracion();
+  // Forzar que todos los inputs tengan su valor actualizado en el DOM
+  document.querySelectorAll('input').forEach(input => {
+    input.setAttribute('value', input.value);
+    input.dispatchEvent(new Event('change'));
+  });
+  // Ocultar listas de autocompletado abiertas
+  document.querySelectorAll('.autocomplete-list').forEach(list => list.classList.remove('visible'));
 }
 
 // ==========================================
@@ -863,7 +658,6 @@ function crearAutocomplete(input) {
   wrapper.className = 'autocomplete-wrapper';
   const list = document.createElement('div');
   list.className = 'autocomplete-list';
-  
   input.parentNode.insertBefore(wrapper, input);
   wrapper.appendChild(input);
   wrapper.appendChild(list);
@@ -879,13 +673,159 @@ function crearAutocomplete(input) {
       item.addEventListener('click', () => { input.value = item.dataset.nombre; list.classList.remove('visible'); });
     });
   });
-  
   input.addEventListener('blur', () => setTimeout(() => list.classList.remove('visible'), 200));
   input.addEventListener('focus', () => { if (input.value.trim().length >= 1) input.dispatchEvent(new Event('input')); });
 }
 
 // ==========================================
-// IMPRESIÓN Y GUARDADO
+// EXPORTAR: PDF
+// ==========================================
+async function descargarPDF() {
+  prepararParaExportar();
+  const hojas = document.querySelectorAll('.hoja');
+  if (hojas.length === 0) return alert('No hay contenido para exportar');
+  
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  
+  for (let i = 0; i < hojas.length; i++) {
+    if (i > 0) pdf.addPage();
+    const hoja = hojas[i];
+    const canvas = await html2canvas(hoja, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: hoja.offsetWidth,
+      windowHeight: hoja.offsetHeight,
+      width: hoja.offsetWidth,
+      height: hoja.offsetHeight
+    });
+    const imgData = canvas.toDataURL('image/png');
+    const imgWidth = 210;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, Math.min(imgHeight, 297));
+  }
+  
+  pdf.save('programa_reunion.pdf');
+}
+
+// ==========================================
+// EXPORTAR: IMÁGENES
+// ==========================================
+async function descargarImagenes() {
+  prepararParaExportar();
+  const hojas = document.querySelectorAll('.hoja');
+  if (hojas.length === 0) return alert('No hay contenido para exportar');
+  
+  for (let i = 0; i < hojas.length; i++) {
+    const hoja = hojas[i];
+    const canvas = await html2canvas(hoja, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: hoja.offsetWidth,
+      windowHeight: hoja.offsetHeight,
+      width: hoja.offsetWidth,
+      height: hoja.offsetHeight
+    });
+    const link = document.createElement('a');
+    link.download = `programa_pagina_${i + 1}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    await new Promise(r => setTimeout(r, 300));
+  }
+}
+
+// ==========================================
+// EXPORTAR: JSON
+// ==========================================
+function exportarJSON() {
+  prepararParaExportar();
+  
+  const congregacion = document.querySelector('.input-congregacion')?.value || '';
+  const hojas = document.querySelectorAll('.hoja');
+  const programasExportados = [];
+  
+  hojas.forEach(hoja => {
+    const tablas = hoja.querySelectorAll('.tabla-programa');
+    tablas.forEach(tabla => {
+      const encabezado = tabla.previousElementSibling;
+      const infoSemana = encabezado ? encabezado.querySelector('.info-semana')?.textContent || '' : '';
+      const presidente = encabezado ? encabezado.querySelector('.presidente-row input')?.value || '' : '';
+      
+      const filas = tabla.querySelectorAll('tr');
+      const asignaciones = [];
+      
+      filas.forEach(fila => {
+        const celdas = fila.querySelectorAll('td');
+        if (celdas.length === 0) return;
+        
+        if (fila.classList.contains('fila-apertura') || fila.classList.contains('fila-cierre')) {
+          const tipo = fila.classList.contains('fila-apertura') ? 'apertura' : 'cierre';
+          const inputAsignacion = fila.querySelector('.input-asignacion');
+          const inputOracion = fila.querySelectorAll('input')[1];
+          asignaciones.push({
+            tipo: tipo,
+            descripcion: inputAsignacion?.value || '',
+            quien_ora: inputOracion?.value || ''
+          });
+        } else if (fila.classList.contains('titulo-seccion')) {
+          // Skip
+        } else {
+          const inputs = fila.querySelectorAll('input');
+          const inputAsignacion = fila.querySelector('.input-asignacion');
+          
+          if (inputs.length === 3) {
+            asignaciones.push({
+              tipo: 'asignacion',
+              descripcion: inputAsignacion?.value || '',
+              ayudante: inputs[1]?.value || '',
+              estudiante: inputs[2]?.value || ''
+            });
+          } else if (inputs.length === 2) {
+            asignaciones.push({
+              tipo: 'asignacion',
+              descripcion: inputAsignacion?.value || '',
+              asignado: inputs[1]?.value || ''
+            });
+          } else if (inputs.length === 1 && !inputAsignacion) {
+            asignaciones.push({
+              tipo: 'orador',
+              asignado: inputs[0]?.value || ''
+            });
+          }
+        }
+      });
+      
+      programasExportados.push({
+        semana: infoSemana,
+        presidente: presidente,
+        asignaciones: asignaciones
+      });
+    });
+  });
+  
+  const jsonExportado = {
+    congregacion: congregacion,
+    fecha_exportacion: new Date().toISOString(),
+    programas: programasExportados
+  };
+  
+  const blob = new Blob([JSON.stringify(jsonExportado, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.download = 'asignaciones_programa.json';
+  link.href = url;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+// ==========================================
+// IMPRESIÓN
 // ==========================================
 function obtenerNombresDeInputs() {
   const nombres = new Set();
@@ -897,7 +837,7 @@ function obtenerNombresDeInputs() {
 }
 
 function manejarImpresion() {
-  guardarConfiguracion();
+  prepararParaExportar();
   const noPreguntar = localStorage.getItem('noPreguntarGuardar') === 'true';
   const nombres = obtenerNombresDeInputs();
   if (noPreguntar) {
@@ -926,7 +866,7 @@ function imprimirSinGuardar() {
 function cerrarModal() { document.getElementById('modal-guardar').classList.add('hidden'); }
 
 // ==========================================
-// CARGAR JSON
+// CARGAR JSON Y RENDERIZAR
 // ==========================================
 async function cargarJSON() {
   try {
@@ -937,7 +877,7 @@ async function cargarJSON() {
     renderizarSemanas();
   } catch (error) {
     document.getElementById('area-contenido').innerHTML =
-      '<div style="padding:40px;text-align:center;color:#e94560;"><h2>❌ Error al cargar el JSON</h2><p>' + error.message + '</p></div>';
+      '<div style="padding:40px;text-align:center;color:#e94560;"><h2>Error al cargar el JSON</h2><p>' + error.message + '</p></div>';
   }
 }
 
@@ -949,7 +889,6 @@ function inicializarSelects() {
   selectFinal.innerHTML = '';
   
   const programas = [...datosJSON.programas].sort((a, b) => a.semana - b.semana);
-  
   programas.forEach(p => {
     const texto = `Sem. ${p.semana} - ${p.encabezado}`;
     const opt1 = document.createElement('option');
@@ -961,12 +900,10 @@ function inicializarSelects() {
   const semanaActual = obtenerSemanaActual();
   const semanaFinalAuto = semanaActual + 4;
   const semanasDisponibles = programas.map(p => p.semana);
-  
   let mejorInicial = semanasDisponibles[0];
   for (let s of semanasDisponibles) { if (s >= semanaActual) { mejorInicial = s; break; } mejorInicial = s; }
   let mejorFinal = semanasDisponibles[semanasDisponibles.length - 1];
   for (let s of semanasDisponibles) { if (s >= semanaFinalAuto) { mejorFinal = s; break; } }
-  
   selectInicial.value = mejorInicial;
   selectFinal.value = mejorFinal;
 }
@@ -986,7 +923,7 @@ function renderizarSemanas() {
   const programas = datosJSON.programas.filter(p => p.semana >= semanaInicial && p.semana <= semanaFinal).sort((a, b) => a.semana - b.semana);
   
   if (programas.length === 0) {
-    document.getElementById('area-contenido').innerHTML = '<div style="padding:40px;text-align:center;"><h2>⚠️ No hay programas en ese rango</h2></div>';
+    document.getElementById('area-contenido').innerHTML = '<div style="padding:40px;text-align:center;"><h2>No hay programas en ese rango</h2></div>';
     return;
   }
   
@@ -1022,15 +959,15 @@ function renderizarSemanas() {
 
 function generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSemana, mostrarTiempo, mostrarIconos) {
   let html = '';
-  const iconoPresidente = mostrarIconos ? '<span class="jw-icon jwico-d"></span>' : '';
-  const iconoTesoros = mostrarIconos ? '<span class="jw-icon jwico-a"></span>' : '';
-  const iconoMaestros = mostrarIconos ? '<span class="jw-icon jwico-b"></span>' : '';
-  const iconoVida = mostrarIconos ? '<span class="jw-icon jwico-c"></span>' : '';
+  const iP = mostrarIconos ? '<span class="jw-icon jwico-d"></span>' : '';
+  const iT = mostrarIconos ? '<span class="jw-icon jwico-a"></span>' : '';
+  const iM = mostrarIconos ? '<span class="jw-icon jwico-b"></span>' : '';
+  const iV = mostrarIconos ? '<span class="jw-icon jwico-c"></span>' : '';
   
   let textoSemana = programa.encabezado;
   if (mostrarNumeroSemana) textoSemana += ` | Semana ${programa.semana}`;
   
-  html += `<div class="encabezado-semana"><span class="info-semana">${textoSemana}</span><span class="presidente-row">${iconoPresidente}<strong>Presidente:</strong><input type="text" placeholder="Nombre"></span></div>`;
+  html += `<div class="encabezado-semana"><span class="info-semana">${textoSemana}</span><span class="presidente-row">${iP}Presidente:<input type="text" placeholder="Nombre"></span></div>`;
   html += '<table class="tabla-programa">';
   
   if (mostrarAperturaCierre && programa.apertura) {
@@ -1038,23 +975,23 @@ function generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSema
     html += `<tr class="fila-apertura"><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td style="width:20%;"><input type="text" placeholder="Quién ora"></td></tr>`;
   }
   
-  html += `<tr class="titulo-seccion titulo-tesoros"><td colspan="3">${iconoTesoros}TESOROS DE LA BIBLIA</td></tr>`;
+  html += `<tr class="titulo-seccion titulo-tesoros"><td colspan="3">${iT}TESOROS DE LA BIBLIA</td></tr>`;
   (programa.tesoros || []).forEach(item => {
     let t = mostrarTiempo ? item : quitarTiempo(item);
     html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Hermano"></td></tr>`;
   });
   
-  html += `<tr class="titulo-seccion titulo-maestros"><td colspan="3">${iconoMaestros}SEAMOS MEJORES MAESTROS</td></tr>`;
+  html += `<tr class="titulo-seccion titulo-maestros"><td colspan="3">${iM}SEAMOS MEJORES MAESTROS</td></tr>`;
   (programa.maestros || []).forEach(item => {
     let t = mostrarTiempo ? item : quitarTiempo(item);
     if (item.toLowerCase().includes('discurso')) {
       html += `<tr><td colspan="3"><input type="text" class="input-asignacion" value="${t}"></td></tr><tr><td colspan="3"><input type="text" placeholder="Orador"></td></tr>`;
     } else {
-      html += `<tr><td><input type="text" class="input-asignacion" value="${t}"></td><td style="width:20%;"><input type="text" placeholder="Estudiante"></td><td style="width:20%;"><input type="text" placeholder="Ayudante"></td></tr>`;
+      html += `<tr><td><input type="text" class="input-asignacion" value="${t}"></td><td style="width:20%;"><input type="text" placeholder="Ayudante"></td><td style="width:20%;"><input type="text" placeholder="Estudiante"></td></tr>`;
     }
   });
   
-  html += `<tr class="titulo-seccion titulo-vida"><td colspan="3">${iconoVida}NUESTRA VIDA CRISTIANA</td></tr>`;
+  html += `<tr class="titulo-seccion titulo-vida"><td colspan="3">${iV}NUESTRA VIDA CRISTIANA</td></tr>`;
   (programa.vida_cristiana || []).forEach(item => {
     let t = mostrarTiempo ? item : quitarTiempo(item);
     html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Hermano"></td></tr>`;
@@ -1062,7 +999,7 @@ function generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSema
   
   if (mostrarAperturaCierre && programa.cierre) {
     let t = mostrarTiempo ? programa.cierre : quitarTiempo(programa.cierre);
-    html += `<tr class="fila-cierre"><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Quién ora"></td></tr>`;
+    html += `<tr class="fila-cierre"><td colspan="2">d<input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Quién ora"></td></tr>`;
   }
   
   html += '</table>';

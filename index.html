@@ -203,7 +203,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
 
 .hoja {
   width: 210mm; min-height: 297mm; background: white;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15); padding: 20mm; position: relative;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15); padding: 5mm; position: relative;
 }
 
 .encabezado-doc {
@@ -239,6 +239,10 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
 .tabla-programa input:focus { outline: 1px solid #6a1b9a; background: rgba(255,249,196,0.3); }
 .input-asignacion { width: 100%; border: none; padding: 2px; font-size: inherit; font-family: inherit; background: transparent; color: inherit; }
 .input-asignacion:focus { outline: 1px solid #6a1b9a; background: rgba(255,249,196,0.3); }
+
+.tabla-programa td input[type="text"]:not(.input-asignacion) {
+  min-width: 90px;
+}
 
 .encabezado-semana {
   font-size: var(--size-semana); font-weight: bold; color: var(--txt-semana);
@@ -625,15 +629,21 @@ function cargarConfiguracion() {
         if (inp) inp.value = val;
       }
     }
-    if (config.tamanos) {
-      for (let [v, val] of Object.entries(config.tamanos)) {
-        document.documentElement.style.setProperty(v, val);
-        if (v !== '--align-secciones') {
-          const inp = document.getElementById('s-' + v.replace('--size-', ''));
-          if (inp) inp.value = parseInt(val);
-        }
-      }
+if (config.tamanos) {
+  for (let [v, val] of Object.entries(config.tamanos)) {
+    document.documentElement.style.setProperty(v, val);
+    if (v !== '--align-secciones') {
+      const inp = document.getElementById('s-' + v.replace('--size-', ''));
+      if (inp) inp.value = parseInt(val);
     }
+  }
+  // Marcar el botón de alineación correcto
+  const alignActual = (config.tamanos['--align-secciones'] || 'center').trim();
+  const botones = document.querySelectorAll('.align-btn');
+  const mapa = { left: 0, center: 1, right: 2 };
+  botones.forEach(b => b.classList.remove('active'));
+  if (botones[mapa[alignActual]]) botones[mapa[alignActual]].classList.add('active');
+}
     if (config.toggles) {
       for (let [id, checked] of Object.entries(config.toggles)) {
         const t = document.getElementById(id);
@@ -1163,8 +1173,8 @@ function generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSema
   html += `<tr class="titulo-seccion titulo-maestros"><td colspan="3">${iM}SEAMOS MEJORES MAESTROS</td></tr>`;
   (programa.maestros || []).forEach(item => {
     let t = mostrarTiempo ? item : quitarTiempo(item);
-    if (item.toLowerCase().includes('discurso')) {
-      html += `<tr><td colspan="3"><input type="text" class="input-asignacion" value="${t}"></td></tr><tr><td colspan="3"><input type="text" placeholder="Orador"></td></tr>`;
+    if (item.toLowerCase().includes('discurso') || item.toLowerCase().includes('¿qué diría?')) {
+      html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Hermano"></td></tr>`;
     } else {
       html += `<tr><td><input type="text" class="input-asignacion" value="${t}"></td><td style="width:20%;"><input type="text" placeholder="Ayudante"></td><td style="width:20%;"><input type="text" placeholder="Estudiante"></td></tr>`;
     }

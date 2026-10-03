@@ -332,6 +332,28 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
 #tabla-nombres .btn-guardar { background: #43a047; color: white; }
 #tabla-nombres td { padding: 6px 8px; border-bottom: 1px solid #eee; vertical-align: middle; }
 #cuerpo-tabla-nombres tr:last-child td { border-bottom: none; }
+.semana-asamblea-bloque {
+  text-align: center;
+  padding: 60px 20px;
+}
+.semana-asamblea-bloque h2 {
+  font-size: 32px;
+  color: var(--txt-semana);
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+.presidente-row.visita-super {
+  margin-left: 10px;
+}
+.presidente-row.visita-super input {
+  width: 140px;
+}
+
+.tabla-programa input[placeholder="Hermano"],
+.tabla-programa input[placeholder="Publicador"],
+.tabla-programa input[placeholder="Conductor"] {
+  font-weight: bold;
+}
 </style>
 </head>
 <body>
@@ -455,6 +477,17 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
         <div class="ribbon-group-label">Rango de Semanas</div>
       </div>
       <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control">
+            <label>Eventos</label>
+            <button class="ribbon-action-btn accent" onclick="abrirModalSemanasEspeciales()">
+              <span class="material-icons mi-sm">event</span>Semanas Especiales
+            </button>
+          </div>
+        </div>
+        <div class="ribbon-group-label">Especiales</div>
+      </div>
+      <div class="ribbon-group">
         <div class="ribbon-group-content" style="flex-direction: column; align-items: flex-start; gap: 2px;">
           <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-apertura-cierre" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label><span>Apertura y Cierre</span></div>
           <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-repetir-titulo" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label><span>Repetir título en hojas</span></div>
@@ -475,16 +508,16 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
         <div class="ribbon-group-label">Iconos</div>
       </div>
       <div class="ribbon-group">
-  <div class="ribbon-group-content">
-    <div class="ribbon-control">
-      <label>Base de nombres</label>
-      <button class="ribbon-action-btn accent" onclick="abrirModalNombres()">
-        <span class="material-icons mi-sm">manage_accounts</span>Gestionar Nombres
-      </button>
-    </div>
-  </div>
-  <div class="ribbon-group-label">Nombres guardados</div>
-</div>
+        <div class="ribbon-group-content">
+          <div class="ribbon-control">
+            <label>Base de nombres</label>
+            <button class="ribbon-action-btn accent" onclick="abrirModalNombres()">
+              <span class="material-icons mi-sm">manage_accounts</span>Gestionar Nombres
+            </button>
+          </div>
+        </div>
+        <div class="ribbon-group-label">Nombres guardados</div>
+      </div>
     </div>
   </div>
 
@@ -516,9 +549,11 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
       </div>
       <div class="ribbon-group">
         <div class="ribbon-group-content">
-          <div class="ribbon-control"><label>Asignaciones + nombres</label><button class="ribbon-action-btn green" onclick="exportarJSON()"><span class="material-icons mi-sm">data_object</span>Exportar JSON</button></div>
+          <div class="ribbon-control"><label>Liviano local</label><button class="ribbon-action-btn green" onclick="descargarJSONLiviano()"><span class="material-icons mi-sm">data_object</span>JSON Liviano</button></div>
+          <div class="ribbon-control"><label>Compartir oculto</label><button class="ribbon-action-btn blue" onclick="compartirCatbox()"><span class="material-icons mi-sm">cloud_upload</span>Catbox</button></div>
+          <div class="ribbon-control"><label>Compartir oculto</label><button class="ribbon-action-btn orange" onclick="compartirJsonbin()"><span class="material-icons mi-sm">cloud_upload</span>JsonBin</button></div>
         </div>
-        <div class="ribbon-group-label">Datos (JSON)</div>
+        <div class="ribbon-group-label">Datos livianos con config</div>
       </div>
     </div>
   </div>
@@ -527,14 +562,24 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
 <div id="area-contenido"></div>
 
 <div id="modal-nombres" class="modal-overlay hidden">
-  <div class="modal-box" style="max-width: 600px;">
+  <div class="modal-box" style="max-width: 650px;">
     <h3>Gestionar nombres guardados</h3>
     <p style="margin-bottom: 10px;">Edita o elimina los nombres que aparecen como sugerencias.</p>
+
+    <div style="margin-bottom:12px; display:flex; align-items:center; gap:8px; padding:8px 10px; background:#f5f5f5; border-radius:4px;">
+      <label class="toggle-switch">
+        <input type="checkbox" id="toggle-preguntar-guardar" onchange="cambiarPreferenciaPreguntar(this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+      <span style="font-size:13px;">Preguntar antes de guardar nombres al exportar</span>
+    </div>
+
     <div style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 15px;">
       <table style="width: 100%; border-collapse: collapse; font-size: 13px;" id="tabla-nombres">
         <thead style="position: sticky; top: 0; background: #f5f5f5;">
           <tr>
             <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Nombre</th>
+            <th style="width: 110px; padding: 8px; border-bottom: 1px solid #ddd;">Última sem.</th>
             <th style="width: 90px; padding: 8px; border-bottom: 1px solid #ddd;">Acciones</th>
           </tr>
         </thead>
@@ -543,6 +588,38 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
     </div>
     <div class="modal-buttons">
       <button class="btn-cancelar" onclick="cerrarModalNombres()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-semanas-especiales" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3>Semanas Especiales</h3>
+    <p style="margin-bottom:12px;">Selecciona una semana y el tipo de evento especial.</p>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;margin-bottom:4px;font-size:13px;font-weight:600;">Semana</label>
+      <select id="select-semana-especial" style="width:100%;padding:6px;border:1px solid #ccc;border-radius:4px;font-family:inherit;font-size:13px;"></select>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;margin-bottom:4px;font-size:13px;font-weight:600;">Tipo de evento</label>
+      <select id="select-tipo-especial" style="width:100%;padding:6px;border:1px solid #ccc;border-radius:4px;font-family:inherit;font-size:13px;">
+        <option value="">— Semana normal —</option>
+        <option value="visita">Semana de Visita</option>
+        <option value="asamblea">Semana de Asamblea</option>
+      </select>
+      <div id="wrap-toggle-conservar-tabla" style="margin-bottom:12px; display:none;">
+  <div class="ribbon-toggle">
+    <label class="toggle-switch">
+      <input type="checkbox" id="toggle-conservar-tabla">
+      <span class="toggle-slider"></span>
+    </label>
+    <span>Conservar tabla de asignaciones</span>
+  </div>
+</div>
+    </div>
+    <div class="modal-buttons">
+      <button class="btn-cancelar" onclick="cerrarModalSemanasEspeciales()">Cancelar</button>
+      <button class="btn-si" onclick="aplicarSemanaEspecial()">Aplicar</button>
     </div>
   </div>
 </div>
@@ -566,6 +643,8 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
 let datosJSON = null;
 let db = null;
 let anioSeleccionado = null;
+let semanasEspeciales = {}; // { numeroSemana: 'visita' | 'asamblea' | 'asamblea_tabla' }
+let callbackModalGuardar = null; // acción pendiente tras el modal
 
 // ==========================================
 // INDEXEDDB
@@ -582,6 +661,14 @@ function abrirIndexedDB() {
     request.onsuccess = (e) => { db = e.target.result; resolve(db); };
     request.onerror = (e) => reject(e);
   });
+}
+
+function cambiarPreferenciaPreguntar(preguntar) {
+  if (preguntar) {
+    localStorage.removeItem('noPreguntarGuardar');
+  } else {
+    localStorage.setItem('noPreguntarGuardar', 'true');
+  }
 }
 
 function guardarSugerencia(nombre) {
@@ -656,6 +743,10 @@ function guardarConfiguracion() {
   localStorage.setItem('configPrograma', JSON.stringify(config));
 }
 
+function guardarSemanasEspeciales() {
+  localStorage.setItem('semanasEspeciales', JSON.stringify(semanasEspeciales));
+}
+
 function cargarConfiguracion() {
   const configStr = localStorage.getItem('configPrograma');
   if (!configStr) return;
@@ -675,21 +766,20 @@ function cargarConfiguracion() {
         if (inp) inp.value = val;
       }
     }
-if (config.tamanos) {
-  for (let [v, val] of Object.entries(config.tamanos)) {
-    document.documentElement.style.setProperty(v, val);
-    if (v !== '--align-secciones') {
-      const inp = document.getElementById('s-' + v.replace('--size-', ''));
-      if (inp) inp.value = parseInt(val);
+    if (config.tamanos) {
+      for (let [v, val] of Object.entries(config.tamanos)) {
+        document.documentElement.style.setProperty(v, val);
+        if (v !== '--align-secciones') {
+          const inp = document.getElementById('s-' + v.replace('--size-', ''));
+          if (inp) inp.value = parseInt(val);
+        }
+      }
+      const alignActual = (config.tamanos['--align-secciones'] || 'center').trim();
+      const botones = document.querySelectorAll('.align-btn');
+      const mapa = { left: 0, center: 1, right: 2 };
+      botones.forEach(b => b.classList.remove('active'));
+      if (botones[mapa[alignActual]]) botones[mapa[alignActual]].classList.add('active');
     }
-  }
-  // Marcar el botón de alineación correcto
-  const alignActual = (config.tamanos['--align-secciones'] || 'center').trim();
-  const botones = document.querySelectorAll('.align-btn');
-  const mapa = { left: 0, center: 1, right: 2 };
-  botones.forEach(b => b.classList.remove('active'));
-  if (botones[mapa[alignActual]]) botones[mapa[alignActual]].classList.add('active');
-}
     if (config.toggles) {
       for (let [id, checked] of Object.entries(config.toggles)) {
         const t = document.getElementById(id);
@@ -737,7 +827,7 @@ document.addEventListener('click', (e) => {
 });
 
 // ==========================================
-// SUBMENÚ DE IMÁGENES (un botón por hoja)
+// SUBMENÚ DE IMÁGENES
 // ==========================================
 function actualizarSubmenuImagenes() {
   const hojas = document.querySelectorAll('.hoja');
@@ -817,10 +907,8 @@ function crearAutocomplete(input) {
 
 // ==========================================
 // CAPTURAR HOJA (SIN CORTES DE TEXTO)
-// Clona la hoja y reemplaza inputs por texto visible
 // ==========================================
 async function capturarHoja(hoja) {
-  // 1. Clonar la hoja
   const clone = hoja.cloneNode(true);
   clone.style.position = 'absolute';
   clone.style.left = '-10000px';
@@ -830,17 +918,14 @@ async function capturarHoja(hoja) {
   clone.style.zIndex = '-9999';
   document.body.appendChild(clone);
 
-  // 2. Quitar listas de autocompletado visibles del clon
   clone.querySelectorAll('.autocomplete-list').forEach(l => l.classList.remove('visible'));
 
-  // 3. Reemplazar cada input por un span de texto (evita el corte de html2canvas)
   clone.querySelectorAll('input').forEach(input => {
     const span = document.createElement('span');
     const tieneValor = input.value.trim() !== '';
     span.textContent = tieneValor ? input.value : (input.placeholder || '');
     span.className = 'texto-export' + (tieneValor ? '' : ' es-placeholder');
 
-    // Conservar apariencia de inputs con subrayado
     if (input.classList.contains('input-congregacion')) {
       span.style.textAlign = 'center';
       span.style.borderBottom = '1px solid #999';
@@ -849,13 +934,17 @@ async function capturarHoja(hoja) {
       span.style.borderBottom = '1px solid #999';
       span.style.width = '120px';
     }
+
+    const placeholdersNegrita = ['Hermano', 'Publicador', 'Conductor'];
+    if (placeholdersNegrita.includes(input.placeholder)) {
+      span.style.fontWeight = 'bold';
+    }
+
     input.parentNode.replaceChild(span, input);
   });
 
-  // 4. Esperar a que se apliquen estilos
   await new Promise(r => setTimeout(r, 60));
 
-  // 5. Capturar el clon completo (sin cortes)
   const canvas = await html2canvas(clone, {
     scale: 2,
     useCORS: true,
@@ -868,168 +957,12 @@ async function capturarHoja(hoja) {
     windowHeight: clone.scrollHeight
   });
 
-  // 6. Eliminar el clon
   document.body.removeChild(clone);
   return canvas;
 }
 
 // ==========================================
-// EXPORTAR: PDF
-// ==========================================
-async function descargarPDF() {
-  prepararParaExportar();
-  const hojas = document.querySelectorAll('.hoja');
-  if (hojas.length === 0) return alert('No hay contenido para exportar');
-  
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  
-  for (let i = 0; i < hojas.length; i++) {
-    if (i > 0) pdf.addPage();
-    const canvas = await capturarHoja(hojas[i]);
-    const imgData = canvas.toDataURL('image/png');
-    const imgWidth = 210;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, Math.min(imgHeight, 297));
-  }
-  
-  pdf.save('programa_reunion.pdf');
-}
-
-// ==========================================
-// EXPORTAR: IMÁGENES
-// ==========================================
-async function descargarImagenIndividual(indice) {
-  prepararParaExportar();
-  const hojas = document.querySelectorAll('.hoja');
-  if (indice >= hojas.length) return;
-  
-  const canvas = await capturarHoja(hojas[indice]);
-  const link = document.createElement('a');
-  link.download = `programa_pagina_${indice + 1}.png`;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
-}
-
-async function descargarImagenes() {
-  prepararParaExportar();
-  const hojas = document.querySelectorAll('.hoja');
-  if (hojas.length === 0) return alert('No hay contenido para exportar');
-  
-  for (let i = 0; i < hojas.length; i++) {
-    const canvas = await capturarHoja(hojas[i]);
-    const link = document.createElement('a');
-    link.download = `programa_pagina_${i + 1}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-    await new Promise(r => setTimeout(r, 300));
-  }
-}
-
-async function descargarZIP() {
-  prepararParaExportar();
-  const hojas = document.querySelectorAll('.hoja');
-  if (hojas.length === 0) return alert('No hay contenido para exportar');
-  
-  const zip = new JSZip();
-  
-  for (let i = 0; i < hojas.length; i++) {
-    const canvas = await capturarHoja(hojas[i]);
-    const imgData = canvas.toDataURL('image/png').split(',')[1];
-    zip.file(`programa_pagina_${i + 1}.png`, imgData, { base64: true });
-  }
-  
-  const blob = await zip.generateAsync({ type: 'blob' });
-  const link = document.createElement('a');
-  link.download = 'programa_reunion_imagenes.zip';
-  link.href = URL.createObjectURL(blob);
-  link.click();
-  URL.revokeObjectURL(link.href);
-}
-
-// ==========================================
-// EXPORTAR: JSON
-// ==========================================
-function exportarJSON() {
-  prepararParaExportar();
-  
-  const congregacion = document.querySelector('.input-congregacion')?.value || '';
-  const hojas = document.querySelectorAll('.hoja');
-  const programasExportados = [];
-  
-  hojas.forEach(hoja => {
-    const tablas = hoja.querySelectorAll('.tabla-programa');
-    tablas.forEach(tabla => {
-      const encabezado = tabla.previousElementSibling;
-      const infoSemana = encabezado ? encabezado.querySelector('.info-semana')?.textContent || '' : '';
-      const presidente = encabezado ? encabezado.querySelector('.presidente-row input')?.value || '' : '';
-      
-      const filas = tabla.querySelectorAll('tr');
-      const asignaciones = [];
-      
-      filas.forEach(fila => {
-        const celdas = fila.querySelectorAll('td');
-        if (celdas.length === 0) return;
-        
-        if (fila.classList.contains('fila-apertura') || fila.classList.contains('fila-cierre')) {
-          const tipo = fila.classList.contains('fila-apertura') ? 'apertura' : 'cierre';
-          const inputAsignacion = fila.querySelector('.input-asignacion');
-          const inputOracion = fila.querySelectorAll('input')[1];
-          asignaciones.push({
-            tipo: tipo,
-            descripcion: inputAsignacion?.value || '',
-            quien_ora: inputOracion?.value || ''
-          });
-        } else if (fila.classList.contains('titulo-seccion')) {
-          // Skip
-        } else {
-          const inputs = fila.querySelectorAll('input');
-          const inputAsignacion = fila.querySelector('.input-asignacion');
-          
-          if (inputs.length === 3) {
-            asignaciones.push({
-              tipo: 'asignacion',
-              descripcion: inputAsignacion?.value || '',
-              ayudante: inputs[1]?.value || '',
-              estudiante: inputs[2]?.value || ''
-            });
-          } else if (inputs.length === 2) {
-            asignaciones.push({
-              tipo: 'asignacion',
-              descripcion: inputAsignacion?.value || '',
-              asignado: inputs[1]?.value || ''
-            });
-          } else if (inputs.length === 1 && !inputAsignacion) {
-            asignaciones.push({
-              tipo: 'orador',
-              asignado: inputs[0]?.value || ''
-            });
-          }
-        }
-      });
-      
-      programasExportados.push({ semana: infoSemana, presidente: presidente, asignaciones: asignaciones });
-    });
-  });
-  
-  const jsonExportado = {
-    congregacion: congregacion,
-    anio: anioSeleccionado,
-    fecha_exportacion: new Date().toISOString(),
-    programas: programasExportados
-  };
-  
-  const blob = new Blob([JSON.stringify(jsonExportado, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.download = 'asignaciones_programa.json';
-  link.href = url;
-  link.click();
-  URL.revokeObjectURL(url);
-}
-
-// ==========================================
-// IMPRESIÓN
+// FLUJO UNIFICADO: PREGUNTAR GUARDAR NOMBRES
 // ==========================================
 function obtenerNombresDeInputs() {
   const nombres = new Set();
@@ -1040,34 +973,271 @@ function obtenerNombresDeInputs() {
   return Array.from(nombres);
 }
 
-function manejarImpresion() {
+// Envuelve cualquier acción de exportación: primero prepara, luego pregunta (si aplica) y ejecuta
+function conGuardarNombres(accion) {
   prepararParaExportar();
   const noPreguntar = localStorage.getItem('noPreguntarGuardar') === 'true';
   const nombres = obtenerNombresDeInputs();
-  if (noPreguntar) {
-    if (nombres.length > 0) nombres.forEach(n => guardarSugerencia(n));
-    window.print();
-  } else if (nombres.length > 0) {
-    document.getElementById('modal-guardar').classList.remove('hidden');
-  } else {
-    window.print();
+
+  if (nombres.length === 0 || noPreguntar) {
+    if (nombres.length > 0 && noPreguntar) {
+      nombres.forEach(n => guardarSugerencia(n));
+    }
+    accion();
+    return;
   }
+
+  // Guardar la acción pendiente y abrir el modal
+  callbackModalGuardar = accion;
+  document.getElementById('modal-guardar').classList.remove('hidden');
 }
 
 function guardarEImprimir() {
-  if (document.getElementById('toggle-no-preguntar').checked) localStorage.setItem('noPreguntarGuardar', 'true');
+  if (document.getElementById('toggle-no-preguntar').checked) {
+    localStorage.setItem('noPreguntarGuardar', 'true');
+  }
   obtenerNombresDeInputs().forEach(n => guardarSugerencia(n));
+  const cb = callbackModalGuardar;
   cerrarModal();
-  window.print();
+  if (typeof cb === 'function') cb();
 }
 
 function imprimirSinGuardar() {
-  if (document.getElementById('toggle-no-preguntar').checked) localStorage.setItem('noPreguntarGuardar', 'true');
+  if (document.getElementById('toggle-no-preguntar').checked) {
+    localStorage.setItem('noPreguntarGuardar', 'true');
+  }
+  const cb = callbackModalGuardar;
   cerrarModal();
-  window.print();
+  if (typeof cb === 'function') cb();
 }
 
-function cerrarModal() { document.getElementById('modal-guardar').classList.add('hidden'); }
+function cerrarModal() {
+  document.getElementById('modal-guardar').classList.add('hidden');
+  callbackModalGuardar = null;
+}
+
+// ==========================================
+// EXPORTAR: PDF
+// ==========================================
+function descargarPDF() {
+  conGuardarNombres(async () => {
+    const hojas = document.querySelectorAll('.hoja');
+    if (hojas.length === 0) return alert('No hay contenido para exportar');
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+
+    for (let i = 0; i < hojas.length; i++) {
+      if (i > 0) pdf.addPage();
+      const canvas = await capturarHoja(hojas[i]);
+      const imgData = canvas.toDataURL('image/png');
+      const imgWidth = 210;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, Math.min(imgHeight, 297));
+    }
+
+    pdf.save('programa_reunion.pdf');
+  });
+}
+
+// ==========================================
+// EXPORTAR: IMÁGENES
+// ==========================================
+function descargarImagenIndividual(indice) {
+  conGuardarNombres(async () => {
+    const hojas = document.querySelectorAll('.hoja');
+    if (indice >= hojas.length) return;
+
+    const canvas = await capturarHoja(hojas[indice]);
+    const link = document.createElement('a');
+    link.download = `programa_pagina_${indice + 1}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+}
+
+function descargarImagenes() {
+  conGuardarNombres(async () => {
+    const hojas = document.querySelectorAll('.hoja');
+    if (hojas.length === 0) return alert('No hay contenido para exportar');
+
+    for (let i = 0; i < hojas.length; i++) {
+      const canvas = await capturarHoja(hojas[i]);
+      const link = document.createElement('a');
+      link.download = `programa_pagina_${i + 1}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      await new Promise(r => setTimeout(r, 300));
+    }
+  });
+}
+
+function descargarZIP() {
+  conGuardarNombres(async () => {
+    const hojas = document.querySelectorAll('.hoja');
+    if (hojas.length === 0) return alert('No hay contenido para exportar');
+
+    const zip = new JSZip();
+
+    for (let i = 0; i < hojas.length; i++) {
+      const canvas = await capturarHoja(hojas[i]);
+      const imgData = canvas.toDataURL('image/png').split(',')[1];
+      zip.file(`programa_pagina_${i + 1}.png`, imgData, { base64: true });
+    }
+
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const link = document.createElement('a');
+    link.download = 'programa_reunion_imagenes.zip';
+    link.href = URL.createObjectURL(blob);
+    link.click();
+    URL.revokeObjectURL(link.href);
+  });
+}
+
+// ==========================================
+// IMPRESIÓN
+// ==========================================
+function manejarImpresion() {
+  conGuardarNombres(() => window.print());
+}
+
+// ==========================================
+// EXPORTAR: JSON LIVIANO
+// ==========================================
+function exportarJSONLiviano() {
+  const configStr = localStorage.getItem('configPrograma');
+  const configuracion = configStr ? JSON.parse(configStr) : {};
+  const congregacion = document.querySelector('.input-congregacion')?.value || 'Tres Valles';
+
+  const tablas = document.querySelectorAll('.tabla-programa');
+  if (tablas.length === 0) {
+    alert('⚠️ No hay semanas cargadas');
+    return null;
+  }
+
+  const programasLivianos = [];
+
+  tablas.forEach(tabla => {
+    const semana = parseInt(tabla.dataset.semana);
+    const programaBase = datosJSON.programas.find(p => p.semana === semana && (p.anio || 2026) === anioSeleccionado);
+    if (!programaBase) return;
+
+    const presidente = tabla.previousElementSibling?.querySelector('.presidente-row input')?.value || '';
+    const filas = tabla.querySelectorAll('tr');
+
+    let oraciones = [];
+    let tesoros = [], maestros = [], vida = [];
+    let overrides = {};
+    let tIdx = 0, mIdx = 0, vIdx = 0;
+
+    filas.forEach(fila => {
+      if (fila.classList.contains('titulo-seccion')) return;
+      const inputAsig = fila.querySelector('.input-asignacion');
+      const inputsNombres = [...fila.querySelectorAll('input')].filter(i => !i.classList.contains('input-asignacion') && !i.classList.contains('input-congregacion'));
+
+      if (fila.classList.contains('fila-apertura') || fila.classList.contains('fila-cierre')) {
+        const base = fila.classList.contains('fila-apertura') ? programaBase.apertura : programaBase.cierre;
+        if (inputAsig && inputAsig.value !== base) overrides[fila.classList.contains('fila-apertura') ? 'apertura' : 'cierre'] = inputAsig.value;
+        oraciones.push(inputsNombres[0]?.value || '');
+        return;
+      }
+
+      let baseTexto = '';
+      if (tIdx < programaBase.tesoros.length) baseTexto = programaBase.tesoros[tIdx];
+      else if (mIdx < programaBase.maestros.length) baseTexto = programaBase.maestros[mIdx];
+      else baseTexto = programaBase.vida_cristiana[vIdx];
+
+      if (inputAsig && inputAsig.value !== baseTexto) overrides[`f_${tIdx + mIdx + vIdx}`] = inputAsig.value;
+
+      const valor = inputsNombres.map(i => i.value.trim()).join(' / ');
+
+      if (tIdx < programaBase.tesoros.length) { tesoros.push(valor); tIdx++; }
+      else if (mIdx < programaBase.maestros.length) { maestros.push(valor); mIdx++; }
+      else { vida.push(valor); vIdx++; }
+    });
+
+    const obj = { semana, pres: presidente, ora: oraciones.join(' / '), a: tesoros, m: maestros, v: vida };
+    if (Object.keys(overrides).length) obj.ov = overrides;
+    programasLivianos.push(obj);
+  });
+
+  return { congregacion, anio: anioSeleccionado, configuracion, programas: programasLivianos };
+}
+
+function descargarJSONLiviano() {
+  conGuardarNombres(() => {
+    const json = exportarJSONLiviano();
+    if (!json) return;
+
+    const texto = JSON.stringify(json, null, 2);
+
+    const totalAsignados = json.programas.reduce((acc, p) => acc + p.a.filter(x => x).length + p.m.filter(x => x).length + p.v.filter(x => x).length, 0);
+    if (totalAsignados === 0) {
+      if (!confirm('No has escrito ningún nombre. ¿Quieres ver el JSON vacío de todas formas?\n(Útil para probar)')) return;
+    }
+
+    console.log(texto);
+
+    try {
+      const blob = new Blob([texto], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `liviano_${json.anio}_${json.programas[0]?.semana || 'x'}.json`;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      setTimeout(() => {
+        const w = window.open('', '_blank');
+        if (w) {
+          w.document.write(`<pre style="font-size:12px;white-space:pre-wrap;word-break:break-all">${texto.replace(/</g, '&lt;')}</pre><br><button onclick="navigator.clipboard.writeText(document.querySelector('pre').innerText).then(()=>alert('Copiado'))">Copiar JSON</button>`);
+        } else {
+          prompt('JSON liviano (cópialo):', texto);
+        }
+      }, 500);
+
+    } catch (e) {
+      prompt('JSON liviano (cópialo manual):', texto);
+    }
+  });
+}
+
+function compartirCatbox() {
+  conGuardarNombres(async () => {
+    const json = exportarJSONLiviano();
+    if (!json) return;
+    const blob = new Blob([JSON.stringify(json)], { type: 'application/json' });
+    const fd = new FormData();
+    fd.append('reqtype', 'fileupload');
+    fd.append('fileToUpload', blob, 'asign.json');
+    const r = await fetch('https://catbox.moe/user/api.php', { method: 'POST', body: fd });
+    const url = await r.text();
+    const file = url.split('/').pop().trim();
+    const b64 = btoa(file);
+    const link = `${location.origin}${location.pathname.replace(/[^/]+$/, '')}ver.html?catbox=${b64}`;
+    prompt('Link oculto Catbox (cópialo):', link);
+  });
+}
+
+function compartirJsonbin() {
+  conGuardarNombres(async () => {
+    const json = exportarJSONLiviano();
+    if (!json) return;
+    const r = await fetch('https://api.jsonbin.io/v3/b', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': '$2a$10$X...TU_KEY...' },
+      body: JSON.stringify(json)
+    });
+    const d = await r.json();
+    const id = d.metadata.id;
+    const b64 = btoa(id);
+    const link = `${location.origin}${location.pathname.replace(/[^/]+$/, '')}ver.html?jsonbin=${b64}`;
+    prompt('Link oculto JsonBin:', link);
+  });
+}
 
 // ==========================================
 // CARGAR JSON Y AÑOS
@@ -1107,11 +1277,11 @@ function actualizarSelectsSemanas() {
   const selectFinal = document.getElementById('semana-final');
   selectInicial.innerHTML = '';
   selectFinal.innerHTML = '';
-  
+
   const programas = datosJSON.programas
     .filter(p => (p.anio || new Date().getFullYear()) === anioSeleccionado)
     .sort((a, b) => a.semana - b.semana);
-  
+
   if (programas.length === 0) {
     const opt = document.createElement('option');
     opt.textContent = 'Sin semanas disponibles';
@@ -1119,7 +1289,7 @@ function actualizarSelectsSemanas() {
     selectFinal.appendChild(opt.cloneNode(true));
     return;
   }
-  
+
   programas.forEach(p => {
     const texto = `Sem. ${p.semana} - ${p.encabezado}`;
     const opt1 = document.createElement('option');
@@ -1127,7 +1297,7 @@ function actualizarSelectsSemanas() {
     const opt2 = document.createElement('option');
     opt2.value = p.semana; opt2.textContent = texto; selectFinal.appendChild(opt2);
   });
-  
+
   const semanaActual = obtenerSemanaActual();
   const semanaFinalAuto = semanaActual + 4;
   const semanasDisponibles = programas.map(p => p.semana);
@@ -1143,7 +1313,8 @@ function actualizarSelectsSemanas() {
 function renderizarSemanas() {
   if (!datosJSON) return;
   guardarConfiguracion();
-  
+  guardarSemanasEspeciales();
+
   const semanaInicial = parseInt(document.getElementById('semana-inicial').value);
   const semanaFinal = parseInt(document.getElementById('semana-final').value);
   const mostrarAperturaCierre = document.getElementById('toggle-apertura-cierre').checked;
@@ -1151,23 +1322,23 @@ function renderizarSemanas() {
   const mostrarNumeroSemana = document.getElementById('toggle-numero-semana').checked;
   const mostrarTiempo = document.getElementById('toggle-tiempo').checked;
   const mostrarIconos = document.getElementById('toggle-iconos').checked;
-  
+
   const programas = datosJSON.programas
     .filter(p => (p.anio || new Date().getFullYear()) === anioSeleccionado)
     .filter(p => p.semana >= semanaInicial && p.semana <= semanaFinal)
     .sort((a, b) => a.semana - b.semana);
-  
+
   if (programas.length === 0) {
     document.getElementById('area-contenido').innerHTML = '<div style="padding:40px;text-align:center;"><h2>No hay programas en ese rango</h2></div>';
     return;
   }
-  
+
   const areaContenido = document.getElementById('area-contenido');
   areaContenido.innerHTML = '';
-  
+
   const grupos = [];
   for (let i = 0; i < programas.length; i += 2) grupos.push(programas.slice(i, i + 2));
-  
+
   grupos.forEach((grupo, indice) => {
     const hoja = document.createElement('div');
     hoja.className = 'hoja';
@@ -1181,62 +1352,91 @@ function renderizarSemanas() {
     hoja.innerHTML = htmlEncabezado + htmlTablas;
     areaContenido.appendChild(hoja);
   });
-  
+
   setTimeout(() => {
     document.querySelectorAll('.tabla-programa input[type="text"]').forEach(input => {
       if (!input.closest('.autocomplete-wrapper')) crearAutocomplete(input);
     });
   }, 100);
-  
+
   const primerInput = document.querySelector('.input-congregacion');
   if (primerInput && primerInput.value) sincronizarCongregacion(primerInput.value);
 }
 
 function generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSemana, mostrarTiempo, mostrarIconos) {
+  const tipoEspecial = semanasEspeciales[programa.semana];
   let html = '';
   const iP = mostrarIconos ? '<span class="jw-icon jwico-d"></span>' : '';
   const iT = mostrarIconos ? '<span class="jw-icon jwico-a"></span>' : '';
   const iM = mostrarIconos ? '<span class="jw-icon jwico-b"></span>' : '';
   const iV = mostrarIconos ? '<span class="jw-icon jwico-c"></span>' : '';
-  
+
   let textoSemana = programa.encabezado;
   if (mostrarNumeroSemana) textoSemana += ` | Semana ${programa.semana}`;
-  
-  html += `<div class="encabezado-semana"><span class="info-semana">${textoSemana}</span><span class="presidente-row">${iP}Presidente:<input type="text" placeholder="Nombre"></span></div>`;
-  html += '<table class="tabla-programa">';
-  
+
+  // ===== CASO ASAMBLEA SIN TABLA =====
+  if (tipoEspecial === 'asamblea') {
+    html += `<div class="encabezado-semana" data-semana="${programa.semana}" data-encabezado="${programa.encabezado}"><span class="info-semana">${textoSemana}</span></div>`;
+    html += `<div class="semana-asamblea-bloque"><h2>Semana de Asamblea</h2></div>`;
+    return html;
+  }
+
+  // ===== CASO NORMAL / VISITA / ASAMBLEA CON TABLA =====
+  html += `<div class="encabezado-semana" data-semana="${programa.semana}" data-encabezado="${programa.encabezado}">`;
+  html += `<span class="info-semana">${textoSemana}</span>`;
+
+  if (tipoEspecial === 'asamblea_tabla') {
+    html += `<span class="presidente-row"><strong>Semana de asamblea</strong></span>`;
+  } else {
+    html += `<span class="presidente-row">${iP}Presidente:<input type="text" placeholder="Nombre"></span>`;
+    if (tipoEspecial === 'visita') {
+      html += `<span class="presidente-row visita-super">${iP}Visita del superintendente:<input type="text" placeholder="Nombre"></span>`;
+    }
+  }
+  html += `</div>`;
+
+  html += `<table class="tabla-programa" data-semana="${programa.semana}" data-encabezado="${programa.encabezado}">`;
+
   if (mostrarAperturaCierre && programa.apertura) {
     let t = mostrarTiempo ? programa.apertura : quitarTiempo(programa.apertura);
     html += `<tr class="fila-apertura"><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td style="width:20%;"><input type="text" placeholder="Quién ora"></td></tr>`;
   }
-  
+
   html += `<tr class="titulo-seccion titulo-tesoros"><td colspan="3">${iT}TESOROS DE LA BIBLIA</td></tr>`;
   (programa.tesoros || []).forEach(item => {
     let t = mostrarTiempo ? item : quitarTiempo(item);
     html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Hermano"></td></tr>`;
   });
-  
+
   html += `<tr class="titulo-seccion titulo-maestros"><td colspan="3">${iM}SEAMOS MEJORES MAESTROS</td></tr>`;
   (programa.maestros || []).forEach(item => {
     let t = mostrarTiempo ? item : quitarTiempo(item);
     if (item.toLowerCase().includes('discurso') || item.toLowerCase().includes('¿qué diría?')) {
       html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Hermano"></td></tr>`;
     } else {
-      html += `<tr><td><input type="text" class="input-asignacion" value="${t}"></td><td style="width:20%;"><input type="text" placeholder="Ayudante"></td><td style="width:20%;"><input type="text" placeholder="Estudiante"></td></tr>`;
+      html += `<tr><td><input type="text" class="input-asignacion" value="${t}"></td><td style="width:20%;"><input type="text" placeholder="Publicador"></td><td style="width:20%;"><input type="text" placeholder="Ayudante"></td></tr>`;
     }
   });
-  
+
   html += `<tr class="titulo-seccion titulo-vida"><td colspan="3">${iV}NUESTRA VIDA CRISTIANA</td></tr>`;
   (programa.vida_cristiana || []).forEach(item => {
     let t = mostrarTiempo ? item : quitarTiempo(item);
-    html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Hermano"></td></tr>`;
+    const esEstudio = item.toLowerCase().includes('estudio bíblico de la congregación');
+
+    if (tipoEspecial === 'visita' && esEstudio) {
+      html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="Discurso de servicio"></td><td><input type="text" placeholder="Hermano"></td></tr>`;
+    } else if (esEstudio) {
+      html += `<tr><td><input type="text" class="input-asignacion" value="${t}"></td><td style="width:15%;"><input type="text" placeholder="Conductor"></td><td style="width:15%;"><input type="text" placeholder="Lector"></td></tr>`;
+    } else {
+      html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Hermano"></td></tr>`;
+    }
   });
-  
+
   if (mostrarAperturaCierre && programa.cierre) {
     let t = mostrarTiempo ? programa.cierre : quitarTiempo(programa.cierre);
     html += `<tr class="fila-cierre"><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Quién ora"></td></tr>`;
   }
-  
+
   html += '</table>';
   return html;
 }
@@ -1257,36 +1457,64 @@ function cerrarModalNombres() {
   document.getElementById('modal-nombres').classList.add('hidden');
 }
 
-function cargarNombresEnTabla() {
-  const tbody = document.getElementById('cuerpo-tabla-nombres');
-  if (!db) {
-    tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;padding:20px;color:#999;">Base de datos no disponible</td></tr>';
-    return;
-  }
-  const tx = db.transaction(['sugerencias'], 'readonly');
-  const store = tx.objectStore('sugerencias');
-  const getAll = store.getAll();
-  getAll.onsuccess = () => {
-    const registros = getAll.result.sort((a, b) => a.nombre.localeCompare(b.nombre));
-    if (registros.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;padding:20px;color:#999;">No hay nombres guardados</td></tr>';
-      return;
+function obtenerUltimaSemanaDe(nombre) {
+  const objetivo = nombre.toLowerCase().trim();
+  let ultima = null;
+  document.querySelectorAll('.tabla-programa').forEach(tabla => {
+    const semana = parseInt(tabla.dataset.semana);
+    if (isNaN(semana)) return;
+
+    let encontrado = false;
+
+    // Buscar en inputs de nombres (excluye input-asignacion y congregación)
+    tabla.querySelectorAll('input[type="text"]:not(.input-asignacion):not(.input-congregacion)').forEach(input => {
+      if (input.value.trim().toLowerCase() === objetivo) encontrado = true;
+    });
+
+    // Buscar en el Presidente (está fuera de la tabla)
+    const presidente = tabla.previousElementSibling?.querySelector('.presidente-row input')?.value?.trim().toLowerCase();
+    if (presidente === objetivo) encontrado = true;
+
+    // Buscar en "Visita del superintendente" si existe
+    tabla.previousElementSibling?.querySelectorAll('.presidente-row input').forEach(inp => {
+      if (inp.value.trim().toLowerCase() === objetivo) encontrado = true;
+    });
+
+    if (encontrado) {
+      if (ultima === null || semana > ultima) ultima = semana;
     }
-    tbody.innerHTML = registros.map(r => `
-      <tr data-id="${r.id}">
-        <td>
-          <input type="text" class="editar-nombre" value="${r.nombre.replace(/"/g, '&quot;')}" data-original="${r.nombre.replace(/"/g, '&quot;')}">
-        </td>
-        <td style="white-space: nowrap;">
-          <button class="btn-accion btn-guardar" onclick="guardarEdicionNombre(${r.id}, this)"><span class="material-icons mi-sm" style="font-size:14px;">check</span></button>
-          <button class="btn-accion btn-eliminar" onclick="eliminarNombre(${r.id})"><span class="material-icons mi-sm" style="font-size:14px;">delete</span></button>
-        </td>
-      </tr>
-    `).join('');
-  };
-  getAll.onerror = () => {
-    tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;padding:20px;color:#e53935;">Error al cargar</td></tr>';
-  };
+  });
+  return ultima;
+}
+
+function obtenerUltimaSemanaDe(nombre) {
+  const objetivo = nombre.toLowerCase().trim();
+  let ultima = null;
+  document.querySelectorAll('.tabla-programa').forEach(tabla => {
+    const semana = parseInt(tabla.dataset.semana);
+    if (isNaN(semana)) return;
+
+    let encontrado = false;
+
+    // Buscar en inputs de nombres (excluye input-asignacion y congregación)
+    tabla.querySelectorAll('input[type="text"]:not(.input-asignacion):not(.input-congregacion)').forEach(input => {
+      if (input.value.trim().toLowerCase() === objetivo) encontrado = true;
+    });
+
+    // Buscar en el Presidente (está fuera de la tabla)
+    const presidente = tabla.previousElementSibling?.querySelector('.presidente-row input')?.value?.trim().toLowerCase();
+    if (presidente === objetivo) encontrado = true;
+
+    // Buscar en "Visita del superintendente" si existe
+    tabla.previousElementSibling?.querySelectorAll('.presidente-row input').forEach(inp => {
+      if (inp.value.trim().toLowerCase() === objetivo) encontrado = true;
+    });
+
+    if (encontrado) {
+      if (ultima === null || semana > ultima) ultima = semana;
+    }
+  });
+  return ultima;
 }
 
 function guardarEdicionNombre(id, boton) {
@@ -1308,7 +1536,6 @@ function guardarEdicionNombre(id, boton) {
     store.put(registro);
     tx.oncomplete = () => {
       input.dataset.original = nuevoNombre;
-      // Feedback visual rápido
       boton.style.background = '#66bb6a';
       setTimeout(() => { boton.style.background = ''; }, 600);
     };
@@ -1323,9 +1550,104 @@ function eliminarNombre(id) {
   tx.oncomplete = () => cargarNombresEnTabla();
 }
 
+// ==========================================
+// SEMANAS ESPECIALES
+// ==========================================
+function abrirModalSemanasEspeciales() {
+  if (!datosJSON) return alert('Carga primero el JSON de programas');
+
+  const semanaInicial = parseInt(document.getElementById('semana-inicial').value);
+  const semanaFinal = parseInt(document.getElementById('semana-final').value);
+
+  const programas = datosJSON.programas
+    .filter(p => (p.anio || new Date().getFullYear()) === anioSeleccionado)
+    .filter(p => p.semana >= semanaInicial && p.semana <= semanaFinal)
+    .sort((a, b) => a.semana - b.semana);
+
+  if (programas.length === 0) return alert('No hay semanas cargadas en el rango actual');
+
+  const selectSemana = document.getElementById('select-semana-especial');
+  selectSemana.innerHTML = '';
+  programas.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.semana;
+    opt.textContent = `Sem. ${p.semana} - ${p.encabezado}`;
+    selectSemana.appendChild(opt);
+  });
+
+  actualizarSelectTipoYMuestra(selectSemana.value);
+
+  selectSemana.onchange = () => actualizarSelectTipoYMuestra(selectSemana.value);
+
+  document.getElementById('select-tipo-especial').onchange = () => {
+    actualizarVisibilidadToggleConservar();
+  };
+
+  document.getElementById('modal-semanas-especiales').classList.remove('hidden');
+}
+
+function actualizarSelectTipoYMuestra(semana) {
+  const valor = semanasEspeciales[semana] || '';
+  const selectTipo = document.getElementById('select-tipo-especial');
+  const toggle = document.getElementById('toggle-conservar-tabla');
+
+  if (valor === 'asamblea') {
+    selectTipo.value = 'asamblea';
+    toggle.checked = false;
+  } else if (valor === 'asamblea_tabla') {
+    selectTipo.value = 'asamblea';
+    toggle.checked = true;
+  } else {
+    selectTipo.value = valor;
+    toggle.checked = false;
+  }
+
+  actualizarVisibilidadToggleConservar();
+}
+
+function actualizarVisibilidadToggleConservar() {
+  const tipo = document.getElementById('select-tipo-especial').value;
+  const wrap = document.getElementById('wrap-toggle-conservar-tabla');
+  wrap.style.display = tipo === 'asamblea' ? 'block' : 'none';
+}
+
+function aplicarSemanaEspecial() {
+  const semana = parseInt(document.getElementById('select-semana-especial').value);
+  const tipo = document.getElementById('select-tipo-especial').value;
+  const toggleEl = document.getElementById('toggle-conservar-tabla');
+  const conservar = toggleEl ? toggleEl.checked : false;
+
+  if (!semana) return;
+
+  if (tipo === 'asamblea' && semanasEspeciales[semana] !== 'asamblea' && semanasEspeciales[semana] !== 'asamblea_tabla') {
+    if (!confirm('Al marcar esta semana como Asamblea, se ocultarán todas las asignaciones.\n¿Continuar?')) return;
+  }
+
+  if (tipo === '') {
+    delete semanasEspeciales[semana];
+  } else if (tipo === 'asamblea') {
+    semanasEspeciales[semana] = conservar ? 'asamblea_tabla' : 'asamblea';
+  } else {
+    semanasEspeciales[semana] = tipo;
+  }
+
+  guardarSemanasEspeciales();
+  cerrarModalSemanasEspeciales();
+  renderizarSemanas();
+}
+
+function cerrarModalSemanasEspeciales() {
+  document.getElementById('modal-semanas-especiales').classList.add('hidden');
+}
+
+// ==========================================
+// INICIALIZACIÓN
+// ==========================================
 document.addEventListener('DOMContentLoaded', async () => {
   await abrirIndexedDB();
   cargarConfiguracion();
+  const stored = localStorage.getItem('semanasEspeciales');
+  if (stored) { try { semanasEspeciales = JSON.parse(stored); } catch(e){} }
   await cargarJSON();
 });
 </script>

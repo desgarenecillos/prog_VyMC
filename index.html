@@ -31,10 +31,12 @@
   --size-secciones: 11px;
   --size-tabla: 10px;
   --size-iconos: 14px;
-  --align-secciones: center;
+  --align-secciones: left;
   --ribbon-bg: #f3f3f3;
   --ribbon-border: #d6d6d6;
   --ribbon-accent: #6a1b9a;
+  --color-etiquetas-maestros: #ffffff;
+  --opacidad-etiquetas-maestros: 0.6;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -216,7 +218,21 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
   border: none; border-bottom: 1px solid #999; font-size: 14px; text-align: center;
   width: 300px; padding: 3px; background: transparent;
 }
-.encabezado-doc h2 input:focus { outline: none; border-bottom: 2px solid var(--txt-encabezado); }
+.encabezado-doc h2 {font-size: 14px; font-weight: normal; color: var(--txt-tabla); display: flex; justify-content: center; align-items: baseline; gap: 6px; flex-wrap: nowrap;
+}
+.encabezado-doc h2 input {
+  border: none;
+  border-bottom: 1px solid #999;
+  font-size: 14px;
+  text-align: left;
+  padding: 2px 6px;
+  background: transparent;
+  min-width: 80px;
+  max-width: 60%;
+  field-sizing: content;
+}
+.encabezado-doc h2 input:focus { outline: none; border-bottom: 2px solid var(--txt-encabezado);
+}
 
 .tabla-programa {
   width: 100%; border-collapse: collapse; margin-bottom: 15px;
@@ -224,10 +240,10 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
 }
 .tabla-programa td { border: 1px solid #333; padding: 3px 5px; vertical-align: middle; color: var(--txt-tabla); }
 .fila-apertura { background: var(--bg-apertura) !important; }
-.fila-apertura td { color: var(--txt-apertura); font-size: var(--size-apertura); padding: 4px 5px; }
+.fila-apertura td { color: var(--txt-apertura); font-size: var(--size-apertura); padding: 2px 5px; }
 .fila-cierre { background: var(--bg-cierre) !important; }
-.fila-cierre td { color: var(--txt-cierre); font-size: var(--size-cierre); padding: 4px 5px; }
-.titulo-seccion td { color: var(--txt-secciones); font-weight: bold; font-size: var(--size-secciones); text-align: var(--align-secciones); padding: 4px; }
+.fila-cierre td { color: var(--txt-cierre); font-size: var(--size-cierre); padding: 2px 5px; }
+.titulo-seccion td { color: var(--txt-secciones);height: 15px; font-weight: bold; font-size: var(--size-secciones); text-align: var(--align-secciones); padding:2px 2px 6px;}
 .titulo-tesoros { background: var(--bg-tesoros) !important; }
 .titulo-maestros { background: var(--bg-maestros) !important; }
 .titulo-vida { background: var(--bg-vida) !important; }
@@ -354,10 +370,364 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
 .tabla-programa input[placeholder="Conductor"] {
   font-weight: bold;
 }
+td.td-etiqueta {
+  position: relative;
+  padding-top: 2px !important;
+}
+td.td-etiqueta .etiqueta-flotante {
+  position: absolute;
+  top: -7px;
+  left: 5px;
+  font-size: 8px;
+  color: var(--color-etiquetas-maestros);
+  opacity: var(--opacidad-etiquetas-maestros);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  pointer-events: none;
+  line-height: 1;
+  z-index: 1;
+}
+.ribbon-control input[type="range"] {
+  width: 80px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--ribbon-accent);
+}
+
+/* ==========================================
+   INPUTS DE HERMANOS (readonly, estilo botón)
+   ========================================== */
+.input-hermano {
+  cursor: pointer;
+  user-select: none;
+  caret-color: transparent;
+  border-radius: 2px;
+  transition: background 0.15s;
+}
+.input-hermano:hover {
+  background: rgba(106, 27, 154, 0.08);
+}
+.input-hermano:focus {
+  outline: none !important;
+  background: rgba(106, 27, 154, 0.12);
+}
+.input-hermano:placeholder-shown {
+  color: #aaa !important;
+  font-weight: normal !important;
+  background: rgba(0, 0, 0, 0.02);
+}
+.encabezado-semana .presidente-row .input-hermano {
+  border-bottom: 1px solid #999;
+  border-radius: 0;
+}
+
+/* ==========================================
+   MODAL SELECCIONAR HERMANO
+   ========================================== */
+.hermano-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.1s;
+}
+.hermano-item:hover {
+  background: #f5f0fa;
+}
+.hermano-item:last-child {
+  border-bottom: none;
+}
+.hermano-item .nombre {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+.hermano-item .info-der {
+  font-size: 11px;
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.badge-contador {
+  background: #ff9800;
+  color: white;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: bold;
+}
+.hermano-agregar {
+  padding: 10px 14px;
+  cursor: pointer;
+  border-top: 1px dashed #ddd;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1e88e5;
+  font-size: 13px;
+  font-weight: 600;
+}
+.hermano-agregar:hover {
+  background: #e3f2fd;
+}
+/* ==========================================
+   FICHA S-89 — Asignación para la reunión
+   Replica exacta del formato impreso
+   ========================================== */
+.ficha-s89-wrap {
+  width: 800px;
+  padding: 20px;
+  background: #e8e8e8;
+  font-family: Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+  display: inline-block;
+}
+
+.ficha-s89 {
+  background: #ffffff;
+  padding: 28px 34px 18px 34px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  box-sizing: border-box;
+  color: #000;
+  font-size: 17px;
+  line-height: 1.35;
+}
+
+.ficha-s89 h2 {
+  font-size: 21px;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  margin: 0 0 22px 0;
+  color: #000;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.ficha-s89 .campo {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 10px;
+  min-height: 28px;
+}
+
+.ficha-s89 .campo label {
+  font-weight: bold;
+  font-size: 17px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding-right: 8px;
+  color: #000;
+}
+
+.ficha-s89 .campo .valor {
+  flex: 1;
+  border-bottom: 1px solid #000;
+  padding: 2px 6px 4px 6px;
+  font-size: 17px;
+  min-height: 24px;
+  color: #000;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.ficha-s89 .campo .valor:empty::after {
+  content: "\00a0";
+}
+
+.ficha-s89 .subtitulo {
+  font-weight: bold;
+  font-size: 17px;
+  margin: 12px 0 6px 0;
+  color: #000;
+}
+
+.ficha-s89 .checkboxes {
+  padding-left: 22px;
+  margin-bottom: 12px;
+}
+
+.ficha-s89 .checkboxes .linea-check {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  font-size: 17px;
+  color: #000;
+}
+
+.ficha-s89 .checkboxes .linea-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0 10px 0 0;
+  cursor: default;
+  pointer-events: none;
+  accent-color: #000;
+}
+
+.ficha-s89 .nota {
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: justify;
+  margin: 14px 0 10px 0;
+  color: #000;
+}
+
+.ficha-s89 .nota strong {
+  font-style: italic;
+  font-weight: bold;
+}
+
+.ficha-s89 .footer-codigo {
+  font-size: 13px;
+  color: #000;
+  margin-top: 12px;
+}
+
+/* ==========================================
+   MODAL HOJA DE ASIGNACIONES (Fichas S-89)
+   ========================================== */
+
+/* Barra de pestañas por semana */
+.tabs-semanas-asig {
+  display: flex;
+  overflow-x: auto;
+  gap: 4px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 14px;
+  flex-shrink: 0;
+  scrollbar-width: thin;
+}
+
+.tabs-semanas-asig .tab-semana-asig {
+  padding: 8px 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px 4px 0 0;
+  background: #f5f5f5;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  white-space: nowrap;
+  color: #444;
+  border-bottom: none;
+  transition: all 0.15s;
+}
+
+.tabs-semanas-asig .tab-semana-asig:hover {
+  background: #e8e8e8;
+}
+
+.tabs-semanas-asig .tab-semana-asig.active {
+  background: white;
+  color: var(--ribbon-accent);
+  font-weight: bold;
+  border-color: var(--ribbon-accent);
+  box-shadow: 0 1px 0 white;
+  transform: translateY(1px);
+}
+
+.tabs-semanas-asig .tab-semana-asig .badge-tab {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  background: var(--ribbon-accent);
+  color: white;
+  font-size: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.tabs-semanas-asig .tab-semana-asig.active .badge-tab {
+  background: white;
+  color: var(--ribbon-accent);
+}
+
+/* Contenedor scrolleable */
+.contenido-hoja-asig {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 4px 16px 4px;
+  min-height: 240px;
+  scrollbar-width: thin;
+}
+
+/* Cada ficha como imagen */
+.ficha-s89-img-wrap {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.ficha-s89-img-wrap img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  background: white;
+}
+
+.ficha-s89-img-wrap img:hover {
+  transform: scale(1.005);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.ficha-s89-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  font-size: 12px;
+  color: #666;
+  background: #f9f9f9;
+  border-radius: 3px;
+  margin-bottom: 6px;
+}
+
+.ficha-s89-meta .nombre-asig {
+  font-weight: 600;
+  color: #333;
+  font-size: 13px;
+}
+
+.ficha-s89-meta .sem-info {
+  color: #888;
+}
+
+/* Mensajes de estado */
+.hoja-asig-vacia,
+.hoja-asig-cargando {
+  padding: 50px 20px;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.hoja-asig-cargando {
+  color: #666;
+}
+
+.hoja-asig-cargando .material-icons {
+  font-size: 32px;
+  animation: girar 1.2s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+@keyframes girar {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 </style>
 </head>
 <body>
-
 <div id="ribbon">
   <div class="ribbon-tabs">
     <button class="ribbon-tab" onclick="toggleRibbon('tab-colores-texto', this)"><span class="material-icons">format_color_text</span>Colores Texto</button>
@@ -367,6 +737,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
     <button class="ribbon-tab" onclick="toggleRibbon('tab-exportar', this)"><span class="material-icons">save_alt</span>Guardar / Exportar</button>
   </div>
 
+  <!-- PESTAÑA: COLORES TEXTO -->
   <div id="tab-colores-texto" class="ribbon-panel">
     <div class="ribbon-groups">
       <div class="ribbon-group">
@@ -390,9 +761,23 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
         </div>
         <div class="ribbon-group-label">Contenido</div>
       </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>Etiquetas Maestros</label><input type="color" id="c-etiquetas-maestros" value="#ffffff" onchange="setVar('--color-etiquetas-maestros', this.value)"></div>
+          <div class="ribbon-control"><label>Opacidad</label><input type="range" id="o-etiquetas-maestros" min="0" max="1" step="0.05" value="0.8" oninput="setVar('--opacidad-etiquetas-maestros', this.value)"></div>
+        </div>
+        <div class="ribbon-group-label">Etiquetas flotantes</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>&nbsp;</label><button class="ribbon-action-btn" onclick="resetearColoresTexto()"><span class="material-icons mi-sm">restart_alt</span>Resetear</button></div>
+        </div>
+        <div class="ribbon-group-label">Restaurar</div>
+      </div>
     </div>
   </div>
 
+  <!-- PESTAÑA: COLORES FONDO -->
   <div id="tab-colores-fondo" class="ribbon-panel">
     <div class="ribbon-groups">
       <div class="ribbon-group">
@@ -417,9 +802,16 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
         </div>
         <div class="ribbon-group-label">Secciones</div>
       </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>&nbsp;</label><button class="ribbon-action-btn" onclick="resetearColoresFondo()"><span class="material-icons mi-sm">restart_alt</span>Resetear</button></div>
+        </div>
+        <div class="ribbon-group-label">Restaurar</div>
+      </div>
     </div>
   </div>
 
+  <!-- PESTAÑA: TAMAÑOS -->
   <div id="tab-tamanos" class="ribbon-panel">
     <div class="ribbon-groups">
       <div class="ribbon-group">
@@ -449,33 +841,39 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
           <div class="ribbon-control">
             <label>Alineación Secciones</label>
             <div class="align-group">
-              <button class="align-btn" onclick="setAlign('left', this)" title="Izquierda"><span class="material-icons mi-sm">format_align_left</span></button>
-              <button class="align-btn active" onclick="setAlign('center', this)" title="Centro"><span class="material-icons mi-sm">format_align_center</span></button>
+              <button class="align-btn active" onclick="setAlign('left', this)" title="Izquierda"><span class="material-icons mi-sm">format_align_left</span></button>
+              <button class="align-btn" onclick="setAlign('center', this)" title="Centro"><span class="material-icons mi-sm">format_align_center</span></button>
               <button class="align-btn" onclick="setAlign('right', this)" title="Derecha"><span class="material-icons mi-sm">format_align_right</span></button>
             </div>
           </div>
         </div>
         <div class="ribbon-group-label">Alineación</div>
       </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>&nbsp;</label><button class="ribbon-action-btn" onclick="resetearTamanos()"><span class="material-icons mi-sm">restart_alt</span>Resetear</button></div>
+        </div>
+        <div class="ribbon-group-label">Restaurar</div>
+      </div>
     </div>
   </div>
 
+  <!-- PESTAÑA: CONFIGURACIÓN -->
   <div id="tab-configuracion" class="ribbon-panel">
     <div class="ribbon-groups">
+
+      <!-- Rango de Semanas + Año -->
       <div class="ribbon-group">
-        <div class="ribbon-group-content">
-          <div class="ribbon-control"><label>Año</label><select id="select-anio" onchange="actualizarSelectsSemanas()"></select></div>
-        </div>
-        <div class="ribbon-group-label">Año</div>
-      </div>
-      <div class="ribbon-group">
-        <div class="ribbon-group-content">
-          <div class="ribbon-control"><label>Desde</label><select id="semana-inicial" onchange="renderizarSemanas()"></select></div>
-          <div class="ribbon-control"><label>Hasta</label><select id="semana-final" onchange="renderizarSemanas()"></select></div>
-          <div class="ribbon-control"><label>&nbsp;</label><button class="ribbon-action-btn accent" onclick="renderizarSemanas()"><span class="material-icons mi-sm">refresh</span>Cargar</button></div>
+        <div class="ribbon-group-content" style="display: grid; grid-template-columns: 1fr auto; gap: 4px; align-items: center; padding: 4px;">
+          <select id="semana-inicial" onchange="renderizarSemanas()" style="padding: 3px 6px; border: 1px solid #bbb; border-radius: 3px; font-size: 11px; font-family: inherit; max-width: 180px; width: 100%;"></select>
+          <select id="select-anio" onchange="actualizarSelectsSemanas()" style="padding: 3px 6px; border: 1px solid #bbb; border-radius: 3px; font-size: 11px; font-family: inherit; max-width: 80px;"></select>
+          <select id="semana-final" onchange="renderizarSemanas()" style="padding: 3px 6px; border: 1px solid #bbb; border-radius: 3px; font-size: 11px; font-family: inherit; max-width: 180px; width: 100%;"></select>
+          <button class="ribbon-action-btn accent" onclick="renderizarSemanas()" style="justify-content: center;"><span class="material-icons mi-sm">refresh</span>Cargar</button>
         </div>
         <div class="ribbon-group-label">Rango de Semanas</div>
       </div>
+
+      <!-- Semanas Especiales -->
       <div class="ribbon-group">
         <div class="ribbon-group-content">
           <div class="ribbon-control">
@@ -487,26 +885,8 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
         </div>
         <div class="ribbon-group-label">Especiales</div>
       </div>
-      <div class="ribbon-group">
-        <div class="ribbon-group-content" style="flex-direction: column; align-items: flex-start; gap: 2px;">
-          <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-apertura-cierre" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label><span>Apertura y Cierre</span></div>
-          <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-repetir-titulo" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label><span>Repetir título en hojas</span></div>
-        </div>
-        <div class="ribbon-group-label">Visualización</div>
-      </div>
-      <div class="ribbon-group">
-        <div class="ribbon-group-content" style="flex-direction: column; align-items: flex-start; gap: 2px;">
-          <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-numero-semana" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label><span>Número de semana</span></div>
-          <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-tiempo" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label><span>Tiempo asignaciones</span></div>
-        </div>
-        <div class="ribbon-group-label">Contenido</div>
-      </div>
-      <div class="ribbon-group">
-        <div class="ribbon-group-content">
-          <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-iconos" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label><span>Iconos</span></div>
-        </div>
-        <div class="ribbon-group-label">Iconos</div>
-      </div>
+
+      <!-- Gestionar Nombres -->
       <div class="ribbon-group">
         <div class="ribbon-group-content">
           <div class="ribbon-control">
@@ -518,9 +898,64 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
         </div>
         <div class="ribbon-group-label">Nombres guardados</div>
       </div>
+
+      <!-- Hoja de Asignaciones -->
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control">
+            <label>Fichas de asignación</label>
+            <button class="ribbon-action-btn green" onclick="abrirModalHojaAsignaciones()">
+              <span class="material-icons mi-sm">assignment</span>Hoja de Asignaciones
+            </button>
+          </div>
+        </div>
+        <div class="ribbon-group-label">Fichas S-89</div>
+      </div>
+
+      <!-- Visualización -->
+      <div class="ribbon-group">
+        <div class="ribbon-group-content" style="flex-direction: column; align-items: flex-start; gap: 2px;">
+          <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-apertura-cierre" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label><span>Apertura y Cierre</span></div>
+          <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-repetir-titulo" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label><span>Repetir título en hojas</span></div>
+        </div>
+        <div class="ribbon-group-label">Visualización</div>
+      </div>
+
+      <!-- Contenido -->
+      <div class="ribbon-group">
+        <div class="ribbon-group-content" style="flex-direction: column; align-items: flex-start; gap: 2px;">
+          <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-numero-semana" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label><span>Número de semana</span></div>
+          <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-tiempo" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label><span>Tiempo asignaciones</span></div>
+        </div>
+        <div class="ribbon-group-label">Contenido</div>
+      </div>
+
+      <!-- Iconos y Etiquetas -->
+      <div class="ribbon-group">
+        <div class="ribbon-group-content" style="flex-direction: column; align-items: flex-start; gap: 2px;">
+          <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-iconos" checked onchange="renderizarSemanas()"><span class="toggle-slider"></span></label><span>Iconos</span></div>
+          <div class="ribbon-toggle"><label class="toggle-switch"><input type="checkbox" id="toggle-etiquetas-maestros" onchange="renderizarSemanas()"><span class="toggle-slider"></span></label><span>Etiquetas maestros</span></div>
+        </div>
+        <div class="ribbon-group-label">Iconos y Etiquetas</div>
+      </div>
+
+      <!-- Mantenimiento -->
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control">
+            <label>Limpiar</label>
+            <button class="ribbon-action-btn" onclick="limpiarMesesPasados()" style="background:#e53935; color:white; border-color:#e53935;">
+              <span class="material-icons mi-sm">delete_sweep</span>Meses Pasados
+            </button>
+          </div>
+        </div>
+        <div class="ribbon-group-label">Mantenimiento</div>
+      </div>
+
     </div>
   </div>
 
+  <!-- PESTAÑA: EXPORTAR -->
   <div id="tab-exportar" class="ribbon-panel">
     <div class="ribbon-groups">
       <div class="ribbon-group">
@@ -547,6 +982,18 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
         </div>
         <div class="ribbon-group-label">Imágenes</div>
       </div>
+      <!-- ⚠️ TEMPORAL: Botón para copiar JSON al portapapeles -->
+<div class="ribbon-group">
+  <div class="ribbon-group-content">
+    <div class="ribbon-control">
+      <label>Temporal</label>
+      <button class="ribbon-action-btn" onclick="copiarJSONAlPortapapeles()" style="background:#9c27b0; color:white; border-color:#9c27b0;">
+        <span class="material-icons mi-sm">content_copy</span>Copiar JSON
+      </button>
+    </div>
+  </div>
+  <div class="ribbon-group-label">Portapapeles</div>
+</div>
       <div class="ribbon-group">
         <div class="ribbon-group-content">
           <div class="ribbon-control"><label>Liviano local</label><button class="ribbon-action-btn green" onclick="descargarJSONLiviano()"><span class="material-icons mi-sm">data_object</span>JSON Liviano</button></div>
@@ -561,6 +1008,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
 
 <div id="area-contenido"></div>
 
+<!-- MODAL: Gestionar nombres guardados -->
 <div id="modal-nombres" class="modal-overlay hidden">
   <div class="modal-box" style="max-width: 650px;">
     <h3>Gestionar nombres guardados</h3>
@@ -592,6 +1040,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
   </div>
 </div>
 
+<!-- MODAL: Semanas especiales -->
 <div id="modal-semanas-especiales" class="modal-overlay hidden">
   <div class="modal-box">
     <h3>Semanas Especiales</h3>
@@ -607,15 +1056,15 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
         <option value="visita">Semana de Visita</option>
         <option value="asamblea">Semana de Asamblea</option>
       </select>
-      <div id="wrap-toggle-conservar-tabla" style="margin-bottom:12px; display:none;">
-  <div class="ribbon-toggle">
-    <label class="toggle-switch">
-      <input type="checkbox" id="toggle-conservar-tabla">
-      <span class="toggle-slider"></span>
-    </label>
-    <span>Conservar tabla de asignaciones</span>
-  </div>
-</div>
+      <div id="wrap-toggle-conservar-tabla" style="margin-top:12px; display:none;">
+        <div class="ribbon-toggle">
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggle-conservar-tabla">
+            <span class="toggle-slider"></span>
+          </label>
+          <span>Conservar tabla de asignaciones</span>
+        </div>
+      </div>
     </div>
     <div class="modal-buttons">
       <button class="btn-cancelar" onclick="cerrarModalSemanasEspeciales()">Cancelar</button>
@@ -624,6 +1073,7 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
   </div>
 </div>
 
+<!-- MODAL: Preguntar guardar nombres -->
 <div id="modal-guardar" class="modal-overlay hidden">
   <div class="modal-box">
     <h3>Guardar nombres para futuros rellenos</h3>
@@ -639,12 +1089,77 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #
   </div>
 </div>
 
+<!-- MODAL: Seleccionar hermano -->
+<div id="modal-seleccionar-hermano" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width: 550px;">
+    <h3 style="margin-bottom:8px;">Asignar hermano</h3>
+    <p id="contexto-asignacion" style="font-size:12px; color:#666; margin-bottom:12px; padding:6px 10px; background:#f5f5f5; border-radius:4px;"></p>
+
+    <div style="display:flex; gap:6px; margin-bottom:12px; align-items: stretch;">
+      <input type="text" id="busqueda-hermano" placeholder="Buscar o escribir un nombre nuevo..." 
+             style="flex:1; padding:10px 12px; border:1px solid #ccc; border-radius:4px; font-family:inherit; font-size:14px;"
+             oninput="filtrarListaHermanos()"
+             onkeydown="if(event.key==='Enter'){agregarOAplicarDesdeBuscador();}">
+      <button class="ribbon-action-btn green" onclick="agregarOAplicarDesdeBuscador()" title="Añadir/asignar" style="padding: 10px 14px; min-width: 46px; justify-content: center;">
+        <span class="material-icons">check</span>
+      </button>
+    </div>
+
+    <div id="lista-hermanos" style="max-height: 350px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px; margin-bottom: 12px;"></div>
+
+    <div class="modal-buttons">
+      <button id="btn-quitar-asignacion" class="btn-no hidden" onclick="quitarAsignacionActual()">Quitar asignación</button>
+      <button class="btn-cancelar" onclick="cerrarModalSeleccionar()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Hoja de Asignaciones (Fichas S-89) -->
+<div id="modal-hoja-asignaciones" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width: 92vw; width: 900px; max-height: 92vh; display: flex; flex-direction: column; padding: 20px;">
+    <h3 style="margin-bottom:6px;">Hoja de Asignaciones</h3>
+    <p style="margin-bottom:14px; font-size:13px; color:#666;">Fichas S-89 para las asignaciones de Lectura de la Biblia y Seamos Mejores Maestros (semanas futuras).</p>
+
+    <div id="tabs-semanas-asig" class="tabs-semanas-asig"></div>
+
+    <div id="contenido-hoja-asignaciones" class="contenido-hoja-asig"></div>
+
+    <div class="modal-buttons" style="margin-top:12px;">
+      <button class="btn-cancelar" onclick="cerrarModalHojaAsignaciones()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Importar JSON -->
+<div id="modal-importar" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width: 600px;">
+    <h3>Importar JSON</h3>
+    <p style="margin-bottom:10px; font-size:13px; color:#666;">Pega el JSON exportado. Se restaurarán la configuración, las asignaciones y las semanas especiales.</p>
+
+    <textarea id="textarea-importar" 
+              placeholder="Pega aquí el JSON..."
+              style="width:100%; height:220px; padding:10px; border:1px solid #ccc; border-radius:4px; font-family:monospace; font-size:12px; resize:vertical; box-sizing:border-box; margin-bottom:12px;"></textarea>
+
+    <div class="modal-buttons">
+      <button class="btn-cancelar" onclick="cerrarModalImportar()">Cancelar</button>
+      <button class="btn-si" onclick="aplicarImportacion()">Importar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Contenedor off-screen para renderizar las fichas S-89 antes de convertirlas a imagen -->
+<div id="ficha-s89-render" style="position: fixed; left: -10000px; top: 0; pointer-events: none;"></div>
+
 <script>
 let datosJSON = null;
 let db = null;
 let anioSeleccionado = null;
-let semanasEspeciales = {}; // { numeroSemana: 'visita' | 'asamblea' | 'asamblea_tabla' }
-let callbackModalGuardar = null; // acción pendiente tras el modal
+let semanasEspeciales = {};
+let callbackModalGuardar = null;
+let inputHermanoActual = null;
+let semanasConAsignaciones = [];
+let semanaActivaAsig = null;
+let asignacionesGuardadas = {};
 
 // ==========================================
 // INDEXEDDB
@@ -661,14 +1176,6 @@ function abrirIndexedDB() {
     request.onsuccess = (e) => { db = e.target.result; resolve(db); };
     request.onerror = (e) => reject(e);
   });
-}
-
-function cambiarPreferenciaPreguntar(preguntar) {
-  if (preguntar) {
-    localStorage.removeItem('noPreguntarGuardar');
-  } else {
-    localStorage.setItem('noPreguntarGuardar', 'true');
-  }
 }
 
 function guardarSugerencia(nombre) {
@@ -694,14 +1201,14 @@ function obtenerSugerencias(filtro = '') {
       let resultados = getAll.result;
       if (filtro) resultados = resultados.filter(r => r.nombre.toLowerCase().includes(filtro.toLowerCase()));
       resultados.sort((a, b) => a.nombre.localeCompare(b.nombre));
-      resolve(resultados.slice(0, 10));
+      resolve(resultados.slice(0, 30));
     };
     getAll.onerror = () => resolve([]);
   });
 }
 
 // ==========================================
-// LOCALSTORAGE
+// LOCALSTORAGE — CONFIG
 // ==========================================
 function guardarConfiguracion() {
   const config = {
@@ -712,6 +1219,10 @@ function guardarConfiguracion() {
       '--txt-cierre': document.getElementById('c-txt-cierre').value,
       '--txt-secciones': document.getElementById('c-txt-secciones').value,
       '--txt-tabla': document.getElementById('c-txt-tabla').value
+    },
+    coloresEtiquetas: {
+      '--color-etiquetas-maestros': document.getElementById('c-etiquetas-maestros').value,
+      '--opacidad-etiquetas-maestros': document.getElementById('o-etiquetas-maestros').value
     },
     coloresFondo: {
       '--bg-encabezado': document.getElementById('c-bg-encabezado').value,
@@ -737,14 +1248,11 @@ function guardarConfiguracion() {
       'toggle-repetir-titulo': document.getElementById('toggle-repetir-titulo').checked,
       'toggle-numero-semana': document.getElementById('toggle-numero-semana').checked,
       'toggle-tiempo': document.getElementById('toggle-tiempo').checked,
-      'toggle-iconos': document.getElementById('toggle-iconos').checked
+      'toggle-iconos': document.getElementById('toggle-iconos').checked,
+      'toggle-etiquetas-maestros': document.getElementById('toggle-etiquetas-maestros').checked
     }
   };
   localStorage.setItem('configPrograma', JSON.stringify(config));
-}
-
-function guardarSemanasEspeciales() {
-  localStorage.setItem('semanasEspeciales', JSON.stringify(semanasEspeciales));
 }
 
 function cargarConfiguracion() {
@@ -758,6 +1266,15 @@ function cargarConfiguracion() {
         const inp = document.getElementById('c-' + v.replace('--txt-', 'txt-'));
         if (inp) inp.value = val;
       }
+    }
+    if (config.coloresEtiquetas) {
+      for (let [v, val] of Object.entries(config.coloresEtiquetas)) {
+        document.documentElement.style.setProperty(v, val);
+      }
+      const cInp = document.getElementById('c-etiquetas-maestros');
+      const oInp = document.getElementById('o-etiquetas-maestros');
+      if (cInp) cInp.value = config.coloresEtiquetas['--color-etiquetas-maestros'] || '#ffffff';
+      if (oInp) oInp.value = config.coloresEtiquetas['--opacidad-etiquetas-maestros'] || '0.8';
     }
     if (config.coloresFondo) {
       for (let [v, val] of Object.entries(config.coloresFondo)) {
@@ -774,7 +1291,7 @@ function cargarConfiguracion() {
           if (inp) inp.value = parseInt(val);
         }
       }
-      const alignActual = (config.tamanos['--align-secciones'] || 'center').trim();
+      const alignActual = (config.tamanos['--align-secciones'] || 'left').trim();
       const botones = document.querySelectorAll('.align-btn');
       const mapa = { left: 0, center: 1, right: 2 };
       botones.forEach(b => b.classList.remove('active'));
@@ -787,6 +1304,72 @@ function cargarConfiguracion() {
       }
     }
   } catch (e) { console.error('Error cargando configuración:', e); }
+}
+
+// ==========================================
+// PERSISTENCIA DE ASIGNACIONES
+// ==========================================
+function guardarAsignaciones() {
+  localStorage.setItem('asignacionesGuardadas', JSON.stringify(asignacionesGuardadas));
+}
+
+function cargarAsignaciones() {
+  const str = localStorage.getItem('asignacionesGuardadas');
+  if (!str) return;
+  try { asignacionesGuardadas = JSON.parse(str) || {}; } catch (e) { asignacionesGuardadas = {}; }
+}
+
+function guardarSemanasEspeciales() {
+  localStorage.setItem('semanasEspeciales', JSON.stringify(semanasEspeciales));
+}
+
+function setValorAsignacion(key, valor) {
+  if (!key) return;
+  if (valor === '' || valor === null || valor === undefined) {
+    delete asignacionesGuardadas[key];
+  } else {
+    asignacionesGuardadas[key] = valor;
+  }
+  guardarAsignaciones();
+}
+
+function aplicarAsignacionesGuardadas() {
+  document.querySelectorAll('[data-key]').forEach(input => {
+    const key = input.dataset.key;
+    if (key && asignacionesGuardadas[key] !== undefined) {
+      if (input.value !== asignacionesGuardadas[key]) {
+        input.value = asignacionesGuardadas[key];
+      }
+    }
+  });
+}
+
+document.addEventListener('input', (e) => {
+  const input = e.target;
+  if (!input || !input.dataset || !input.dataset.key) return;
+  setValorAsignacion(input.dataset.key, input.value);
+});
+
+function limpiarMesesPasados() {
+  const semanaActual = obtenerSemanaActual();
+  const keys = Object.keys(asignacionesGuardadas);
+  const keysABorrar = keys.filter(k => {
+    const m = k.match(/^s(\d+)_/);
+    if (!m) return false;
+    return parseInt(m[1]) < semanaActual;
+  });
+
+  if (keysABorrar.length === 0) {
+    alert(`No hay datos de semanas anteriores a la semana ${semanaActual}.\n\nTodo limpio ✨`);
+    return;
+  }
+
+  if (!confirm(`Se eliminarán los datos de ${keysABorrar.length} asignaciones de semanas anteriores a la ${semanaActual}.\n\n¿Continuar?`)) return;
+
+  keysABorrar.forEach(k => delete asignacionesGuardadas[k]);
+  guardarAsignaciones();
+  alert(`✅ Se eliminaron ${keysABorrar.length} datos de semanas pasadas.`);
+  renderizarSemanas();
 }
 
 // ==========================================
@@ -826,18 +1409,13 @@ document.addEventListener('click', (e) => {
   if (!e.target.closest('.submenu-container')) cerrarSubmenus();
 });
 
-// ==========================================
-// SUBMENÚ DE IMÁGENES
-// ==========================================
 function actualizarSubmenuImagenes() {
   const hojas = document.querySelectorAll('.hoja');
   const submenu = document.getElementById('submenu-imagenes');
   let html = '';
-  
   hojas.forEach((hoja, i) => {
     html += `<button class="submenu-item" onclick="descargarImagenIndividual(${i}); cerrarSubmenus();"><span class="material-icons">image</span>Página ${i + 1}</button>`;
   });
-  
   if (hojas.length > 1) {
     html += '<div class="submenu-divider"></div>';
     html += `<button class="submenu-item" onclick="descargarImagenes(); cerrarSubmenus();"><span class="material-icons">collections</span>Todas (individual)</button>`;
@@ -846,7 +1424,6 @@ function actualizarSubmenuImagenes() {
     html += '<div class="submenu-divider"></div>';
     html += `<button class="submenu-item" onclick="descargarImagenes(); cerrarSubmenus();"><span class="material-icons">collections</span>Descargar</button>`;
   }
-  
   submenu.innerHTML = html;
 }
 
@@ -860,6 +1437,86 @@ function setAlign(valor, boton) {
   document.querySelectorAll('.align-btn').forEach(b => b.classList.remove('active'));
   boton.classList.add('active');
   guardarConfiguracion();
+  if (typeof renderizarSemanas === 'function' && datosJSON) renderizarSemanas();
+}
+
+function resetearColoresTexto() {
+  const defaults = {
+    '--txt-encabezado': '#6a1b9a',
+    '--txt-semana': '#6a1b9a',
+    '--txt-apertura': '#000000',
+    '--txt-cierre': '#000000',
+    '--txt-secciones': '#ffffff',
+    '--txt-tabla': '#000000',
+    '--color-etiquetas-maestros': '#ffffff',
+    '--opacidad-etiquetas-maestros': '0.8'
+  };
+  const inputs = {
+    '--txt-encabezado': 'c-txt-encabezado',
+    '--txt-semana': 'c-txt-semana',
+    '--txt-apertura': 'c-txt-apertura',
+    '--txt-cierre': 'c-txt-cierre',
+    '--txt-secciones': 'c-txt-secciones',
+    '--txt-tabla': 'c-txt-tabla',
+    '--color-etiquetas-maestros': 'c-etiquetas-maestros',
+    '--opacidad-etiquetas-maestros': 'o-etiquetas-maestros'
+  };
+  for (let [varName, valor] of Object.entries(defaults)) {
+    document.documentElement.style.setProperty(varName, valor);
+    const el = document.getElementById(inputs[varName]);
+    if (el) el.value = valor;
+  }
+  guardarConfiguracion();
+}
+
+function resetearColoresFondo() {
+  const defaults = {
+    '--bg-encabezado': '#ffffff',
+    '--bg-semana': '#ffffff',
+    '--bg-apertura': '#f3e5f5',
+    '--bg-cierre': '#f3e5f5',
+    '--bg-tesoros': '#2A6B77',
+    '--bg-maestros': '#9B6D17',
+    '--bg-vida': '#942926'
+  };
+  const inputs = {
+    '--bg-encabezado': 'c-bg-encabezado',
+    '--bg-semana': 'c-bg-semana',
+    '--bg-apertura': 'c-bg-apertura',
+    '--bg-cierre': 'c-bg-cierre',
+    '--bg-tesoros': 'c-bg-tesoros',
+    '--bg-maestros': 'c-bg-maestros',
+    '--bg-vida': 'c-bg-vida'
+  };
+  for (let [varName, valor] of Object.entries(defaults)) {
+    document.documentElement.style.setProperty(varName, valor);
+    const el = document.getElementById(inputs[varName]);
+    if (el) el.value = valor;
+  }
+  guardarConfiguracion();
+}
+
+function resetearTamanos() {
+  const defaults = {
+    '--size-encabezado': 18,
+    '--size-semana': 12,
+    '--size-apertura': 10,
+    '--size-cierre': 10,
+    '--size-secciones': 11,
+    '--size-tabla': 10,
+    '--size-iconos': 14
+  };
+  for (let [varName, valor] of Object.entries(defaults)) {
+    document.documentElement.style.setProperty(varName, valor + 'px');
+    const inputId = 's-' + varName.replace('--size-', '');
+    const el = document.getElementById(inputId);
+    if (el) el.value = valor;
+  }
+  document.documentElement.style.setProperty('--align-secciones', 'left');
+  const botones = document.querySelectorAll('.align-btn');
+  botones.forEach(b => b.classList.remove('active'));
+  if (botones[0]) botones[0].classList.add('active');
+  guardarConfiguracion();
 }
 
 function quitarTiempo(texto) { return texto.replace(/\s*\(\d+\s*mins?\.\)\s*/gi, '').trim(); }
@@ -867,19 +1524,30 @@ function quitarTiempo(texto) { return texto.replace(/\s*\(\d+\s*mins?\.\)\s*/gi,
 function obtenerSemanaActual() {
   const ahora = new Date();
   const inicio = new Date(ahora.getFullYear(), 0, 1);
-  const dias = Math.floor((ahora - inicio) / (24*60*60*1000));
+  const dias = Math.floor((ahora - inicio) / (24 * 60 * 60 * 1000));
   return Math.ceil((dias + inicio.getDay() + 1) / 7);
+}
+
+function escaparHTML(texto) {
+  if (texto === null || texto === undefined) return '';
+  return String(texto)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 function prepararParaExportar() {
   guardarConfiguracion();
+  guardarAsignaciones();
   document.querySelectorAll('input').forEach(input => { input.setAttribute('value', input.value); });
   document.querySelectorAll('.autocomplete-list').forEach(list => list.classList.remove('visible'));
   cerrarSubmenus();
 }
 
 // ==========================================
-// AUTOCOMPLETADO
+// AUTOCOMPLETADO (solo congregación)
 // ==========================================
 function crearAutocomplete(input) {
   const wrapper = document.createElement('div');
@@ -889,7 +1557,7 @@ function crearAutocomplete(input) {
   input.parentNode.insertBefore(wrapper, input);
   wrapper.appendChild(input);
   wrapper.appendChild(list);
-  
+
   input.addEventListener('input', async () => {
     const valor = input.value.trim();
     if (valor.length < 1) { list.classList.remove('visible'); return; }
@@ -906,7 +1574,145 @@ function crearAutocomplete(input) {
 }
 
 // ==========================================
-// CAPTURAR HOJA (SIN CORTES DE TEXTO)
+// MODAL SELECCIONAR HERMANO
+// ==========================================
+function abrirModalSeleccionar(input) {
+  inputHermanoActual = input;
+  const tabla = input.closest('.tabla-programa');
+  const encSemana = input.closest('.encabezado-semana');
+
+  let contextoTxt = '';
+  if (tabla) {
+    const semana = tabla.dataset.semana;
+    const enc = tabla.previousElementSibling;
+    const infoSem = enc?.querySelector('.info-semana')?.textContent?.split('|')[0].trim() || '';
+    contextoTxt = `Semana ${semana} — ${infoSem}`;
+  } else if (encSemana) {
+    const semana = encSemana.dataset.semana;
+    const infoSem = encSemana.querySelector('.info-semana')?.textContent?.split('|')[0].trim() || '';
+    contextoTxt = `Semana ${semana} — ${infoSem}`;
+  }
+
+  const tipo = input.placeholder || 'Asignado';
+  contextoTxt += ` — ${tipo}`;
+  document.getElementById('contexto-asignacion').textContent = contextoTxt;
+
+  const inputBusq = document.getElementById('busqueda-hermano');
+  inputBusq.value = '';
+  document.getElementById('btn-quitar-asignacion').classList.toggle('hidden', input.value.trim() === '');
+
+  filtrarListaHermanos();
+  document.getElementById('modal-seleccionar-hermano').classList.remove('hidden');
+  setTimeout(() => inputBusq.focus(), 100);
+}
+
+async function filtrarListaHermanos() {
+  const filtro = document.getElementById('busqueda-hermano').value.trim();
+  const lista = document.getElementById('lista-hermanos');
+  const sugerencias = await obtenerSugerencias(filtro);
+
+  lista.innerHTML = '';
+
+  let semanaActual = null;
+  if (inputHermanoActual) {
+    const tabla = inputHermanoActual.closest('.tabla-programa');
+    const encSem = inputHermanoActual.closest('.encabezado-semana');
+    if (tabla) semanaActual = parseInt(tabla.dataset.semana);
+    else if (encSem) semanaActual = parseInt(encSem.dataset.semana);
+  }
+
+  if (sugerencias.length === 0 && !filtro) {
+    lista.innerHTML = '<div style="padding:24px 16px;text-align:center;color:#999;font-size:13px;line-height:1.6;">No hay nombres guardados aún.<br>Escribe un nombre en el buscador y pulsa <strong>✓</strong> o Enter para añadirlo.</div>';
+    return;
+  }
+
+  sugerencias.forEach(s => {
+    const ultima = obtenerUltimaSemanaDe(s.nombre);
+    const textoUltima = ultima !== null ? `Última: sem. ${ultima}` : 'Sin asignaciones';
+
+    let contador = 0;
+    if (semanaActual) {
+      document.querySelectorAll('.tabla-programa').forEach(t => {
+        if (parseInt(t.dataset.semana) === semanaActual) {
+          t.querySelectorAll('.input-hermano').forEach(inp => {
+            if (inp.value.trim().toLowerCase() === s.nombre.toLowerCase()) contador++;
+          });
+        }
+      });
+      document.querySelectorAll('.encabezado-semana').forEach(enc => {
+        if (parseInt(enc.dataset.semana) === semanaActual) {
+          enc.querySelectorAll('.input-hermano').forEach(inp => {
+            if (inp.value.trim().toLowerCase() === s.nombre.toLowerCase()) contador++;
+          });
+        }
+      });
+    }
+
+    const badge = contador > 0 ? `<span class="badge-contador">${contador}×</span>` : '';
+    const div = document.createElement('div');
+    div.className = 'hermano-item';
+    div.dataset.nombre = s.nombre;
+    div.innerHTML = `<span class="nombre">${escaparHTML(s.nombre)}</span><span class="info-der">${badge}<span>${textoUltima}</span></span>`;
+    div.addEventListener('click', () => seleccionarHermano(s.nombre));
+    lista.appendChild(div);
+  });
+
+  if (sugerencias.length === 0 && filtro) {
+    const div = document.createElement('div');
+    div.style.cssText = 'padding:24px 16px;text-align:center;color:#999;font-size:13px;line-height:1.6;';
+    div.innerHTML = `No hay coincidencias con "<strong>${escaparHTML(filtro)}</strong>".<br>Pulsa <strong>✓</strong> o Enter para añadirlo como nuevo.`;
+    lista.appendChild(div);
+  }
+
+  if (filtro && !sugerencias.some(s => s.nombre.toLowerCase() === filtro.toLowerCase())) {
+    const divNuevo = document.createElement('div');
+    divNuevo.className = 'hermano-agregar';
+    divNuevo.innerHTML = '<span class="material-icons" style="font-size:18px;">add_circle</span><span></span>';
+    divNuevo.querySelector('span:last-child').textContent = `Añadir "${filtro}" como nuevo`;
+    divNuevo.addEventListener('click', () => seleccionarHermanoYGuardar(filtro));
+    lista.appendChild(divNuevo);
+  }
+}
+
+function seleccionarHermano(nombre) {
+  if (inputHermanoActual) {
+    inputHermanoActual.value = nombre;
+    if (inputHermanoActual.dataset.key) {
+      setValorAsignacion(inputHermanoActual.dataset.key, nombre);
+    }
+  }
+  cerrarModalSeleccionar();
+}
+
+function seleccionarHermanoYGuardar(nombre) {
+  guardarSugerencia(nombre);
+  seleccionarHermano(nombre);
+}
+
+function quitarAsignacionActual() {
+  if (inputHermanoActual) {
+    inputHermanoActual.value = '';
+    if (inputHermanoActual.dataset.key) {
+      setValorAsignacion(inputHermanoActual.dataset.key, '');
+    }
+  }
+  cerrarModalSeleccionar();
+}
+
+function cerrarModalSeleccionar() {
+  document.getElementById('modal-seleccionar-hermano').classList.add('hidden');
+  inputHermanoActual = null;
+}
+
+function agregarOAplicarDesdeBuscador() {
+  const valor = document.getElementById('busqueda-hermano').value.trim();
+  if (!valor) return;
+  guardarSugerencia(valor);
+  seleccionarHermano(valor);
+}
+
+// ==========================================
+// CAPTURAR HOJA
 // ==========================================
 async function capturarHoja(hoja) {
   const clone = hoja.cloneNode(true);
@@ -927,9 +1733,12 @@ async function capturarHoja(hoja) {
     span.className = 'texto-export' + (tieneValor ? '' : ' es-placeholder');
 
     if (input.classList.contains('input-congregacion')) {
-      span.style.textAlign = 'center';
+      span.style.textAlign = 'left';
       span.style.borderBottom = '1px solid #999';
-      span.style.width = '300px';
+      span.style.display = 'inline-block';
+      span.style.width = 'auto';
+      span.style.padding = '2px 6px';
+      span.style.minWidth = '80px';
     } else if (input.closest('.presidente-row')) {
       span.style.borderBottom = '1px solid #999';
       span.style.width = '120px';
@@ -970,10 +1779,13 @@ function obtenerNombresDeInputs() {
     const valor = input.value.trim();
     if (valor) nombres.add(valor);
   });
+  document.querySelectorAll('.encabezado-semana input.input-hermano').forEach(input => {
+    const valor = input.value.trim();
+    if (valor) nombres.add(valor);
+  });
   return Array.from(nombres);
 }
 
-// Envuelve cualquier acción de exportación: primero prepara, luego pregunta (si aplica) y ejecuta
 function conGuardarNombres(accion) {
   prepararParaExportar();
   const noPreguntar = localStorage.getItem('noPreguntarGuardar') === 'true';
@@ -987,7 +1799,6 @@ function conGuardarNombres(accion) {
     return;
   }
 
-  // Guardar la acción pendiente y abrir el modal
   callbackModalGuardar = accion;
   document.getElementById('modal-guardar').classList.remove('hidden');
 }
@@ -1017,16 +1828,14 @@ function cerrarModal() {
 }
 
 // ==========================================
-// EXPORTAR: PDF
+// EXPORTAR
 // ==========================================
 function descargarPDF() {
   conGuardarNombres(async () => {
     const hojas = document.querySelectorAll('.hoja');
     if (hojas.length === 0) return alert('No hay contenido para exportar');
-
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF('p', 'mm', 'a4');
-
     for (let i = 0; i < hojas.length; i++) {
       if (i > 0) pdf.addPage();
       const canvas = await capturarHoja(hojas[i]);
@@ -1035,19 +1844,14 @@ function descargarPDF() {
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, Math.min(imgHeight, 297));
     }
-
     pdf.save('programa_reunion.pdf');
   });
 }
 
-// ==========================================
-// EXPORTAR: IMÁGENES
-// ==========================================
 function descargarImagenIndividual(indice) {
   conGuardarNombres(async () => {
     const hojas = document.querySelectorAll('.hoja');
     if (indice >= hojas.length) return;
-
     const canvas = await capturarHoja(hojas[indice]);
     const link = document.createElement('a');
     link.download = `programa_pagina_${indice + 1}.png`;
@@ -1060,7 +1864,6 @@ function descargarImagenes() {
   conGuardarNombres(async () => {
     const hojas = document.querySelectorAll('.hoja');
     if (hojas.length === 0) return alert('No hay contenido para exportar');
-
     for (let i = 0; i < hojas.length; i++) {
       const canvas = await capturarHoja(hojas[i]);
       const link = document.createElement('a');
@@ -1076,15 +1879,12 @@ function descargarZIP() {
   conGuardarNombres(async () => {
     const hojas = document.querySelectorAll('.hoja');
     if (hojas.length === 0) return alert('No hay contenido para exportar');
-
     const zip = new JSZip();
-
     for (let i = 0; i < hojas.length; i++) {
       const canvas = await capturarHoja(hojas[i]);
       const imgData = canvas.toDataURL('image/png').split(',')[1];
       zip.file(`programa_pagina_${i + 1}.png`, imgData, { base64: true });
     }
-
     const blob = await zip.generateAsync({ type: 'blob' });
     const link = document.createElement('a');
     link.download = 'programa_reunion_imagenes.zip';
@@ -1094,15 +1894,12 @@ function descargarZIP() {
   });
 }
 
-// ==========================================
-// IMPRESIÓN
-// ==========================================
 function manejarImpresion() {
   conGuardarNombres(() => window.print());
 }
 
 // ==========================================
-// EXPORTAR: JSON LIVIANO
+// JSON LIVIANO
 // ==========================================
 function exportarJSONLiviano() {
   const configStr = localStorage.getItem('configPrograma');
@@ -1161,14 +1958,13 @@ function exportarJSONLiviano() {
     programasLivianos.push(obj);
   });
 
-  return { congregacion, anio: anioSeleccionado, configuracion, programas: programasLivianos };
+  return { congregacion, anio: anioSeleccionado, configuracion, semanasEspeciales, programas: programasLivianos };
 }
 
 function descargarJSONLiviano() {
   conGuardarNombres(() => {
     const json = exportarJSONLiviano();
     if (!json) return;
-
     const texto = JSON.stringify(json, null, 2);
 
     const totalAsignados = json.programas.reduce((acc, p) => acc + p.a.filter(x => x).length + p.m.filter(x => x).length + p.v.filter(x => x).length, 0);
@@ -1198,7 +1994,6 @@ function descargarJSONLiviano() {
           prompt('JSON liviano (cópialo):', texto);
         }
       }, 500);
-
     } catch (e) {
       prompt('JSON liviano (cópialo manual):', texto);
     }
@@ -1237,6 +2032,452 @@ function compartirJsonbin() {
     const link = `${location.origin}${location.pathname.replace(/[^/]+$/, '')}ver.html?jsonbin=${b64}`;
     prompt('Link oculto JsonBin:', link);
   });
+}
+
+// ==========================================
+// TEMPORAL: Copiar JSON al portapapeles
+// ==========================================
+function copiarJSONAlPortapapeles() {
+  prepararParaExportar();
+  const json = exportarJSONLiviano();
+  if (!json) return;
+  const texto = JSON.stringify(json, null, 2);
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(texto).then(() => {
+      alert('✅ JSON copiado al portapapeles.\n\nAhora pégalo en tu archivo .json.');
+    }).catch(() => copiarFallback(texto));
+  } else {
+    copiarFallback(texto);
+  }
+}
+
+function copiarFallback(texto) {
+  const ta = document.createElement('textarea');
+  ta.value = texto;
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  ta.style.top = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try {
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    if (ok) {
+      alert('✅ JSON copiado al portapapeles.\n\nAhora pégalo en tu archivo .json.');
+    } else {
+      prompt('No se pudo copiar automáticamente. Cópialo manualmente:', texto);
+    }
+  } catch (e) {
+    document.body.removeChild(ta);
+    prompt('No se pudo copiar automáticamente. Cópialo manualmente:', texto);
+  }
+}
+
+// ==========================================
+// IMPORTAR JSON
+// ==========================================
+function abrirModalImportar() {
+  document.getElementById('textarea-importar').value = '';
+  document.getElementById('modal-importar').classList.remove('hidden');
+  setTimeout(() => document.getElementById('textarea-importar').focus(), 100);
+}
+
+function cerrarModalImportar() {
+  document.getElementById('modal-importar').classList.add('hidden');
+}
+
+function aplicarImportacion() {
+  const texto = document.getElementById('textarea-importar').value.trim();
+  if (!texto) {
+    alert('Por favor, pega el JSON primero.');
+    return;
+  }
+
+  let json;
+  try {
+    json = JSON.parse(texto);
+  } catch (e) {
+    alert('❌ El JSON no es válido:\n\n' + e.message);
+    return;
+  }
+
+  if (!json.programas || !Array.isArray(json.programas)) {
+    alert('⚠️ El JSON no tiene el formato esperado (falta "programas").');
+    return;
+  }
+
+  if (json.configuracion) {
+    const cfg = json.configuracion;
+    if (cfg.coloresTexto) {
+      for (let [v, val] of Object.entries(cfg.coloresTexto)) {
+        document.documentElement.style.setProperty(v, val);
+        const inp = document.getElementById('c-' + v.replace('--txt-', 'txt-'));
+        if (inp) inp.value = val;
+      }
+    }
+    if (cfg.coloresEtiquetas) {
+      for (let [v, val] of Object.entries(cfg.coloresEtiquetas)) {
+        document.documentElement.style.setProperty(v, val);
+      }
+      const cInp = document.getElementById('c-etiquetas-maestros');
+      const oInp = document.getElementById('o-etiquetas-maestros');
+      if (cInp) cInp.value = cfg.coloresEtiquetas['--color-etiquetas-maestros'] || '#ffffff';
+      if (oInp) oInp.value = cfg.coloresEtiquetas['--opacidad-etiquetas-maestros'] || '0.8';
+    }
+    if (cfg.coloresFondo) {
+      for (let [v, val] of Object.entries(cfg.coloresFondo)) {
+        document.documentElement.style.setProperty(v, val);
+        const inp = document.getElementById('c-' + v.replace('--bg-', 'bg-'));
+        if (inp) inp.value = val;
+      }
+    }
+    if (cfg.tamanos) {
+      for (let [v, val] of Object.entries(cfg.tamanos)) {
+        document.documentElement.style.setProperty(v, val);
+        if (v !== '--align-secciones') {
+          const inp = document.getElementById('s-' + v.replace('--size-', ''));
+          if (inp) inp.value = parseInt(val);
+        }
+      }
+      const alignActual = (cfg.tamanos['--align-secciones'] || 'left').trim();
+      const botones = document.querySelectorAll('.align-btn');
+      const mapa = { left: 0, center: 1, right: 2 };
+      botones.forEach(b => b.classList.remove('active'));
+      if (botones[mapa[alignActual]]) botones[mapa[alignActual]].classList.add('active');
+    }
+    if (cfg.toggles) {
+      for (let [id, checked] of Object.entries(cfg.toggles)) {
+        const t = document.getElementById(id);
+        if (t) t.checked = checked;
+      }
+    }
+  }
+
+  if (json.semanasEspeciales && typeof json.semanasEspeciales === 'object') {
+    semanasEspeciales = { ...json.semanasEspeciales };
+    guardarSemanasEspeciales();
+  }
+
+  asignacionesGuardadas = {};
+
+  if (json.congregacion) {
+    asignacionesGuardadas['congregacion'] = json.congregacion;
+  }
+
+  json.programas.forEach(prog => {
+    const s = prog.semana;
+    if (!s) return;
+
+    if (prog.pres) asignacionesGuardadas[`s${s}_pres`] = prog.pres;
+
+    if (prog.ora) {
+      const partes = prog.ora.split(' / ');
+      if (partes[0]) asignacionesGuardadas[`s${s}_aora`] = partes[0];
+      if (partes[1]) asignacionesGuardadas[`s${s}_cora`] = partes[1];
+    }
+
+    if (Array.isArray(prog.a)) {
+      prog.a.forEach((valor, i) => {
+        if (valor) asignacionesGuardadas[`s${s}_t${i}_h`] = valor;
+      });
+    }
+
+    if (Array.isArray(prog.m)) {
+      prog.m.forEach((valor, i) => {
+        if (!valor) return;
+        const partes = valor.split(' / ');
+        const programaBase = datosJSON.programas.find(p => p.semana === s && (p.anio || 2026) === anioSeleccionado);
+        const textoAsig = programaBase?.maestros?.[i] || '';
+        const esDiscurso = textoAsig.toLowerCase().includes('discurso') || textoAsig.toLowerCase().includes('¿qué diría?');
+        if (esDiscurso) {
+          asignacionesGuardadas[`s${s}_md${i}_h`] = partes[0] || '';
+        } else {
+          if (partes[0]) asignacionesGuardadas[`s${s}_m${i}_p`] = partes[0];
+          if (partes[1]) asignacionesGuardadas[`s${s}_m${i}_a`] = partes[1];
+        }
+      });
+    }
+
+    if (Array.isArray(prog.v)) {
+      prog.v.forEach((valor, i) => {
+        if (!valor) return;
+        const programaBase = datosJSON.programas.find(p => p.semana === s && (p.anio || 2026) === anioSeleccionado);
+        const textoAsig = programaBase?.vida_cristiana?.[i] || '';
+        const esEstudio = textoAsig.toLowerCase().includes('estudio bíblico de la congregación');
+        const partes = valor.split(' / ');
+        if (esEstudio) {
+          if (partes[0]) asignacionesGuardadas[`s${s}_ve${i}_c`] = partes[0];
+          if (partes[1]) asignacionesGuardadas[`s${s}_ve${i}_l`] = partes[1];
+        } else {
+          asignacionesGuardadas[`s${s}_v${i}_h`] = partes[0] || '';
+        }
+      });
+    }
+  });
+
+  guardarConfiguracion();
+  guardarAsignaciones();
+  cerrarModalImportar();
+  renderizarSemanas();
+
+  alert('✅ JSON importado correctamente.\n\nSe restauraron:\n- Configuración visual\n- Semanas especiales\n- Asignaciones\n- Congregación');
+}
+
+// ==========================================
+// FICHA S-89
+// ==========================================
+function generarFichaS89(datos) {
+  const nombre = (datos.nombre || '').trim();
+  const ayudante = (datos.ayudante || '').trim();
+  const fecha = (datos.fecha || '').trim();
+  const intervencion = (datos.intervencion || '').trim();
+  const codigo = datos.codigo || 'S-89-S 11/23';
+
+  return `
+    <div class="ficha-s89">
+      <h2>Asignación para la reunión de entre semana</h2>
+      <div class="campo">
+        <label>Nombre:</label>
+        <div class="valor">${escaparHTML(nombre)}</div>
+      </div>
+      <div class="campo">
+        <label>Ayudante:</label>
+        <div class="valor">${escaparHTML(ayudante)}</div>
+      </div>
+      <div class="campo">
+        <label>Fecha:</label>
+        <div class="valor">${escaparHTML(fecha)}</div>
+      </div>
+      <div class="campo">
+        <label>Intervención núm.:</label>
+        <div class="valor">${escaparHTML(intervencion)}</div>
+      </div>
+      <div class="subtitulo">Se presentará en:</div>
+      <div class="checkboxes">
+        <div class="linea-check"><input type="checkbox" checked disabled><span>Sala principal</span></div>
+        <div class="linea-check"><input type="checkbox" disabled><span>Sala auxiliar núm. 1</span></div>
+        <div class="linea-check"><input type="checkbox" disabled><span>Sala auxiliar núm. 2</span></div>
+      </div>
+      <div class="nota">
+        <strong>Nota al estudiante:</strong> En la <em>Guía de actividades</em> encontrará la información que necesita para su intervención. Repase también las indicaciones que se describen en las <em>Instrucciones para la reunión Vida y Ministerio Cristianos</em> (S-38).
+      </div>
+      <div class="footer-codigo">${escaparHTML(codigo)}</div>
+    </div>
+  `;
+}
+
+function prepararFichaEnDOM(datos) {
+  const contenedor = document.getElementById('ficha-s89-render');
+  if (!contenedor) return null;
+  contenedor.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.className = 'ficha-s89-wrap';
+  wrap.innerHTML = generarFichaS89(datos);
+  contenedor.appendChild(wrap);
+  return wrap;
+}
+
+// ==========================================
+// MODAL HOJA DE ASIGNACIONES
+// ==========================================
+function abrirModalHojaAsignaciones() {
+  const semanaActual = obtenerSemanaActual();
+  semanasConAsignaciones = [];
+
+  document.querySelectorAll('.tabla-programa').forEach(tabla => {
+    const semana = parseInt(tabla.dataset.semana);
+    if (isNaN(semana)) return;
+    if (semana <= semanaActual) return;
+
+    const fecha = tabla.dataset.encabezado || '';
+    const tipoEsp = semanasEspeciales[semana];
+    if (tipoEsp === 'asamblea') return;
+
+    const filas = tabla.querySelectorAll('tr');
+    let seccion = null;
+    let idxTesoros = 0;
+    const fichas = [];
+
+    filas.forEach(fila => {
+      if (fila.classList.contains('titulo-tesoros')) { seccion = 'tesoros'; idxTesoros = 0; return; }
+      if (fila.classList.contains('titulo-maestros')) { seccion = 'maestros'; return; }
+      if (fila.classList.contains('titulo-vida')) { seccion = 'vida'; return; }
+
+      if (fila.classList.contains('fila-apertura') || fila.classList.contains('fila-cierre')) return;
+
+      const inputAsig = fila.querySelector('.input-asignacion');
+      if (!inputAsig) return;
+      const intervencion = inputAsig.value.trim();
+      if (!intervencion) return;
+
+      const inputsNombres = [...fila.querySelectorAll('.input-hermano')];
+      if (inputsNombres.length === 0) return;
+
+      const nombre = inputsNombres[0].value.trim();
+      if (!nombre) return;
+
+      const ayudante = inputsNombres[1] ? inputsNombres[1].value.trim() : '';
+
+      if (seccion === 'tesoros') {
+        if (idxTesoros === 2) {
+          fichas.push({ nombre, ayudante: '', intervencion });
+        }
+        idxTesoros++;
+        return;
+      }
+
+      if (seccion === 'maestros') {
+        const textoLower = intervencion.toLowerCase();
+        if (!textoLower.includes('¿qué diría?')) {
+          fichas.push({ nombre, ayudante, intervencion });
+        }
+        return;
+      }
+    });
+
+    if (fichas.length > 0) {
+      semanasConAsignaciones.push({ semana, fecha, fichas });
+    }
+  });
+
+  const tabsCont = document.getElementById('tabs-semanas-asig');
+  const contenidoCont = document.getElementById('contenido-hoja-asignaciones');
+  tabsCont.innerHTML = '';
+  contenidoCont.innerHTML = '';
+
+  if (semanasConAsignaciones.length === 0) {
+    contenidoCont.innerHTML = '<div class="hoja-asig-vacia">📭 No hay asignaciones en semanas futuras.<br>Asegúrate de haber cargado semanas posteriores a la actual y de haber asignado nombres.</div>';
+    document.getElementById('modal-hoja-asignaciones').classList.remove('hidden');
+    return;
+  }
+
+  semanasConAsignaciones.sort((a, b) => a.semana - b.semana);
+
+  semanasConAsignaciones.forEach((item, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-semana-asig' + (i === 0 ? ' active' : '');
+    btn.textContent = `Sem ${item.semana}`;
+    const badge = document.createElement('span');
+    badge.className = 'badge-tab';
+    badge.textContent = item.fichas.length;
+    btn.appendChild(badge);
+    btn.onclick = () => activarTabSemana(item.semana, btn);
+    tabsCont.appendChild(btn);
+  });
+
+  semanaActivaAsig = semanasConAsignaciones[0].semana;
+  renderizarFichasSemana(semanaActivaAsig);
+  document.getElementById('modal-hoja-asignaciones').classList.remove('hidden');
+}
+
+function cerrarModalHojaAsignaciones() {
+  document.getElementById('modal-hoja-asignaciones').classList.add('hidden');
+  document.getElementById('contenido-hoja-asignaciones').innerHTML = '';
+  document.getElementById('tabs-semanas-asig').innerHTML = '';
+  semanasConAsignaciones = [];
+  semanaActivaAsig = null;
+}
+
+function activarTabSemana(semana, boton) {
+  document.querySelectorAll('#tabs-semanas-asig .tab-semana-asig').forEach(t => t.classList.remove('active'));
+  boton.classList.add('active');
+  semanaActivaAsig = semana;
+  renderizarFichasSemana(semana);
+}
+
+async function renderizarFichasSemana(semana) {
+  const cont = document.getElementById('contenido-hoja-asignaciones');
+  const item = semanasConAsignaciones.find(s => s.semana === semana);
+  if (!item) return;
+
+  cont.innerHTML = '<div class="hoja-asig-cargando"><span class="material-icons">autorenew</span>Generando fichas...</div>';
+  await new Promise(r => setTimeout(r, 50));
+  cont.innerHTML = '';
+
+  for (const ficha of item.fichas) {
+    const meta = document.createElement('div');
+    meta.className = 'ficha-s89-meta';
+    meta.innerHTML = `
+      <span class="nombre-asig">${escaparHTML(ficha.nombre)}</span>
+      <span class="sem-info">Sem ${semana} · ${escaparHTML(item.fecha)}</span>
+    `;
+    cont.appendChild(meta);
+
+    const wrapImg = document.createElement('div');
+    wrapImg.className = 'ficha-s89-img-wrap';
+    cont.appendChild(wrapImg);
+
+    try {
+      const nodoFicha = prepararFichaEnDOM({
+        nombre: ficha.nombre,
+        ayudante: ficha.ayudante,
+        fecha: item.fecha,
+        intervencion: ficha.intervencion,
+        codigo: 'S-89-S 11/23'
+      });
+
+      await new Promise(r => setTimeout(r, 40));
+
+      const canvas = await html2canvas(nodoFicha, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#e8e8e8',
+        scrollX: 0,
+        scrollY: 0,
+        width: nodoFicha.scrollWidth,
+        height: nodoFicha.scrollHeight,
+        windowWidth: nodoFicha.scrollWidth,
+        windowHeight: nodoFicha.scrollHeight
+      });
+
+      const dataURL = canvas.toDataURL('image/png');
+      const img = document.createElement('img');
+      img.src = dataURL;
+      img.alt = `Ficha S-89 - ${ficha.nombre}`;
+      img.dataset.nombre = ficha.nombre;
+      img.addEventListener('click', () => compartirFicha(img));
+      wrapImg.appendChild(img);
+
+      document.getElementById('ficha-s89-render').innerHTML = '';
+
+    } catch (err) {
+      console.error('Error generando ficha:', err);
+      wrapImg.innerHTML = '<div style="padding:20px;color:#c00;font-size:13px;">Error al generar la ficha</div>';
+    }
+  }
+}
+
+async function compartirFicha(img) {
+  try {
+    const res = await fetch(img.src);
+    const blob = await res.blob();
+    const nombre = (img.dataset.nombre || 'asignacion').replace(/[^a-zA-Z0-9]/g, '_');
+    const file = new File([blob], `ficha_${nombre}.png`, { type: 'image/png' });
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: 'Ficha de asignación',
+        text: `Ficha para ${img.dataset.nombre || ''}`
+      });
+      return;
+    }
+
+    const link = document.createElement('a');
+    link.download = `ficha_${nombre}.png`;
+    link.href = img.src;
+    link.click();
+
+  } catch (err) {
+    if (err.name === 'AbortError') return;
+    console.error('Error compartiendo:', err);
+    const link = document.createElement('a');
+    link.download = `ficha_${(img.dataset.nombre || 'asignacion').replace(/[^a-zA-Z0-9]/g, '_')}.png`;
+    link.href = img.src;
+    link.click();
+  }
 }
 
 // ==========================================
@@ -1314,6 +2555,7 @@ function renderizarSemanas() {
   if (!datosJSON) return;
   guardarConfiguracion();
   guardarSemanasEspeciales();
+  guardarAsignaciones();
 
   const semanaInicial = parseInt(document.getElementById('semana-inicial').value);
   const semanaFinal = parseInt(document.getElementById('semana-final').value);
@@ -1322,6 +2564,7 @@ function renderizarSemanas() {
   const mostrarNumeroSemana = document.getElementById('toggle-numero-semana').checked;
   const mostrarTiempo = document.getElementById('toggle-tiempo').checked;
   const mostrarIconos = document.getElementById('toggle-iconos').checked;
+  const mostrarEtiquetas = document.getElementById('toggle-etiquetas-maestros')?.checked || false;
 
   const programas = datosJSON.programas
     .filter(p => (p.anio || new Date().getFullYear()) === anioSeleccionado)
@@ -1339,32 +2582,40 @@ function renderizarSemanas() {
   const grupos = [];
   for (let i = 0; i < programas.length; i += 2) grupos.push(programas.slice(i, i + 2));
 
+  const congregacionGuardada = asignacionesGuardadas['congregacion'] || '';
+
   grupos.forEach((grupo, indice) => {
     const hoja = document.createElement('div');
     hoja.className = 'hoja';
     const mostrarEncabezado = indice === 0 || repetirTitulo;
     let htmlEncabezado = '';
     if (mostrarEncabezado) {
-      htmlEncabezado = `<div class="encabezado-doc"><h1>Programa de Vida y Ministerio Cristiano</h1><h2>Congregación: <input type="text" class="input-congregacion" placeholder="Nombre de la congregación" oninput="sincronizarCongregacion(this.value)"></h2></div>`;
+      const congValue = escaparHTML(congregacionGuardada);
+      htmlEncabezado = `<div class="encabezado-doc"><h1>Programa de Vida y Ministerio Cristiano</h1><h2><span>Congregación:</span> <input type="text" class="input-congregacion" data-key="congregacion" value="${congValue}" placeholder="Nombre de la congregación" oninput="sincronizarCongregacion(this.value)"></h2></div>`;
     }
     let htmlTablas = '';
-    grupo.forEach(programa => { htmlTablas += generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSemana, mostrarTiempo, mostrarIconos); });
+    grupo.forEach(programa => { htmlTablas += generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSemana, mostrarTiempo, mostrarIconos, mostrarEtiquetas); });
     hoja.innerHTML = htmlEncabezado + htmlTablas;
     areaContenido.appendChild(hoja);
   });
 
+  aplicarAsignacionesGuardadas();
+
   setTimeout(() => {
-    document.querySelectorAll('.tabla-programa input[type="text"]').forEach(input => {
+    document.querySelectorAll('.input-congregacion').forEach(input => {
       if (!input.closest('.autocomplete-wrapper')) crearAutocomplete(input);
     });
   }, 100);
 
-  const primerInput = document.querySelector('.input-congregacion');
-  if (primerInput && primerInput.value) sincronizarCongregacion(primerInput.value);
+  document.querySelectorAll('.input-hermano').forEach(inp => {
+    inp.addEventListener('click', () => abrirModalSeleccionar(inp));
+  });
 }
 
-function generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSemana, mostrarTiempo, mostrarIconos) {
+function generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSemana, mostrarTiempo, mostrarIconos, mostrarEtiquetas) {
   const tipoEspecial = semanasEspeciales[programa.semana];
+  const etiquetasActivas = mostrarEtiquetas;
+
   let html = '';
   const iP = mostrarIconos ? '<span class="jw-icon jwico-d"></span>' : '';
   const iT = mostrarIconos ? '<span class="jw-icon jwico-a"></span>' : '';
@@ -1374,67 +2625,73 @@ function generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSema
   let textoSemana = programa.encabezado;
   if (mostrarNumeroSemana) textoSemana += ` | Semana ${programa.semana}`;
 
-  // ===== CASO ASAMBLEA SIN TABLA =====
+  const s = programa.semana;
+
   if (tipoEspecial === 'asamblea') {
-    html += `<div class="encabezado-semana" data-semana="${programa.semana}" data-encabezado="${programa.encabezado}"><span class="info-semana">${textoSemana}</span></div>`;
+    html += `<div class="encabezado-semana" data-semana="${s}" data-encabezado="${programa.encabezado}"><span class="info-semana">${textoSemana}</span></div>`;
     html += `<div class="semana-asamblea-bloque"><h2>Semana de Asamblea</h2></div>`;
     return html;
   }
 
-  // ===== CASO NORMAL / VISITA / ASAMBLEA CON TABLA =====
-  html += `<div class="encabezado-semana" data-semana="${programa.semana}" data-encabezado="${programa.encabezado}">`;
+  html += `<div class="encabezado-semana" data-semana="${s}" data-encabezado="${programa.encabezado}">`;
   html += `<span class="info-semana">${textoSemana}</span>`;
 
   if (tipoEspecial === 'asamblea_tabla') {
     html += `<span class="presidente-row"><strong>Semana de asamblea</strong></span>`;
   } else {
-    html += `<span class="presidente-row">${iP}Presidente:<input type="text" placeholder="Nombre"></span>`;
+    html += `<span class="presidente-row">${iP}Presidente:<input type="text" class="input-hermano" data-key="s${s}_pres" readonly placeholder="Nombre"></span>`;
     if (tipoEspecial === 'visita') {
-      html += `<span class="presidente-row visita-super">${iP}Visita del superintendente:<input type="text" placeholder="Nombre"></span>`;
+      html += `<span class="presidente-row visita-super">${iP}Visita del superintendente:<input type="text" class="input-hermano" data-key="s${s}_vs" readonly placeholder="Nombre"></span>`;
     }
   }
   html += `</div>`;
 
-  html += `<table class="tabla-programa" data-semana="${programa.semana}" data-encabezado="${programa.encabezado}">`;
+  html += `<table class="tabla-programa" data-semana="${s}" data-encabezado="${programa.encabezado}">`;
 
   if (mostrarAperturaCierre && programa.apertura) {
     let t = mostrarTiempo ? programa.apertura : quitarTiempo(programa.apertura);
-    html += `<tr class="fila-apertura"><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td style="width:20%;"><input type="text" placeholder="Quién ora"></td></tr>`;
+    html += `<tr class="fila-apertura"><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td style="width:20%;"><input type="text" class="input-hermano" data-key="s${s}_aora" readonly placeholder="Quién ora"></td></tr>`;
   }
 
   html += `<tr class="titulo-seccion titulo-tesoros"><td colspan="3">${iT}TESOROS DE LA BIBLIA</td></tr>`;
-  (programa.tesoros || []).forEach(item => {
+  (programa.tesoros || []).forEach((item, i) => {
     let t = mostrarTiempo ? item : quitarTiempo(item);
-    html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Hermano"></td></tr>`;
+    html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" class="input-hermano" data-key="s${s}_t${i}_h" readonly placeholder="Hermano"></td></tr>`;
   });
 
   html += `<tr class="titulo-seccion titulo-maestros"><td colspan="3">${iM}SEAMOS MEJORES MAESTROS</td></tr>`;
-  (programa.maestros || []).forEach(item => {
+  let primeraMaestros = true;
+  (programa.maestros || []).forEach((item, i) => {
     let t = mostrarTiempo ? item : quitarTiempo(item);
     if (item.toLowerCase().includes('discurso') || item.toLowerCase().includes('¿qué diría?')) {
-      html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Hermano"></td></tr>`;
+      html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" class="input-hermano" data-key="s${s}_md${i}_h" readonly placeholder="Hermano"></td></tr>`;
     } else {
-      html += `<tr><td><input type="text" class="input-asignacion" value="${t}"></td><td style="width:20%;"><input type="text" placeholder="Publicador"></td><td style="width:20%;"><input type="text" placeholder="Ayudante"></td></tr>`;
+      const conEtiqueta = etiquetasActivas && primeraMaestros;
+      const labelPub = conEtiqueta ? '<span class="etiqueta-flotante">Publicador</span>' : '';
+      const labelAyud = conEtiqueta ? '<span class="etiqueta-flotante">Ayudante</span>' : '';
+      const claseTd = conEtiqueta ? 'td-etiqueta' : '';
+      html += `<tr><td><input type="text" class="input-asignacion" value="${t}"></td><td style="width:20%;" class="${claseTd}">${labelPub}<input type="text" class="input-hermano" data-key="s${s}_m${i}_p" readonly placeholder="Publicador"></td><td style="width:20%;" class="${claseTd}">${labelAyud}<input type="text" class="input-hermano" data-key="s${s}_m${i}_a" readonly placeholder="Ayudante"></td></tr>`;
+      primeraMaestros = false;
     }
   });
 
   html += `<tr class="titulo-seccion titulo-vida"><td colspan="3">${iV}NUESTRA VIDA CRISTIANA</td></tr>`;
-  (programa.vida_cristiana || []).forEach(item => {
+  (programa.vida_cristiana || []).forEach((item, i) => {
     let t = mostrarTiempo ? item : quitarTiempo(item);
     const esEstudio = item.toLowerCase().includes('estudio bíblico de la congregación');
 
     if (tipoEspecial === 'visita' && esEstudio) {
-      html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="Discurso de servicio"></td><td><input type="text" placeholder="Hermano"></td></tr>`;
+      html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="Discurso de servicio"></td><td><input type="text" class="input-hermano" data-key="s${s}_ve_h" readonly placeholder="Hermano"></td></tr>`;
     } else if (esEstudio) {
-      html += `<tr><td><input type="text" class="input-asignacion" value="${t}"></td><td style="width:15%;"><input type="text" placeholder="Conductor"></td><td style="width:15%;"><input type="text" placeholder="Lector"></td></tr>`;
+      html += `<tr><td><input type="text" class="input-asignacion" value="${t}"></td><td style="width:15%;"><input type="text" class="input-hermano" data-key="s${s}_ve${i}_c" readonly placeholder="Conductor"></td><td style="width:15%;"><input type="text" class="input-hermano" data-key="s${s}_ve${i}_l" readonly placeholder="Lector"></td></tr>`;
     } else {
-      html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Hermano"></td></tr>`;
+      html += `<tr><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" class="input-hermano" data-key="s${s}_v${i}_h" readonly placeholder="Hermano"></td></tr>`;
     }
   });
 
   if (mostrarAperturaCierre && programa.cierre) {
     let t = mostrarTiempo ? programa.cierre : quitarTiempo(programa.cierre);
-    html += `<tr class="fila-cierre"><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" placeholder="Quién ora"></td></tr>`;
+    html += `<tr class="fila-cierre"><td colspan="2"><input type="text" class="input-asignacion" value="${t}"></td><td><input type="text" class="input-hermano" data-key="s${s}_cora" readonly placeholder="Quién ora"></td></tr>`;
   }
 
   html += '</table>';
@@ -1442,7 +2699,10 @@ function generarTablaPrograma(programa, mostrarAperturaCierre, mostrarNumeroSema
 }
 
 function sincronizarCongregacion(valor) {
-  document.querySelectorAll('.input-congregacion').forEach(input => { if (input.value !== valor) input.value = valor; });
+  document.querySelectorAll('.input-congregacion').forEach(input => {
+    if (input.value !== valor) input.value = valor;
+  });
+  setValorAsignacion('congregacion', valor);
 }
 
 // ==========================================
@@ -1463,23 +2723,16 @@ function obtenerUltimaSemanaDe(nombre) {
   document.querySelectorAll('.tabla-programa').forEach(tabla => {
     const semana = parseInt(tabla.dataset.semana);
     if (isNaN(semana)) return;
-
     let encontrado = false;
-
-    // Buscar en inputs de nombres (excluye input-asignacion y congregación)
     tabla.querySelectorAll('input[type="text"]:not(.input-asignacion):not(.input-congregacion)').forEach(input => {
       if (input.value.trim().toLowerCase() === objetivo) encontrado = true;
     });
-
-    // Buscar en el Presidente (está fuera de la tabla)
-    const presidente = tabla.previousElementSibling?.querySelector('.presidente-row input')?.value?.trim().toLowerCase();
-    if (presidente === objetivo) encontrado = true;
-
-    // Buscar en "Visita del superintendente" si existe
-    tabla.previousElementSibling?.querySelectorAll('.presidente-row input').forEach(inp => {
-      if (inp.value.trim().toLowerCase() === objetivo) encontrado = true;
-    });
-
+    const enc = tabla.previousElementSibling;
+    if (enc) {
+      enc.querySelectorAll('.presidente-row input').forEach(inp => {
+        if (inp.value.trim().toLowerCase() === objetivo) encontrado = true;
+      });
+    }
     if (encontrado) {
       if (ultima === null || semana > ultima) ultima = semana;
     }
@@ -1487,34 +2740,48 @@ function obtenerUltimaSemanaDe(nombre) {
   return ultima;
 }
 
-function obtenerUltimaSemanaDe(nombre) {
-  const objetivo = nombre.toLowerCase().trim();
-  let ultima = null;
-  document.querySelectorAll('.tabla-programa').forEach(tabla => {
-    const semana = parseInt(tabla.dataset.semana);
-    if (isNaN(semana)) return;
+function cargarNombresEnTabla() {
+  const noPreguntar = localStorage.getItem('noPreguntarGuardar') === 'true';
+  const toggle = document.getElementById('toggle-preguntar-guardar');
+  if (toggle) toggle.checked = !noPreguntar;
 
-    let encontrado = false;
-
-    // Buscar en inputs de nombres (excluye input-asignacion y congregación)
-    tabla.querySelectorAll('input[type="text"]:not(.input-asignacion):not(.input-congregacion)').forEach(input => {
-      if (input.value.trim().toLowerCase() === objetivo) encontrado = true;
-    });
-
-    // Buscar en el Presidente (está fuera de la tabla)
-    const presidente = tabla.previousElementSibling?.querySelector('.presidente-row input')?.value?.trim().toLowerCase();
-    if (presidente === objetivo) encontrado = true;
-
-    // Buscar en "Visita del superintendente" si existe
-    tabla.previousElementSibling?.querySelectorAll('.presidente-row input').forEach(inp => {
-      if (inp.value.trim().toLowerCase() === objetivo) encontrado = true;
-    });
-
-    if (encontrado) {
-      if (ultima === null || semana > ultima) ultima = semana;
+  const tbody = document.getElementById('cuerpo-tabla-nombres');
+  if (!db) {
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:20px;color:#999;">Base de datos no disponible</td></tr>';
+    return;
+  }
+  const tx = db.transaction(['sugerencias'], 'readonly');
+  const store = tx.objectStore('sugerencias');
+  const getAll = store.getAll();
+  getAll.onsuccess = () => {
+    const registros = getAll.result.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    if (registros.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:20px;color:#999;">No hay nombres guardados</td></tr>';
+      return;
     }
-  });
-  return ultima;
+    tbody.innerHTML = registros.map(r => {
+      const ultima = obtenerUltimaSemanaDe(r.nombre);
+      const textoUltima = ultima !== null ? 'Sem. ' + ultima : '—';
+      return `
+        <tr data-id="${r.id}">
+          <td><input type="text" class="editar-nombre" value="${r.nombre.replace(/"/g, '&quot;')}" data-original="${r.nombre.replace(/"/g, '&quot;')}"></td>
+          <td style="color:#555; font-size:12px;">${textoUltima}</td>
+          <td style="white-space: nowrap;">
+            <button class="btn-accion btn-guardar" onclick="guardarEdicionNombre(${r.id}, this)"><span class="material-icons mi-sm" style="font-size:14px;">check</span></button>
+            <button class="btn-accion btn-eliminar" onclick="eliminarNombre(${r.id})"><span class="material-icons mi-sm" style="font-size:14px;">delete</span></button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  };
+  getAll.onerror = () => {
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:20px;color:#e53935;">Error al cargar</td></tr>';
+  };
+}
+
+function cambiarPreferenciaPreguntar(preguntar) {
+  if (preguntar) localStorage.removeItem('noPreguntarGuardar');
+  else localStorage.setItem('noPreguntarGuardar', 'true');
 }
 
 function guardarEdicionNombre(id, boton) {
@@ -1522,10 +2789,8 @@ function guardarEdicionNombre(id, boton) {
   const input = fila.querySelector('.editar-nombre');
   const nuevoNombre = input.value.trim();
   const original = input.dataset.original;
-
   if (!nuevoNombre) { alert('El nombre no puede estar vacío'); return; }
   if (nuevoNombre === original) { alert('No has cambiado el nombre'); return; }
-
   const tx = db.transaction(['sugerencias'], 'readwrite');
   const store = tx.objectStore('sugerencias');
   const get = store.get(id);
@@ -1555,17 +2820,13 @@ function eliminarNombre(id) {
 // ==========================================
 function abrirModalSemanasEspeciales() {
   if (!datosJSON) return alert('Carga primero el JSON de programas');
-
   const semanaInicial = parseInt(document.getElementById('semana-inicial').value);
   const semanaFinal = parseInt(document.getElementById('semana-final').value);
-
   const programas = datosJSON.programas
     .filter(p => (p.anio || new Date().getFullYear()) === anioSeleccionado)
     .filter(p => p.semana >= semanaInicial && p.semana <= semanaFinal)
     .sort((a, b) => a.semana - b.semana);
-
   if (programas.length === 0) return alert('No hay semanas cargadas en el rango actual');
-
   const selectSemana = document.getElementById('select-semana-especial');
   selectSemana.innerHTML = '';
   programas.forEach(p => {
@@ -1574,15 +2835,11 @@ function abrirModalSemanasEspeciales() {
     opt.textContent = `Sem. ${p.semana} - ${p.encabezado}`;
     selectSemana.appendChild(opt);
   });
-
   actualizarSelectTipoYMuestra(selectSemana.value);
-
   selectSemana.onchange = () => actualizarSelectTipoYMuestra(selectSemana.value);
-
   document.getElementById('select-tipo-especial').onchange = () => {
     actualizarVisibilidadToggleConservar();
   };
-
   document.getElementById('modal-semanas-especiales').classList.remove('hidden');
 }
 
@@ -1590,7 +2847,6 @@ function actualizarSelectTipoYMuestra(semana) {
   const valor = semanasEspeciales[semana] || '';
   const selectTipo = document.getElementById('select-tipo-especial');
   const toggle = document.getElementById('toggle-conservar-tabla');
-
   if (valor === 'asamblea') {
     selectTipo.value = 'asamblea';
     toggle.checked = false;
@@ -1601,7 +2857,6 @@ function actualizarSelectTipoYMuestra(semana) {
     selectTipo.value = valor;
     toggle.checked = false;
   }
-
   actualizarVisibilidadToggleConservar();
 }
 
@@ -1616,21 +2871,13 @@ function aplicarSemanaEspecial() {
   const tipo = document.getElementById('select-tipo-especial').value;
   const toggleEl = document.getElementById('toggle-conservar-tabla');
   const conservar = toggleEl ? toggleEl.checked : false;
-
   if (!semana) return;
-
   if (tipo === 'asamblea' && semanasEspeciales[semana] !== 'asamblea' && semanasEspeciales[semana] !== 'asamblea_tabla') {
     if (!confirm('Al marcar esta semana como Asamblea, se ocultarán todas las asignaciones.\n¿Continuar?')) return;
   }
-
-  if (tipo === '') {
-    delete semanasEspeciales[semana];
-  } else if (tipo === 'asamblea') {
-    semanasEspeciales[semana] = conservar ? 'asamblea_tabla' : 'asamblea';
-  } else {
-    semanasEspeciales[semana] = tipo;
-  }
-
+  if (tipo === '') delete semanasEspeciales[semana];
+  else if (tipo === 'asamblea') semanasEspeciales[semana] = conservar ? 'asamblea_tabla' : 'asamblea';
+  else semanasEspeciales[semana] = tipo;
   guardarSemanasEspeciales();
   cerrarModalSemanasEspeciales();
   renderizarSemanas();
@@ -1646,11 +2893,11 @@ function cerrarModalSemanasEspeciales() {
 document.addEventListener('DOMContentLoaded', async () => {
   await abrirIndexedDB();
   cargarConfiguracion();
+  cargarAsignaciones();
   const stored = localStorage.getItem('semanasEspeciales');
   if (stored) { try { semanasEspeciales = JSON.parse(stored); } catch(e){} }
   await cargarJSON();
 });
 </script>
-
 </body>
 </html>

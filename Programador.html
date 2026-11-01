@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programador - Acomodadores y Micrófonos</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root {
+  /* Tus colores personalizados */
+  --txt-encabezado: #000000; --bg-encabezado: #ffffff; --size-encabezado: 25px;
+  --txt-mes: #ff6915; --bg-mes: #ffffff; --size-mes: 20px;
+  --txt-header-tabla: #000000; --bg-header-tabla: #ff7300; --size-tabla: 20px;
+  --txt-entre-semana: #000000; --bg-entre-semana: #ff9e55; --size-entre-semana: 18px;
+  --txt-fin-semana: #000000; --bg-fin-semana: #ffffff; --size-fin-semana: 18px;
+  --color-separador: #170541;
+  --border-color: #999999;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #d0d0d0; color: #333; overflow-x: hidden; }
+.material-icons { font-size: 18px; vertical-align: middle; line-height: 1; }
+.mi-sm { font-size: 14px; }
+
+/* ============ RIBBON ============ */
+#ribbon { background: #f3f3f3; border-bottom: 1px solid #ccc; position: sticky; top: 0; z-index: 1000; user-select: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.ribbon-tabs { display: flex; background: #e8e8e8; border-bottom: 1px solid #ccc; padding: 0 8px; overflow-x: auto; }
+.ribbon-tab { padding: 8px 16px; font-size: 12px; font-weight: 500; color: #444; cursor: pointer; border: none; background: transparent; border-bottom: 2px solid transparent; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+.ribbon-tab.active { background: #f3f3f3; color: #1e88e5; border-bottom: 2px solid #1e88e5; font-weight: 600; }
+.ribbon-panel { display: none; padding: 10px 12px 6px; background: #f3f3f3; }
+.ribbon-panel.visible { display: block; }
+.ribbon-groups { display: flex; gap: 0; overflow-x: auto; padding-bottom: 2px; align-items: flex-start; }
+.ribbon-group { display: flex; flex-direction: column; align-items: center; padding: 0 14px; border-right: 1px solid #ddd; flex-shrink: 0; }
+.ribbon-group:last-child { border-right: none; }
+.ribbon-group-content { display: flex; flex-wrap: wrap; gap: 6px; align-items: flex-start; justify-content: center; flex: 1; }
+.ribbon-group-label { font-size: 9px; color: #888; text-transform: uppercase; margin-top: 6px; padding-top: 4px; border-top: 1px solid #e0e0e0; text-align: center; width: 100%; }
+.ribbon-control { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px 6px; }
+.ribbon-control label { font-size: 9px; color: #666; text-align: center; max-width: 65px; }
+.ribbon-control input[type="color"] { width: 32px; height: 24px; border: 1px solid #bbb; border-radius: 3px; cursor: pointer; padding: 1px; }
+.ribbon-control input[type="number"] { width: 52px; padding: 3px 4px; border: 1px solid #bbb; border-radius: 3px; font-size: 11px; text-align: center; }
+.ribbon-control select { padding: 3px 6px; border: 1px solid #bbb; border-radius: 3px; font-size: 11px; max-width: 180px; }
+.ribbon-action-btn { padding: 6px 14px; border: 1px solid #bbb; border-radius: 3px; background: white; cursor: pointer; font-size: 11px; font-weight: 600; color: #333; transition: all 0.15s; display: flex; align-items: center; gap: 4px; }
+.ribbon-action-btn:hover { background: #e9ecef; }
+.ribbon-action-btn.blue { background: #1e88e5; color: white; border-color: #1e88e5; }
+.ribbon-action-btn.green { background: #43a047; color: white; border-color: #43a047; }
+.ribbon-action-btn.orange { background: #f57c00; color: white; border-color: #f57c00; }
+.ribbon-action-btn.red { background: #e53935; color: white; border-color: #e53935; }
+
+/* ============ ÁREA DE TRABAJO ============ */
+#area-contenido { padding: 20px; overflow: auto; min-height: calc(100vh - 90px); text-align: center; }
+#zoom-spacer { display: inline-block; position: relative; vertical-align: top; }
+#hoja-wrapper { transform-origin: top left; }
+
+.hoja { background: white; width: 279.4mm; min-height: 215.9mm; padding: 8mm; box-shadow: 0 4px 16px rgba(0,0,0,0.2); position: relative; }
+.encabezado-doc { text-align: center; margin-bottom: 12px; background: var(--bg-encabezado); padding: 10px 0; }
+.encabezado-doc h1 { font-size: var(--size-encabezado); color: var(--txt-encabezado); margin-bottom: 4px; text-transform: uppercase; }
+.encabezado-doc h2 { font-size: var(--size-mes); color: var(--txt-mes); margin-bottom: 12px; font-weight: bold; background: var(--bg-mes); padding: 4px; display: inline-block; }
+
+/* ============ TABLA ============ */
+.tabla-programa { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.tabla-programa th, .tabla-programa td {
+  border: 1px solid var(--border-color);
+  text-align: center;
+  position: relative;
+}
+.tabla-programa th {
+  background: var(--bg-header-tabla); color: var(--txt-header-tabla);
+  font-weight: bold; text-transform: uppercase; font-size: var(--size-tabla); 
+  height: 36px;
+  vertical-align: middle;
+  padding: 4px;
+}
+.tabla-programa td {
+  font-size: var(--size-tabla);
+  vertical-align: top;
+  padding: 2px;
+}
+.tabla-programa input {
+  width: 100%; border: none; background: transparent;
+  text-align: center; font-family: inherit; font-size: inherit; color: inherit;
+  outline: none;
+}
+.tabla-programa input:focus { outline: 2px solid #1e88e5; background: rgba(30, 136, 229, 0.1); }
+.input-hermano { cursor: pointer; user-select: none; caret-color: transparent; }
+.input-hermano:hover { background: rgba(30, 136, 229, 0.08); }
+.input-hermano::placeholder { color: transparent !important; }
+
+/* 🔧 SOLUCIÓN AL BUG DE LA TABLA */
+.td-multi-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100%;
+}
+.td-multi-wrapper input {
+  border-bottom: 1px dashed #ccc;
+  padding: 2px 0;
+  line-height: 1.2;
+  height: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.td-multi-wrapper input:last-child {
+  border-bottom: none;
+}
+
+.fila-entre-semana { background: var(--bg-entre-semana); color: var(--txt-entre-semana); }
+.fila-fin-semana { background: var(--bg-fin-semana); color: var(--txt-fin-semana); }
+.fila-entre-semana td { font-size: var(--size-entre-semana); }
+.fila-fin-semana td { font-size: var(--size-fin-semana); }
+
+.fila-unificada td {
+  background-color: var(--bg-header-tabla) !important;
+  color: var(--txt-header-tabla);
+  font-weight: bold;
+  font-size: calc(var(--size-tabla) + 1px);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  vertical-align: middle;
+}
+
+.separador-semana { border-top: 6px solid var(--color-separador) !important; }
+
+/* ============ ZOOM FLOTANTE ============ */
+#zoom-controls {
+  position: fixed; bottom: 20px; right: 20px; display: flex; gap: 4px; background: white;
+  padding: 6px; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  z-index: 999; align-items: center; user-select: none;
+}
+#zoom-controls button { width: 34px; height: 34px; border: none; background: #f0f0f0; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; color: #333; display: flex; align-items: center; justify-content: center; }
+#zoom-controls button:hover { background: #e0e0e0; }
+#zoom-controls #zoom-label { min-width: 46px; text-align: center; font-size: 12px; font-weight: 700; color: #444; }
+#zoom-controls .zoom-sep { width: 1px; height: 22px; background: #ddd; margin: 0 2px; }
+
+/* ============ MODALES ============ */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center; }
+.modal-overlay.hidden { display: none; }
+.modal-box { background: white; border-radius: 8px; padding: 25px; max-width: 400px; width: 90%; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+.modal-box h3 { margin-bottom: 15px; color: #333; }
+.modal-box p { margin-bottom: 15px; font-size: 14px; color: #555; }
+.modal-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px; }
+.btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; font-family: inherit; font-weight: 600; display: flex; align-items: center; gap: 4px;}
+.btn-si { background: #43a047; color: white; }
+.btn-no { background: #e53935; color: white; }
+.btn-cancelar { background: #9e9e9e; color: white; }
+.btn-blue { background: #1e88e5; color: white; }
+
+.hermano-item { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+.hermano-item:hover { background: #f5f0fa; }
+.hermano-item:last-child { border-bottom: none; }
+.hermano-item .nombre { font-size: 14px; font-weight: 500; color: #333; }
+.hermano-agregar { padding: 10px 14px; cursor: pointer; border-top: 1px dashed #ddd; display: flex; align-items: center; gap: 8px; color: #1e88e5; font-size: 13px; font-weight: 600; }
+.hermano-agregar:hover { background: #e3f2fd; }
+
+/* Gestor de Columnas */
+details.col-group { background: #f9f9f9; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 8px; }
+details.col-group summary { padding: 10px; cursor: pointer; font-weight: bold; font-size: 13px; color: #333; display: flex; justify-content: space-between; align-items: center; }
+details.col-group summary:hover { background: #f0f0f0; }
+.col-settings { padding: 10px; border-top: 1px solid #eee; font-size: 13px; display: flex; flex-direction: column; gap: 8px; }
+.col-settings-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.col-settings-row label { flex: 1; color: #555; }
+.col-settings-row input[type="text"], .col-settings-row input[type="number"] { flex: 1; padding: 4px 6px; border: 1px solid #ccc; border-radius: 3px; font-family: inherit; }
+.inputs-list { border: 1px solid #ddd; border-radius: 4px; padding: 8px; background: white; margin-top: 5px; }
+.input-item-row { display: flex; gap: 6px; margin-bottom: 6px; align-items: center; }
+.input-item-row select { flex: 1; padding: 4px; border: 1px solid #ccc; border-radius: 3px; }
+.btn-mini { padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: bold; }
+.btn-add-input { background: #e3f2fd; color: #1565c0; width: 100%; border: 1px dashed #90caf9; padding: 6px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 4px; }
+.btn-add-input:hover { background: #bbdefb; }
+.btn-del-input { background: #ffebee; color: #c62828; }
+.btn-del-input:hover { background: #ffcdd2; }
+.col-settings-actions { display: flex; gap: 5px; justify-content: flex-end; margin-top: 5px; }
+.col-settings-actions button { padding: 4px 8px; border: none; border-radius: 3px; cursor: pointer; font-size: 12px; }
+
+/* ============ IMPRESIÓN ============ */
+@media print {
+  @page { size: 279.4mm 215.9mm; margin: 8mm; }
+  html, body { width: 100% !important; height: auto !important; margin: 0 !important; padding: 0 !important; background: white !important; overflow: visible !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  #ribbon, #zoom-controls, .modal-overlay { display: none !important; }
+  #area-contenido { padding: 0 !important; overflow: visible !important; text-align: left !important; display: block !important; min-height: auto !important; }
+  #zoom-spacer { width: auto !important; height: auto !important; display: block !important; position: static !important; }
+  #hoja-wrapper { width: auto !important; height: auto !important; transform: none !important; position: static !important; display: block !important; }
+  .hoja { width: 100% !important; min-height: auto !important; height: auto !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; border: none !important; }
+  .tabla-programa { width: 100% !important; }
+  .tabla-programa th, .tabla-programa td { print-color-adjust: exact !important; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; }
+}
+</style>
+</head>
+<body>
+
+<div id="ribbon">
+  <div class="ribbon-tabs">
+    <button class="ribbon-tab" onclick="toggleRibbon('tab-formato', this)"><span class="material-icons">format_paint</span>Formato</button>
+    <button class="ribbon-tab" onclick="toggleRibbon('tab-configuracion', this)"><span class="material-icons">settings</span>Configuración</button>
+    <button class="ribbon-tab" onclick="toggleRibbon('tab-exportar', this)"><span class="material-icons">save_alt</span>Guardar / Exportar</button>
+  </div>
+
+  <!-- PESTAÑA FORMATO -->
+  <div id="tab-formato" class="ribbon-panel">
+    <div class="ribbon-groups">
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>Texto</label><input type="color" id="c-txt-encabezado" value="#000000" onchange="setVar('--txt-encabezado', this.value)"></div>
+          <div class="ribbon-control"><label>Fondo</label><input type="color" id="c-bg-encabezado" value="#ffffff" onchange="setVar('--bg-encabezado', this.value)"></div>
+          <div class="ribbon-control"><label>Tamaño</label><input type="number" id="s-encabezado" min="10" max="32" value="22" onchange="setVar('--size-encabezado', this.value + 'px'); recalcularZoom()"></div>
+        </div>
+        <div class="ribbon-group-label">Encabezado (Título)</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>Texto</label><input type="color" id="c-txt-mes" value="#ff6915" onchange="setVar('--txt-mes', this.value)"></div>
+          <div class="ribbon-control"><label>Fondo</label><input type="color" id="c-bg-mes" value="#ffffff" onchange="setVar('--bg-mes', this.value)"></div>
+          <div class="ribbon-control"><label>Tamaño</label><input type="number" id="s-mes" min="10" max="32" value="16" onchange="setVar('--size-mes', this.value + 'px'); recalcularZoom()"></div>
+        </div>
+        <div class="ribbon-group-label">Mes / Año</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>Texto</label><input type="color" id="c-txt-header-tabla" value="#000000" onchange="setVar('--txt-header-tabla', this.value)"></div>
+          <div class="ribbon-control"><label>Fondo</label><input type="color" id="c-bg-header-tabla" value="#ff7300" onchange="setVar('--bg-header-tabla', this.value)"></div>
+          <div class="ribbon-control"><label>Tamaño</label><input type="number" id="s-tabla" min="8" max="20" value="12" onchange="setVar('--size-tabla', this.value + 'px'); recalcularZoom()"></div>
+        </div>
+        <div class="ribbon-group-label">Encabezado Tabla (TH)</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>Texto</label><input type="color" id="c-txt-entre-semana" value="#000000" onchange="setVar('--txt-entre-semana', this.value)"></div>
+          <div class="ribbon-control"><label>Fondo</label><input type="color" id="c-bg-entre-semana" value="#ff9e55" onchange="setVar('--bg-entre-semana', this.value)"></div>
+          <div class="ribbon-control"><label>Tamaño</label><input type="number" id="s-entre-semana" min="8" max="20" value="12" onchange="setVar('--size-entre-semana', this.value + 'px'); recalcularZoom()"></div>
+        </div>
+        <div class="ribbon-group-label">Fila Entre Semana</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>Texto</label><input type="color" id="c-txt-fin-semana" value="#000000" onchange="setVar('--txt-fin-semana', this.value)"></div>
+          <div class="ribbon-control"><label>Fondo</label><input type="color" id="c-bg-fin-semana" value="#ffffff" onchange="setVar('--bg-fin-semana', this.value)"></div>
+          <div class="ribbon-control"><label>Tamaño</label><input type="number" id="s-fin-semana" min="8" max="20" value="12" onchange="setVar('--size-fin-semana', this.value + 'px'); recalcularZoom()"></div>
+        </div>
+        <div class="ribbon-group-label">Fila Fin de Semana</div>
+      </div>
+      <div class="ribbon-group" style="background: #e8f5e9; border-radius: 4px;">
+        <div class="ribbon-group-content" style="flex-direction: column; gap: 4px;">
+          <div style="display:flex; gap:4px; width: 100%; justify-content: space-between;">
+            <div class="ribbon-control"><label>Texto</label><input type="color" id="c-txt-celda" value="#000000"></div>
+            <div class="ribbon-control"><label>Fondo</label><input type="color" id="c-bg-celda" value="#ffffcc"></div>
+            <div class="ribbon-control"><label>Tamaño</label><input type="number" id="s-celda" min="8" max="20" value="12"></div>
+          </div>
+          <div style="display:flex; gap:4px;">
+            <button class="ribbon-action-btn" onclick="aplicarEstiloCelda('celda')">Celda</button>
+            <button class="ribbon-action-btn" onclick="aplicarEstiloCelda('fila')">Fila</button>
+            <button class="ribbon-action-btn" onclick="aplicarEstiloCelda('columna')">Columna</button>
+          </div>
+        </div>
+        <div class="ribbon-group-label">Control por Celda (Clic en celda primero)</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>Línea Separadora</label><input type="color" id="c-separador" value="#ffff66" onchange="setVar('--color-separador', this.value)"></div>
+          <div class="ribbon-control"><label>&nbsp;</label><button class="ribbon-action-btn" onclick="resetearTodoFormato()"><span class="material-icons mi-sm">restart_alt</span>Resetear</button></div>
+        </div>
+        <div class="ribbon-group-label">Extras y Restaurar</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA CONFIGURACIÓN -->
+  <div id="tab-configuracion" class="ribbon-panel">
+    <div class="ribbon-groups">
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control">
+            <label>Mes</label>
+            <select id="select-mes" onchange="generarTabla()">
+              <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option>
+              <option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option>
+              <option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option>
+              <option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
+            </select>
+          </div>
+          <div class="ribbon-control">
+            <label>Año</label>
+            <input type="number" id="input-anio" value="2026" min="2020" max="2050" style="width:70px;" onchange="generarTabla()">
+          </div>
+        </div>
+        <div class="ribbon-group-label">Mes a generar</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control">
+            <label>Entre semana</label>
+            <select id="select-dia-entre-semana" onchange="generarTabla()">
+              <option value="1">Lunes</option><option value="2">Martes</option><option value="3">Miércoles</option>
+              <option value="4">Jueves</option><option value="5" selected>Viernes</option><option value="6">Sábado</option>
+            </select>
+          </div>
+          <div class="ribbon-control">
+            <label>Fin de semana</label>
+            <select id="select-dia-fin-semana" onchange="generarTabla()">
+              <option value="0" selected>Domingo</option>
+              <option value="6">Sábado</option>
+            </select>
+          </div>
+        </div>
+        <div class="ribbon-group-label">Días de Reunión</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>Columnas</label><button class="ribbon-action-btn blue" onclick="abrirModalColumnas()"><span class="material-icons mi-sm">view_column</span>Gestionar</button></div>
+          <div class="ribbon-control"><label>Eventos</label><button class="ribbon-action-btn orange" onclick="abrirModalEventosEspeciales()"><span class="material-icons mi-sm">event</span>Fechas Especiales</button></div>
+        </div>
+        <div class="ribbon-group-label">Estructura y Eventos</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>Gestionar nombres</label><button class="ribbon-action-btn green" onclick="abrirModalNombres()"><span class="material-icons mi-sm">manage_accounts</span>Nombres</button></div>
+        </div>
+        <div class="ribbon-group-label">Base de Datos</div>
+      </div>
+      <div class="ribbon-group" style="background:#ffebee; border-radius:4px;">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>Borrar todo</label><button class="ribbon-action-btn red" onclick="borrarTodoYReiniciar()"><span class="material-icons mi-sm">delete_forever</span>Reiniciar App</button></div>
+        </div>
+        <div class="ribbon-group-label">Mantenimiento</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA EXPORTAR -->
+  <div id="tab-exportar" class="ribbon-panel">
+    <div class="ribbon-groups">
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>Imagen Recomendada</label><button class="ribbon-action-btn orange" onclick="descargarImagen()"><span class="material-icons mi-sm">image</span>Guardar PNG</button></div>
+        </div>
+        <div class="ribbon-group-label">Alta Calidad</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>En móviles puede cortarse</label><button class="ribbon-action-btn red" onclick="descargarPDF()"><span class="material-icons mi-sm">picture_as_pdf</span>Guardar PDF</button></div>
+        </div>
+        <div class="ribbon-group-label">Solo PC / Mac</div>
+      </div>
+      <div class="ribbon-group">
+        <div class="ribbon-group-content">
+          <div class="ribbon-control"><label>Respaldo</label><button class="ribbon-action-btn green" onclick="descargarJSON()"><span class="material-icons mi-sm">data_object</span>Exportar JSON</button></div>
+          <div class="ribbon-control"><label>Restaurar</label><button class="ribbon-action-btn" onclick="abrirModalImportar()"><span class="material-icons mi-sm">upload</span>Importar JSON</button></div>
+        </div>
+        <div class="ribbon-group-label">Datos</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="area-contenido">
+  <div id="zoom-spacer">
+    <div id="hoja-wrapper">
+      <div class="hoja" id="hoja">
+        <div class="encabezado-doc" id="wrap-encabezado">
+          <h1>Programa de Acomodadores y Micrófonos</h1>
+          <h2 id="titulo-mes">—</h2>
+        </div>
+        <table class="tabla-programa" id="tabla-programa">
+          <thead id="thead-programa"></thead>
+          <tbody id="cuerpo-tabla"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="zoom-controls">
+  <button onclick="cambiarZoom(-0.1)" title="Reducir">−</button>
+  <span id="zoom-label">100%</span>
+  <button onclick="cambiarZoom(0.1)" title="Aumentar">+</button>
+  <div class="zoom-sep"></div>
+  <button onclick="ajustarAPantalla()" title="Ajustar a pantalla" style="font-size:18px;">⤢</button>
+  <button onclick="resetZoom()" title="Tamaño real 100%" style="font-size:13px;">1:1</button>
+</div>
+
+<div id="modal-seleccionar-hermano" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width: 550px;">
+    <h3 style="margin-bottom:8px;">Asignar hermano</h3>
+    <p id="contexto-asignacion" style="font-size:12px; color:#666; margin-bottom:12px; padding:6px 10px; background:#f5f5f5; border-radius:4px;"></p>
+    <div style="display:flex; gap:6px; margin-bottom:12px; align-items: stretch;">
+      <input type="text" id="busqueda-hermano" placeholder="Buscar o escribir un nombre nuevo..." style="flex:1; padding:10px 12px; border:1px solid #ccc; border-radius:4px; font-family:inherit; font-size:14px;" oninput="filtrarListaHermanos()" onkeydown="if(event.key==='Enter'){agregarOAplicarDesdeBuscador();}">
+      <button class="btn btn-si" onclick="agregarOAplicarDesdeBuscador()" style="padding: 10px 14px; min-width: 46px; justify-content: center;"><span class="material-icons">check</span></button>
+    </div>
+    <div id="lista-hermanos" style="max-height: 350px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px; margin-bottom: 12px;"></div>
+    <div class="modal-buttons">
+      <button id="btn-quitar-asignacion" class="btn btn-no hidden" onclick="quitarAsignacionActual()">Quitar asignación</button>
+      <button class="btn btn-cancelar" onclick="cerrarModalSeleccionar()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-nombres" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width: 650px;">
+    <h3>Gestionar nombres guardados</h3>
+    <p style="margin-bottom: 10px;">Edita o elimina los nombres que aparecen como sugerencias.</p>
+    <div style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 15px;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+        <thead style="position: sticky; top: 0; background: #f5f5f5;">
+          <tr><th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Nombre</th><th style="width: 90px; padding: 8px; border-bottom: 1px solid #ddd;">Acciones</th></tr>
+        </thead>
+        <tbody id="cuerpo-tabla-nombres"></tbody>
+      </table>
+    </div>
+    <div class="modal-buttons"><button class="btn btn-cancelar" onclick="cerrarModalNombres()">Cerrar</button></div>
+  </div>
+</div>
+
+<div id="modal-eventos-especiales" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width: 450px;">
+    <h3>Eventos Especiales</h3>
+    <p style="margin-bottom:10px; font-size:13px; color:#666;">Configura una semana. Si ya tiene un evento, se cargará para que puedas cambiarlo o volverlo a "Normal".</p>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;margin-bottom:4px;font-size:13px;font-weight:600;">Seleccionar Semana</label>
+      <select id="select-semana-evento" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;font-family:inherit;font-size:14px;" onchange="sincronizarFormularioConSemana()"></select>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;margin-bottom:4px;font-size:13px;font-weight:600;">Tipo de Evento</label>
+      <select id="select-tipo-evento" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;font-family:inherit;font-size:14px;" onchange="actualizarFormularioEvento()">
+        <option value="normal">— Semana Normal —</option>
+        <option value="asamblea">Asamblea (Toda la semana)</option>
+        <option value="conmemoracion">Conmemoración</option>
+        <option value="visita">Visita del Superintendente</option>
+      </select>
+    </div>
+    <div style="margin-bottom:12px; display:none;" id="wrap-evento-conmemoracion">
+      <label style="display:block;margin-bottom:4px;font-size:13px;font-weight:600;">¿Qué reunión se cancela?</label>
+      <select id="select-conmemoracion-cancela" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;font-family:inherit;font-size:14px;">
+        <option value="mid">Reunión de entre semana</option>
+        <option value="fin">Reunión de fin de semana</option>
+      </select>
+    </div>
+    <div style="margin-bottom:12px; display:none;" id="wrap-evento-visita">
+      <label style="display:block;margin-bottom:4px;font-size:13px;font-weight:600;">Día de la reunión de entre semana:</label>
+      <select id="select-dia-visita" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;font-family:inherit;font-size:14px;">
+        <option value="1">Lunes</option><option value="2" selected>Martes</option><option value="3">Miércoles</option><option value="4">Jueves</option><option value="5">Viernes</option><option value="6">Sábado</option>
+      </select>
+    </div>
+    <div class="modal-buttons">
+      <button class="btn btn-cancelar" onclick="cerrarModalEventos()">Cancelar</button>
+      <button class="btn btn-si" onclick="guardarEventoEspecial()">Guardar Evento</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-columnas" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width: 600px;">
+    <h3>Gestionar Columnas</h3>
+    <p style="margin-bottom:10px; font-size:12px; color:#c00; background:#ffebee; padding:8px; border-radius:4px;"><strong>⚠️ Advertencia:</strong> Modificar las columnas alterará la estructura de la tabla.</p>
+    <div id="lista-columnas" style="max-height: 450px; overflow-y: auto; margin-bottom: 15px; padding-right:5px;"></div>
+    <div style="display:flex; gap:10px; justify-content:space-between;">
+      <button class="btn btn-blue" onclick="agregarNuevaColumna()"><span class="material-icons mi-sm">add</span>Nueva Columna</button>
+      <div style="display:flex; gap:5px;">
+        <button class="btn btn-cancelar" onclick="cerrarModalColumnas()">Cancelar</button>
+        <button class="btn btn-si" onclick="guardarColumnas()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-importar" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width: 600px;">
+    <h3>Importar Respaldo JSON</h3>
+    <p style="margin-bottom:10px; font-size:13px; color:#666;">Pega el JSON exportado. Se restaurarán los datos, colores y configuración.</p>
+    <textarea id="textarea-importar" placeholder="Pega aquí el JSON..." style="width:100%; height:220px; padding:10px; border:1px solid #ccc; border-radius:4px; font-family:monospace; font-size:12px; resize:vertical; margin-bottom:12px;"></textarea>
+    <div class="modal-buttons">
+      <button class="btn btn-cancelar" onclick="cerrarModalImportar()">Cancelar</button>
+      <button class="btn btn-si" onclick="aplicarImportacion()">Importar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==========================================
+// VARIABLES GLOBALES Y VERSIÓN
+// ==========================================
+const VERSION_ESTRUCTURA = "v7.3"; // Versión actualizada para forzar el reinicio
+
+let db = null;
+let inputHermanoActual = null;
+let ultimoInputSeleccionado = null;
+let zoomActual = 1;
+
+let eventosEspeciales = {}; 
+let eventosVisitasDias = {}; 
+let eventosConmemoracionCancela = {}; 
+
+// ==========================================
+// ESTRUCTURA BASE CORRECTA
+// ==========================================
+function obtenerColumnasBase() {
+  return [
+    { id: 'fecha', nombre: 'FECHA', width: '9%', esFija: true, type: 'fecha', inputsConfig: [] },
+    { id: 'pres', nombre: 'PRESIDENTE', width: '13%', inputsConfig: [{ tipo: 'hermano' }] },
+    { id: 'acom', nombre: 'ACOMODADORES', width: '16%', inputsConfig: [{ tipo: 'hermano' }, { tipo: 'hermano' }] }, 
+    { id: 'micro', nombre: 'MICRÓFONOS', width: '16%', inputsConfig: [{ tipo: 'hermano' }, { tipo: 'hermano' }] }, 
+    { id: 'hosp', nombre: 'HOSPITALIDAD', width: '12%', inputsConfig: [{ tipo: 'numero' }] }, 
+    { id: 'atalaya', nombre: 'LEC. ATALAYA', width: '11%', inputsConfig: [{ tipo: 'hermano' }] },
+    { id: 'biblico', nombre: 'LEC. EST. BÍBLICO', width: '12%', inputsConfig: [{ tipo: 'hermano' }] },
+    { id: 'aseo', nombre: 'ASEO', width: '11%', inputsConfig: [{ tipo: 'numero' }] } 
+  ];
+}
+
+let columnasConfig = obtenerColumnasBase();
+
+// ==========================================
+// UTILIDADES
+// ==========================================
+function obtenerSemanaKey(dateObj) {
+  const d = new Date(dateObj);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  return new Date(d.setDate(diff)).toISOString().split('T')[0];
+}
+
+function borrarTodoYReiniciar() {
+  if (confirm('⚠️ ¿Seguro que quieres borrar todo? Se perderán las asignaciones, nombres guardados y colores. La página volverá a su estado de fábrica.')) {
+    localStorage.clear();
+    location.reload();
+  }
+}
+
+// ==========================================
+// ZOOM
+// ==========================================
+function aplicarZoom(z) {
+  z = Math.max(0.3, Math.min(2.5, z));
+  zoomActual = z;
+  const spacer = document.getElementById('zoom-spacer');
+  const wrapper = document.getElementById('hoja-wrapper');
+  const hoja = document.getElementById('hoja');
+  wrapper.style.width = 'auto'; wrapper.style.height = 'auto'; wrapper.style.transform = 'none';
+  void wrapper.offsetWidth;
+  const naturalW = hoja.offsetWidth;
+  const naturalH = hoja.offsetHeight;
+  wrapper.style.width = naturalW + 'px'; wrapper.style.height = naturalH + 'px';
+  wrapper.style.transform = `scale(${z})`;
+  spacer.style.width = Math.ceil(naturalW * z) + 'px';
+  spacer.style.height = Math.ceil(naturalH * z) + 'px';
+  document.getElementById('zoom-label').textContent = Math.round(z * 100) + '%';
+  localStorage.setItem('programador_zoom', z);
+}
+function cambiarZoom(delta) { aplicarZoom(zoomActual + delta); }
+function resetZoom() { aplicarZoom(1); }
+function ajustarAPantalla() {
+  const disponible = document.getElementById('area-contenido').clientWidth - 40;
+  const factor = disponible / document.getElementById('hoja').offsetWidth;
+  aplicarZoom(Math.min(1, factor));
+}
+function recalcularZoom() { setTimeout(() => aplicarZoom(zoomActual), 50); }
+function inicializarZoom() {
+  const guardado = parseFloat(localStorage.getItem('programador_zoom'));
+  if (!isNaN(guardado) && guardado > 0) aplicarZoom(guardado);
+  else setTimeout(() => ajustarAPantalla(), 150);
+}
+window.addEventListener('resize', () => {
+  clearTimeout(window._zoomResizeTimer);
+  window._zoomResizeTimer = setTimeout(recalcularZoom, 150);
+});
+
+// ==========================================
+// INDEXEDDB (NOMBRES)
+// ==========================================
+function abrirIndexedDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('ProgramadorDB', 1);
+    request.onupgradeneeded = (e) => {
+      const database = e.target.result;
+      if (!database.objectStoreNames.contains('sugerencias')) {
+        database.createObjectStore('sugerencias', { keyPath: 'id', autoIncrement: true });
+      }
+    };
+    request.onsuccess = (e) => { db = e.target.result; resolve(db); };
+    request.onerror = (e) => reject(e);
+  });
+}
+function guardarSugerencia(nombre) {
+  if (!db || !nombre || nombre.trim() === '') return;
+  const tx = db.transaction(['sugerencias'], 'readwrite');
+  const store = tx.objectStore('sugerencias');
+  const getAll = store.getAll();
+  getAll.onsuccess = () => {
+    const existentes = getAll.result.map(r => r.nombre.toLowerCase());
+    if (!existentes.includes(nombre.toLowerCase().trim())) {
+      store.add({ nombre: nombre.trim(), fecha: new Date().toISOString() });
+    }
+  };
+}
+function obtenerSugerencias(filtro = '') {
+  return new Promise((resolve) => {
+    if (!db) return resolve([]);
+    const tx = db.transaction(['sugerencias'], 'readonly');
+    const store = tx.objectStore('sugerencias');
+    const getAll = store.getAll();
+    getAll.onsuccess = () => {
+      let r = getAll.result;
+      if (filtro) r = r.filter(x => x.nombre.toLowerCase().includes(filtro.toLowerCase()));
+      r.sort((a, b) => a.nombre.localeCompare(b.nombre));
+      resolve(r.slice(0, 50));
+    };
+  });
+}
+
+// ==========================================
+// CONFIGURACIÓN VISUAL Y LOCALSTORAGE
+// ==========================================
+function guardarConfiguracion() {
+  const config = {
+    versionEstructura: VERSION_ESTRUCTURA,
+    '--txt-encabezado': document.getElementById('c-txt-encabezado').value,
+    '--bg-encabezado': document.getElementById('c-bg-encabezado').value,
+    '--size-encabezado': document.getElementById('s-encabezado').value + 'px',
+    '--txt-mes': document.getElementById('c-txt-mes').value,
+    '--bg-mes': document.getElementById('c-bg-mes').value,
+    '--size-mes': document.getElementById('s-mes').value + 'px',
+    '--txt-header-tabla': document.getElementById('c-txt-header-tabla').value,
+    '--bg-header-tabla': document.getElementById('c-bg-header-tabla').value,
+    '--size-tabla': document.getElementById('s-tabla').value + 'px',
+    '--txt-entre-semana': document.getElementById('c-txt-entre-semana').value,
+    '--bg-entre-semana': document.getElementById('c-bg-entre-semana').value,
+    '--size-entre-semana': document.getElementById('s-entre-semana').value + 'px',
+    '--txt-fin-semana': document.getElementById('c-txt-fin-semana').value,
+    '--bg-fin-semana': document.getElementById('c-bg-fin-semana').value,
+    '--size-fin-semana': document.getElementById('s-fin-semana').value + 'px',
+    '--color-separador': document.getElementById('c-separador').value,
+    'diaEntreSemana': document.getElementById('select-dia-entre-semana').value,
+    'diaFinSemana': document.getElementById('select-dia-fin-semana').value,
+    'columnasConfig': columnasConfig,
+    'eventosEspeciales': eventosEspeciales,
+    'eventosVisitasDias': eventosVisitasDias,
+    'eventosConmemoracionCancela': eventosConmemoracionCancela
+  };
+  localStorage.setItem('programador_config', JSON.stringify(config));
+}
+
+function cargarConfiguracion() {
+  const s = localStorage.getItem('programador_config');
+  
+  // 🔧 SI NO HAY CONFIGURACIÓN GUARDADA, LEEMOS TUS COLORES DEL CSS
+  if (!s) {
+    const rs = getComputedStyle(document.documentElement);
+    document.getElementById('c-txt-encabezado').value = rs.getPropertyValue('--txt-encabezado').trim() || '#000000';
+    document.getElementById('c-bg-encabezado').value = rs.getPropertyValue('--bg-encabezado').trim() || '#ffffff';
+    document.getElementById('s-encabezado').value = parseInt(rs.getPropertyValue('--size-encabezado')) || 22;
+    
+    document.getElementById('c-txt-mes').value = rs.getPropertyValue('--txt-mes').trim() || '#ff6915';
+    document.getElementById('c-bg-mes').value = rs.getPropertyValue('--bg-mes').trim() || '#ffffff';
+    document.getElementById('s-mes').value = parseInt(rs.getPropertyValue('--size-mes')) || 16;
+    
+    document.getElementById('c-txt-header-tabla').value = rs.getPropertyValue('--txt-header-tabla').trim() || '#000000';
+    document.getElementById('c-bg-header-tabla').value = rs.getPropertyValue('--bg-header-tabla').trim() || '#ff7300';
+    document.getElementById('s-tabla').value = parseInt(rs.getPropertyValue('--size-tabla')) || 12;
+    
+    document.getElementById('c-txt-entre-semana').value = rs.getPropertyValue('--txt-entre-semana').trim() || '#000000';
+    document.getElementById('c-bg-entre-semana').value = rs.getPropertyValue('--bg-entre-semana').trim() || '#ff9e55';
+    document.getElementById('s-entre-semana').value = parseInt(rs.getPropertyValue('--size-entre-semana')) || 12;
+    
+    document.getElementById('c-txt-fin-semana').value = rs.getPropertyValue('--txt-fin-semana').trim() || '#000000';
+    document.getElementById('c-bg-fin-semana').value = rs.getPropertyValue('--bg-fin-semana').trim() || '#ffffff';
+    document.getElementById('s-fin-semana').value = parseInt(rs.getPropertyValue('--size-fin-semana')) || 12;
+    
+    document.getElementById('c-separador').value = rs.getPropertyValue('--color-separador').trim() || '#ffff66';
+    return;
+  }
+
+  try {
+    const c = JSON.parse(s);
+    
+    for (let [v, val] of Object.entries(c)) {
+      if (v.startsWith('--')) document.documentElement.style.setProperty(v, val);
+    }
+    if (c['--txt-encabezado']) document.getElementById('c-txt-encabezado').value = c['--txt-encabezado'];
+    if (c['--bg-encabezado']) document.getElementById('c-bg-encabezado').value = c['--bg-encabezado'];
+    if (c['--size-encabezado']) document.getElementById('s-encabezado').value = parseInt(c['--size-encabezado']);
+    if (c['--txt-mes']) document.getElementById('c-txt-mes').value = c['--txt-mes'];
+    if (c['--bg-mes']) document.getElementById('c-bg-mes').value = c['--bg-mes'];
+    if (c['--size-mes']) document.getElementById('s-mes').value = parseInt(c['--size-mes']);
+    if (c['--txt-header-tabla']) document.getElementById('c-txt-header-tabla').value = c['--txt-header-tabla'];
+    if (c['--bg-header-tabla']) document.getElementById('c-bg-header-tabla').value = c['--bg-header-tabla'];
+    if (c['--size-tabla']) document.getElementById('s-tabla').value = parseInt(c['--size-tabla']);
+    if (c['--txt-entre-semana']) document.getElementById('c-txt-entre-semana').value = c['--txt-entre-semana'];
+    if (c['--bg-entre-semana']) document.getElementById('c-bg-entre-semana').value = c['--bg-entre-semana'];
+    if (c['--size-entre-semana']) document.getElementById('s-entre-semana').value = parseInt(c['--size-entre-semana']);
+    if (c['--txt-fin-semana']) document.getElementById('c-txt-fin-semana').value = c['--txt-fin-semana'];
+    if (c['--bg-fin-semana']) document.getElementById('c-bg-fin-semana').value = c['--bg-fin-semana'];
+    if (c['--size-fin-semana']) document.getElementById('s-fin-semana').value = parseInt(c['--size-fin-semana']);
+    if (c['--color-separador']) document.getElementById('c-separador').value = c['--color-separador'];
+    if (c.diaEntreSemana) document.getElementById('select-dia-entre-semana').value = c.diaEntreSemana;
+    if (c.diaFinSemana) document.getElementById('select-dia-fin-semana').value = c.diaFinSemana;
+    
+    // FILTRO DE SEGURIDAD: Verifica que las columnas guardadas coincidan exactamente con la estructura base.
+    let esEstructuraValida = false;
+    if (c.versionEstructura === VERSION_ESTRUCTURA && c.columnasConfig && Array.isArray(c.columnasConfig)) {
+      const base = obtenerColumnasBase();
+      if (c.columnasConfig.length === base.length) {
+        esEstructuraValida = true;
+        for (let i = 0; i < base.length; i++) {
+          if (c.columnasConfig[i].id !== base[i].id) { esEstructuraValida = false; break; }
+          if (c.columnasConfig[i].inputsConfig && base[i].inputsConfig) {
+             if (c.columnasConfig[i].inputsConfig.length !== base[i].inputsConfig.length) {
+                esEstructuraValida = false; break;
+             }
+          }
+        }
+      }
+    }
+
+    if (esEstructuraValida) {
+      columnasConfig = c.columnasConfig;
+    } else {
+      columnasConfig = obtenerColumnasBase();
+      setTimeout(() => guardarConfiguracion(), 100); 
+    }
+
+    if (c.eventosEspeciales) eventosEspeciales = c.eventosEspeciales;
+    if (c.eventosVisitasDias) eventosVisitasDias = c.eventosVisitasDias;
+    if (c.eventosConmemoracionCancela) eventosConmemoracionCancela = c.eventosConmemoracionCancela;
+    
+  } catch (e) {
+    console.error("Error cargando config", e);
+    columnasConfig = obtenerColumnasBase();
+  }
+}
+
+function setVar(nombre, valor) {
+  document.documentElement.style.setProperty(nombre, valor);
+  guardarConfiguracion();
+}
+
+function resetearTodoFormato() {
+  if(!confirm('¿Restaurar los colores a los valores de tu código original?')) return;
+  
+  // 🔧 BORRAMOS LOS ESTILOS INYECTADOS EN EL HTML PARA QUE TOME EL CSS :root
+  const variables = [
+    '--txt-encabezado', '--bg-encabezado', '--size-encabezado',
+    '--txt-mes', '--bg-mes', '--size-mes',
+    '--txt-header-tabla', '--bg-header-tabla', '--size-tabla',
+    '--txt-entre-semana', '--bg-entre-semana', '--size-entre-semana',
+    '--txt-fin-semana', '--bg-fin-semana', '--size-fin-semana',
+    '--color-separador'
+  ];
+  variables.forEach(v => document.documentElement.style.removeProperty(v));
+
+  // Borramos la memoria de configuración y estilos de celda
+  localStorage.removeItem('programador_config');
+  localStorage.removeItem('programador_estilos_celdas');
+  
+  // Recargamos la página para que limpie todo y lea el CSS original
+  location.reload();
+}
+
+// ==========================================
+// GESTIÓN DE COLUMNAS
+// ==========================================
+function renderizarEncabezadoTabla() {
+  const thead = document.getElementById('thead-programa');
+  thead.innerHTML = '';
+  const tr = document.createElement('tr');
+  columnasConfig.forEach(col => {
+    const th = document.createElement('th');
+    th.textContent = col.nombre;
+    th.style.width = col.width;
+    tr.appendChild(th);
+  });
+  thead.appendChild(tr);
+}
+
+function abrirModalColumnas() {
+  document.getElementById('modal-columnas').classList.remove('hidden');
+  renderizarListaColumnasModal();
+}
+function cerrarModalColumnas() { document.getElementById('modal-columnas').classList.add('hidden'); }
+
+function renderizarListaColumnasModal() {
+  const cont = document.getElementById('lista-columnas');
+  cont.innerHTML = '';
+  columnasConfig.forEach((col, index) => {
+    const details = document.createElement('details');
+    details.className = 'col-group';
+    const summary = document.createElement('summary');
+    summary.textContent = col.nombre;
+    details.appendChild(summary);
+    const settings = document.createElement('div');
+    settings.className = 'col-settings';
+    const rowNombre = document.createElement('div');
+    rowNombre.className = 'col-settings-row';
+    rowNombre.innerHTML = `<label>Título:</label><input type="text" value="${col.nombre}" onchange="actualizarPropiedadColumna(${index}, 'nombre', this.value.toUpperCase())">`;
+    const rowAncho = document.createElement('div');
+    rowAncho.className = 'col-settings-row';
+    rowAncho.innerHTML = `<label>Ancho (%):</label><input type="number" value="${parseInt(col.width)}" min="5" max="50" onchange="actualizarPropiedadColumna(${index}, 'width', this.value + '%')">`;
+    settings.appendChild(rowNombre);
+    settings.appendChild(rowAncho);
+
+    if (col.id !== 'fecha') {
+      const rowInputs = document.createElement('div');
+      rowInputs.innerHTML = `<label style="display:block; margin-bottom:5px; font-weight:600;">Inputs de la celda:</label>`;
+      const inputsList = document.createElement('div');
+      inputsList.className = 'inputs-list';
+      col.inputsConfig.forEach((inpCfg, idxInput) => {
+        const row = document.createElement('div');
+        row.className = 'input-item-row';
+        row.innerHTML = `
+          <select onchange="actualizarTipoInput(${index}, ${idxInput}, this.value)">
+            <option value="hermano" ${inpCfg.tipo === 'hermano' ? 'selected' : ''}>Nombre (Buscador)</option>
+            <option value="numero" ${inpCfg.tipo === 'numero' ? 'selected' : ''}>Número</option>
+            <option value="texto" ${inpCfg.tipo === 'texto' ? 'selected' : ''}>Libre</option>
+          </select>
+          <button class="btn-mini btn-del-input" onclick="eliminarInputColumna(${index}, ${idxInput})" ${col.inputsConfig.length === 1 ? 'disabled' : ''}>✕</button>
+        `;
+        inputsList.appendChild(row);
+      });
+      const btnAddInput = document.createElement('button');
+      btnAddInput.className = 'btn-add-input';
+      btnAddInput.innerHTML = '+ Agregar otro input';
+      btnAddInput.onclick = () => agregarInputColumna(index);
+      inputsList.appendChild(btnAddInput);
+      rowInputs.appendChild(inputsList);
+      settings.appendChild(rowInputs);
+    }
+    const actions = document.createElement('div');
+    actions.className = 'col-settings-actions';
+    const btnUp = document.createElement('button');
+    btnUp.textContent = '▲ Subir'; btnUp.disabled = index === 0; btnUp.onclick = () => moverColumna(index, -1);
+    const btnDown = document.createElement('button');
+    btnDown.textContent = '▼ Bajar'; btnDown.disabled = index === columnasConfig.length - 1; btnDown.onclick = () => moverColumna(index, 1);
+    const btnDel = document.createElement('button');
+    btnDel.textContent = '✕ Eliminar Columna'; btnDel.style.background = '#ffebee'; btnDel.style.color = '#c62828'; btnDel.disabled = col.esFija; btnDel.onclick = () => eliminarColumna(index);
+    actions.appendChild(btnUp);
+    actions.appendChild(btnDown);
+    actions.appendChild(btnDel);
+    settings.appendChild(actions);
+    details.appendChild(settings);
+    cont.appendChild(details);
+  });
+
+  const btnReset = document.createElement('button');
+  btnReset.className = 'btn-add-input';
+  btnReset.style.background = '#ffebee';
+  btnReset.style.color = '#c62828';
+  btnReset.style.borderColor = '#ef9a9a';
+  btnReset.style.marginTop = '10px';
+  btnReset.textContent = '↺ Restaurar columnas por defecto';
+  btnReset.onclick = () => {
+    if (!confirm('¿Restaurar las columnas a los valores por defecto?')) return;
+    columnasConfig = obtenerColumnasBase();
+    renderizarListaColumnasModal();
+  };
+  cont.appendChild(btnReset);
+}
+
+function actualizarPropiedadColumna(index, prop, valor) { columnasConfig[index][prop] = valor; }
+function actualizarTipoInput(colIndex, inputIndex, tipo) { columnasConfig[colIndex].inputsConfig[inputIndex].tipo = tipo; }
+function agregarInputColumna(colIndex) { columnasConfig[colIndex].inputsConfig.push({ tipo: 'texto' }); renderizarListaColumnasModal(); }
+function eliminarInputColumna(colIndex, inputIndex) {
+  if (columnasConfig[colIndex].inputsConfig.length > 1) {
+    columnasConfig[colIndex].inputsConfig.splice(inputIndex, 1);
+    renderizarListaColumnasModal();
+  }
+}
+function moverColumna(index, dir) {
+  const newIndex = index + dir;
+  if (newIndex < 0 || newIndex >= columnasConfig.length) return;
+  const temp = columnasConfig[index];
+  columnasConfig[index] = columnasConfig[newIndex];
+  columnasConfig[newIndex] = temp;
+  renderizarListaColumnasModal();
+}
+function eliminarColumna(index) {
+  if (columnasConfig[index].esFija) return;
+  if (confirm('¿Eliminar esta columna?')) {
+    columnasConfig.splice(index, 1);
+    renderizarListaColumnasModal();
+  }
+}
+function agregarNuevaColumna() {
+  columnasConfig.push({ id: 'custom_' + Date.now(), nombre: 'NUEVA COLUMNA', width: '12%', inputsConfig: [{ tipo: 'hermano' }] });
+  renderizarListaColumnasModal();
+}
+function guardarColumnas() { guardarConfiguracion(); cerrarModalColumnas(); generarTabla(); }
+
+// ==========================================
+// EVENTOS ESPECIALES
+// ==========================================
+function abrirModalEventosEspeciales() {
+  document.getElementById('modal-eventos-especiales').classList.remove('hidden');
+  const selectSemana = document.getElementById('select-semana-evento');
+  selectSemana.innerHTML = '';
+  const mes = parseInt(document.getElementById('select-mes').value);
+  const anio = parseInt(document.getElementById('input-anio').value);
+  const diaEntreSemana = parseInt(document.getElementById('select-dia-entre-semana').value);
+  const diaFinSemana = parseInt(document.getElementById('select-dia-fin-semana').value);
+  const fecha = new Date(anio, mes, 1);
+  const semanas = [];
+  let tempMid = null;
+  while (fecha.getMonth() === mes) {
+    if (fecha.getDay() === diaEntreSemana) tempMid = new Date(fecha);
+    if (fecha.getDay() === diaFinSemana && tempMid) {
+      semanas.push({ mid: tempMid, fin: new Date(fecha) });
+      tempMid = null;
+    }
+    fecha.setDate(fecha.getDate() + 1);
+  }
+  semanas.forEach((sem, i) => {
+    const lunesStr = obtenerSemanaKey(sem.mid);
+    let estadoEvento = '';
+    const ev = eventosEspeciales[lunesStr];
+    if (ev === 'asamblea') estadoEvento = ' [ASAMBLEA]';
+    else if (ev === 'conmemoracion') estadoEvento = ' [CONMEMORACIÓN]';
+    else if (ev === 'visita') estadoEvento = ' [VISITA]';
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `Semana ${i + 1}: Día ${sem.mid.getDate()} (Entre) y ${sem.fin.getDate()} (Fin)${estadoEvento}`;
+    opt.dataset.mid = sem.mid.toISOString().split('T')[0];
+    opt.dataset.fin = sem.fin.toISOString().split('T')[0];
+    opt.dataset.key = lunesStr;
+    selectSemana.appendChild(opt);
+  });
+  sincronizarFormularioConSemana();
+}
+function cerrarModalEventos() { document.getElementById('modal-eventos-especiales').classList.add('hidden'); }
+
+function sincronizarFormularioConSemana() {
+  const selectSemana = document.getElementById('select-semana-evento');
+  if (!selectSemana.selectedOptions[0]) return;
+  const lunesStr = selectSemana.selectedOptions[0].dataset.key;
+  const ev = eventosEspeciales[lunesStr];
+  const tipoSelect = document.getElementById('select-tipo-evento');
+  if (ev === 'asamblea') tipoSelect.value = 'asamblea';
+  else if (ev === 'conmemoracion') {
+    tipoSelect.value = 'conmemoracion';
+    document.getElementById('select-conmemoracion-cancela').value = eventosConmemoracionCancela[lunesStr] || 'mid';
+  } else if (ev === 'visita') {
+    tipoSelect.value = 'visita';
+    document.getElementById('select-dia-visita').value = eventosVisitasDias[lunesStr] || 2;
+  } else tipoSelect.value = 'normal';
+  actualizarFormularioEvento();
+}
+function actualizarFormularioEvento() {
+  const tipo = document.getElementById('select-tipo-evento').value;
+  const wrapConmemoracion = document.getElementById('wrap-evento-conmemoracion');
+  const wrapVisita = document.getElementById('wrap-evento-visita');
+  if (tipo === 'asamblea') { wrapConmemoracion.style.display = 'none'; wrapVisita.style.display = 'none'; }
+  else if (tipo === 'conmemoracion') { wrapConmemoracion.style.display = 'block'; wrapVisita.style.display = 'none'; }
+  else if (tipo === 'visita') { wrapConmemoracion.style.display = 'none'; wrapVisita.style.display = 'block'; }
+  else { wrapConmemoracion.style.display = 'none'; wrapVisita.style.display = 'none'; }
+}
+function guardarEventoEspecial() {
+  const selectSemana = document.getElementById('select-semana-evento');
+  if (!selectSemana.selectedOptions[0]) return;
+  const lunesStr = selectSemana.selectedOptions[0].dataset.key;
+  const tipo = document.getElementById('select-tipo-evento').value;
+  delete eventosEspeciales[lunesStr];
+  delete eventosVisitasDias[lunesStr];
+  delete eventosConmemoracionCancela[lunesStr];
+  if (tipo === 'asamblea') eventosEspeciales[lunesStr] = 'asamblea';
+  else if (tipo === 'conmemoracion') {
+    eventosEspeciales[lunesStr] = 'conmemoracion';
+    eventosConmemoracionCancela[lunesStr] = document.getElementById('select-conmemoracion-cancela').value;
+  } else if (tipo === 'visita') {
+    eventosEspeciales[lunesStr] = 'visita';
+    eventosVisitasDias[lunesStr] = parseInt(document.getElementById('select-dia-visita').value);
+  }
+  guardarConfiguracion();
+  cerrarModalEventos();
+  generarTabla();
+}
+
+// ==========================================
+// GENERACIÓN DE TABLA
+// ==========================================
+const NOMBRES_MESES = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
+const NOMBRES_DIAS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+
+function generarTabla() {
+  renderizarEncabezadoTabla();
+  const mes = parseInt(document.getElementById('select-mes').value);
+  const anio = parseInt(document.getElementById('input-anio').value);
+  let diaEntreSemana = parseInt(document.getElementById('select-dia-entre-semana').value);
+  const diaFinSemana = parseInt(document.getElementById('select-dia-fin-semana').value);
+  document.getElementById('titulo-mes').textContent = `${NOMBRES_MESES[mes]} ${anio}`;
+  
+  const cuerpo = document.getElementById('cuerpo-tabla');
+  cuerpo.innerHTML = '';
+  const fecha = new Date(anio, mes, 1);
+  const fechasClave = [];
+  
+  while (fecha.getMonth() === mes) {
+    const dia = fecha.getDay();
+    let isMid = (dia === diaEntreSemana);
+    let isFin = (dia === diaFinSemana);
+    const lunesStr = obtenerSemanaKey(fecha);
+    if (eventosEspeciales[lunesStr] === 'visita') {
+      const nuevoDiaVisita = eventosVisitasDias[lunesStr] || 2;
+      if (dia === diaEntreSemana) isMid = false;
+      if (dia === nuevoDiaVisita) isMid = true;
+    }
+    if (isMid || isFin) fechasClave.push(new Date(fecha));
+    fecha.setDate(fecha.getDate() + 1);
+  }
+  
+  let esPrimeraFila = true;
+  let semanasAsambleaRenderizadas = new Set();
+  
+  fechasClave.forEach(f => {
+    const fStr = f.toISOString().split('T')[0];
+    const dia = f.getDay();
+    const lunesStr = obtenerSemanaKey(f);
+    const ev = eventosEspeciales[lunesStr];
+    let esFinSemana = (dia === diaFinSemana);
+    let esEntreSemana = (dia === diaEntreSemana);
+    
+    if (ev === 'visita') {
+      const nuevoDiaVisita = eventosVisitasDias[lunesStr] || 2;
+      if (dia === nuevoDiaVisita) { esEntreSemana = true; esFinSemana = false; }
+    }
+    
+    const nombreDia = NOMBRES_DIAS[dia];
+    const claseFila = esFinSemana ? 'fila-fin-semana' : 'fila-entre-semana';
+    const claseSeparador = (esEntreSemana && !esPrimeraFila) ? 'separador-semana' : '';
+
+    if (ev === 'asamblea') {
+      if (!semanasAsambleaRenderizadas.has(lunesStr)) {
+        semanasAsambleaRenderizadas.add(lunesStr);
+        const lunes = new Date(lunesStr);
+        const domingo = new Date(lunesStr);
+        domingo.setDate(lunes.getDate() + 6);
+        const tr = document.createElement('tr');
+        tr.className = 'fila-unificada';
+        if (claseSeparador) tr.classList.add(claseSeparador);
+        const td = document.createElement('td');
+        td.colSpan = columnasConfig.length;
+        const mesLunes = lunes.getMonth() + 1;
+        const mesDomingo = domingo.getMonth() + 1;
+        td.textContent = `SEMANA DE ASAMBLEA (${lunes.getDate()}/${mesLunes} AL ${domingo.getDate()}/${mesDomingo})`;
+        td.style.padding = '15px';
+        tr.appendChild(td);
+        cuerpo.appendChild(tr);
+      }
+      esPrimeraFila = false;
+      return;
+    }
+    
+    if (ev === 'conmemoracion') {
+      const cancela = eventosConmemoracionCancela[lunesStr] || 'mid';
+      const esDiaCancelado = (cancela === 'mid' && esEntreSemana) || (cancela === 'fin' && esFinSemana);
+      if (esDiaCancelado) {
+        const tr = document.createElement('tr');
+        tr.className = 'fila-unificada';
+        if (claseSeparador) tr.classList.add(claseSeparador);
+        const td = document.createElement('td');
+        td.colSpan = columnasConfig.length;
+        td.textContent = `REUNIÓN DE CONMEMORACIÓN (${cancela === 'mid' ? 'ENTRE SEMANA' : 'FIN DE SEMANA'})`;
+        td.style.padding = '15px';
+        tr.appendChild(td);
+        cuerpo.appendChild(tr);
+        esPrimeraFila = false;
+        return;
+      }
+    }
+    
+    const tr = document.createElement('tr');
+    tr.className = `${claseFila} ${claseSeparador}`;
+    tr.dataset.fechaId = fStr;
+    
+    columnasConfig.forEach(col => {
+      const td = document.createElement('td');
+      td.dataset.cellKey = `${fStr}_${col.id}`;
+      
+      if (col.id === 'fecha') {
+        td.innerHTML = `<strong>${nombreDia} ${f.getDate()}</strong>`;
+        td.style.verticalAlign = 'middle';
+      } else {
+        if (col.inputsConfig.length > 1) {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'td-multi-wrapper';
+          col.inputsConfig.forEach((inpCfg, i) => {
+            const input = document.createElement('input');
+            configurarInput(input, inpCfg, fStr, col.id, i);
+            wrapper.appendChild(input);
+          });
+          td.appendChild(wrapper);
+        } else {
+          col.inputsConfig.forEach((inpCfg, i) => {
+            const input = document.createElement('input');
+            configurarInput(input, inpCfg, fStr, col.id, i);
+            td.appendChild(input);
+          });
+        }
+      }
+      tr.appendChild(td);
+    });
+    cuerpo.appendChild(tr);
+    esPrimeraFila = false;
+  });
+  
+  vincularEventosInputs();
+  cargarDatosGuardados();
+  localStorage.setItem('programador_mes_visto', mes);
+  localStorage.setItem('programador_anio_visto', anio);
+  guardarConfiguracion();
+  setTimeout(recalcularZoom, 50);
+}
+
+function configurarInput(input, inpCfg, fStr, colId, index) {
+  input.dataset.key = `${fStr}_${colId}_${index}`;
+  if (inpCfg.tipo === 'hermano') {
+    input.type = 'text';
+    input.className = 'input-hermano';
+    input.readOnly = true;
+  } else if (inpCfg.tipo === 'numero') {
+    input.type = 'text';
+    input.inputMode = 'numeric';
+    input.className = 'input-directo input-numero';
+    input.addEventListener('change', (e) => guardarValor(e.target));
+  } else {
+    input.type = 'text';
+    input.className = 'input-directo';
+    input.addEventListener('change', (e) => guardarValor(e.target));
+  }
+}
+
+function guardarValor(input) {
+  const key = input.dataset.key;
+  if (!key) return;
+  let datos = JSON.parse(localStorage.getItem('programador_datos') || '{}');
+  datos[key] = input.value;
+  localStorage.setItem('programador_datos', JSON.stringify(datos));
+}
+
+function cargarDatosGuardados() {
+  let datos = JSON.parse(localStorage.getItem('programador_datos') || '{}');
+  document.querySelectorAll('[data-key]').forEach(input => {
+    const key = input.dataset.key;
+    if (datos[key] !== undefined) input.value = datos[key];
+  });
+  const estilosCeldas = JSON.parse(localStorage.getItem('programador_estilos_celdas') || '{}');
+  document.querySelectorAll('#tabla-programa td[data-cell-key]').forEach(td => {
+    const key = td.dataset.cellKey;
+    if (estilosCeldas[key]) {
+      if (estilosCeldas[key].color) td.style.color = estilosCeldas[key].color;
+      if (estilosCeldas[key].bg) td.style.backgroundColor = estilosCeldas[key].bg;
+      if (estilosCeldas[key].size) td.style.fontSize = estilosCeldas[key].size;
+    }
+  });
+}
+
+function guardarEstiloCelda(td, tipo, valor) {
+  if (!td || !td.dataset.cellKey) return;
+  const key = td.dataset.cellKey;
+  let estilos = JSON.parse(localStorage.getItem('programador_estilos_celdas') || '{}');
+  if (!estilos[key]) estilos[key] = {};
+  if (valor === '' || valor === null) delete estilos[key][tipo];
+  else estilos[key][tipo] = valor;
+  localStorage.setItem('programador_estilos_celdas', JSON.stringify(estilos));
+}
+
+function vincularEventosInputs() {
+  document.querySelectorAll('.input-hermano').forEach(inp => {
+    inp.addEventListener('click', (e) => {
+      ultimoInputSeleccionado = e.target;
+      abrirModalSeleccionar(inp);
+    });
+  });
+  document.querySelectorAll('.input-directo').forEach(inp => {
+    inp.addEventListener('focus', (e) => { ultimoInputSeleccionado = e.target; });
+  });
+}
+
+function abrirModalSeleccionar(input) {
+  inputHermanoActual = input;
+  const tr = input.closest('tr');
+  document.getElementById('contexto-asignacion').textContent = `Fecha: ${tr.querySelector('td').textContent.trim()}`;
+  const inputBusq = document.getElementById('busqueda-hermano');
+  inputBusq.value = '';
+  document.getElementById('btn-quitar-asignacion').classList.toggle('hidden', input.value.trim() === '');
+  filtrarListaHermanos();
+  document.getElementById('modal-seleccionar-hermano').classList.remove('hidden');
+  setTimeout(() => inputBusq.focus(), 100);
+}
+
+async function filtrarListaHermanos() {
+  const filtro = document.getElementById('busqueda-hermano').value.trim();
+  const lista = document.getElementById('lista-hermanos');
+  const sugerencias = await obtenerSugerencias(filtro);
+  lista.innerHTML = '';
+  if (sugerencias.length === 0 && !filtro) {
+    lista.innerHTML = '<div style="padding:24px 16px;text-align:center;color:#999;font-size:13px;">No hay nombres guardados aún.<br>Escribe un nombre y pulsa <strong>✓</strong> para añadirlo.</div>';
+    return;
+  }
+  sugerencias.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'hermano-item';
+    div.innerHTML = `<span class="nombre">${s.nombre}</span>`;
+    div.addEventListener('click', () => seleccionarHermano(s.nombre));
+    lista.appendChild(div);
+  });
+  if (filtro && !sugerencias.some(s => s.nombre.toLowerCase() === filtro.toLowerCase())) {
+    const divNuevo = document.createElement('div');
+    divNuevo.className = 'hermano-agregar';
+    divNuevo.innerHTML = `<span class="material-icons">add_circle</span><span>Añadir "${filtro}" como nuevo</span>`;
+    divNuevo.addEventListener('click', () => seleccionarHermanoYGuardar(filtro));
+    lista.appendChild(divNuevo);
+  }
+}
+
+function seleccionarHermano(nombre) {
+  if (inputHermanoActual) { inputHermanoActual.value = nombre; guardarValor(inputHermanoActual); }
+  cerrarModalSeleccionar();
+}
+function seleccionarHermanoYGuardar(nombre) { guardarSugerencia(nombre); seleccionarHermano(nombre); }
+function quitarAsignacionActual() {
+  if (inputHermanoActual) { inputHermanoActual.value = ''; guardarValor(inputHermanoActual); }
+  cerrarModalSeleccionar();
+}
+function cerrarModalSeleccionar() {
+  document.getElementById('modal-seleccionar-hermano').classList.add('hidden');
+  inputHermanoActual = null;
+}
+function agregarOAplicarDesdeBuscador() {
+  const valor = document.getElementById('busqueda-hermano').value.trim();
+  if (!valor) return;
+  guardarSugerencia(valor);
+  seleccionarHermano(valor);
+}
+
+function aplicarEstiloCelda(tipo) {
+  if (!ultimoInputSeleccionado) return alert('Primero haz clic dentro de una celda de la tabla.');
+  const colorTxt = document.getElementById('c-txt-celda').value;
+  const colorBg = document.getElementById('c-bg-celda').value;
+  const sizeTxt = document.getElementById('s-celda').value + 'px';
+  const td = ultimoInputSeleccionado.closest('td');
+  if (!td) return;
+  const aplicarATd = (celda) => {
+    celda.style.color = colorTxt;
+    celda.style.backgroundColor = colorBg;
+    celda.style.fontSize = sizeTxt;
+    guardarEstiloCelda(celda, 'color', colorTxt);
+    guardarEstiloCelda(celda, 'bg', colorBg);
+    guardarEstiloCelda(celda, 'size', sizeTxt);
+  };
+  if (tipo === 'celda') aplicarATd(td);
+  else if (tipo === 'fila') {
+    const tr = ultimoInputSeleccionado.closest('tr');
+    tr.querySelectorAll('td').forEach(aplicarATd);
+  } else if (tipo === 'columna') {
+    const index = Array.from(td.parentNode.children).indexOf(td);
+    document.querySelectorAll('#tabla-programa tr').forEach(fila => {
+      if (fila.children[index]) aplicarATd(fila.children[index]);
+    });
+  }
+}
+
+function abrirModalNombres() {
+  document.getElementById('modal-nombres').classList.remove('hidden');
+  cargarNombresModal();
+}
+function cerrarModalNombres() { document.getElementById('modal-nombres').classList.add('hidden'); }
+
+function cargarNombresModal() {
+  const tbody = document.getElementById('cuerpo-tabla-nombres');
+  if (!db) return;
+  const tx = db.transaction(['sugerencias'], 'readonly');
+  const getAll = tx.objectStore('sugerencias').getAll();
+  getAll.onsuccess = () => {
+    const registros = getAll.result.sort((a, b) => a.nombre.localeCompare(b.nombre));
+    if (registros.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="2" style="padding:15px; text-align:center; color:#999;">No hay nombres guardados</td></tr>';
+      return;
+    }
+    tbody.innerHTML = registros.map(r => `
+      <tr>
+        <td style="padding: 8px; border-bottom: 1px solid #eee;">${r.nombre}</td>
+        <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">
+          <button class="btn btn-no" style="padding: 4px 8px;" onclick="eliminarNombre(${r.id})"><span class="material-icons mi-sm">delete</span></button>
+        </td>
+      </tr>
+    `).join('');
+  };
+}
+function eliminarNombre(id) {
+  if (!confirm('¿Eliminar este nombre definitivamente?')) return;
+  const tx = db.transaction(['sugerencias'], 'readwrite');
+  tx.objectStore('sugerencias').delete(id);
+  tx.oncomplete = () => cargarNombresModal();
+}
+
+async function capturarHojaLimpia() {
+  const hojaOriginal = document.getElementById('hoja');
+  const tempDiv = document.createElement('div');
+  tempDiv.style.cssText = `position: fixed; top: 0; left: 0; width: 279.4mm; background: #ffffff; z-index: -9999; opacity: 0.01; pointer-events: none;`;
+  document.body.appendChild(tempDiv);
+  const clone = hojaOriginal.cloneNode(true);
+  clone.style.transform = 'none';
+  clone.style.boxShadow = 'none';
+  clone.style.margin = '0';
+  clone.style.width = '279.4mm';
+  clone.style.minHeight = 'auto';
+  clone.style.padding = '8mm';
+  tempDiv.appendChild(clone);
+  clone.querySelectorAll('input').forEach(input => {
+    const span = document.createElement('span');
+    span.textContent = input.value || '';
+    span.style.cssText = 'display:block;width:100%;text-align:center;font-size:inherit;color:inherit;line-height:1.4;';
+    input.parentNode.replaceChild(span, input);
+  });
+  await new Promise(r => setTimeout(r, 200));
+  const canvas = await html2canvas(clone, {
+    scale: 2, useCORS: true, backgroundColor: '#ffffff',
+    width: clone.scrollWidth, height: clone.scrollHeight,
+    windowWidth: clone.scrollWidth, windowHeight: clone.scrollHeight,
+    scrollX: 0, scrollY: 0, logging: false
+  });
+  document.body.removeChild(tempDiv);
+  return canvas;
+}
+
+async function descargarPDF() {
+  try {
+    const canvas = await capturarHojaLimpia();
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('l', 'mm', 'letter');
+    const pdfW = 279.4, pdfH = 215.9, margin = 8;
+    const availW = pdfW - 2 * margin, availH = pdfH - 2 * margin;
+    const aspect = canvas.width / canvas.height;
+    let finalW = availW, finalH = finalW / aspect;
+    if (finalH > availH) { finalH = availH; finalW = finalH * aspect; }
+    const x = (pdfW - finalW) / 2, y = (pdfH - finalH) / 2;
+    pdf.addImage(imgData, 'PNG', x, y, finalW, finalH);
+    pdf.save('programa_acomodadores.pdf');
+  } catch (err) { alert('No se pudo generar el PDF. Usa "Guardar PNG" para obtener la imagen.'); }
+}
+
+async function descargarImagen() {
+  try {
+    const canvas = await capturarHojaLimpia();
+    const link = document.createElement('a');
+    link.download = `programa_${document.getElementById('titulo-mes').textContent.replace(/\s+/g, '_')}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch (err) { alert('Error al generar imagen: ' + err.message); }
+}
+
+function descargarJSON() {
+  const paquete = {
+    datos: JSON.parse(localStorage.getItem('programador_datos') || '{}'),
+    estilosCeldas: JSON.parse(localStorage.getItem('programador_estilos_celdas') || '{}'),
+    config: JSON.parse(localStorage.getItem('programador_config') || '{}'),
+    version: "7.3"
+  };
+  const blob = new Blob([JSON.stringify(paquete, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'respaldo_programador.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function abrirModalImportar() {
+  document.getElementById('textarea-importar').value = '';
+  document.getElementById('modal-importar').classList.remove('hidden');
+}
+function cerrarModalImportar() { document.getElementById('modal-importar').classList.add('hidden'); }
+
+function aplicarImportacion() {
+  const texto = document.getElementById('textarea-importar').value.trim();
+  if (!texto) return alert('Pega el JSON primero.');
+  try {
+    const json = JSON.parse(texto);
+    if (json.datos) localStorage.setItem('programador_datos', JSON.stringify(json.datos));
+    if (json.estilosCeldas) localStorage.setItem('programador_estilos_celdas', JSON.stringify(json.estilosCeldas));
+    if (json.config) localStorage.setItem('programador_config', JSON.stringify(json.config));
+    cargarConfiguracion();
+    cerrarModalImportar();
+    generarTabla();
+    alert('✅ Respaldo importado.');
+  } catch (e) { alert('❌ JSON inválido: ' + e.message); }
+}
+
+function toggleRibbon(tabId, boton) {
+  const panel = document.getElementById(tabId);
+  const todosPaneles = document.querySelectorAll('.ribbon-panel');
+  const todosBotones = document.querySelectorAll('.ribbon-tab');
+  const estabaVisible = panel.classList.contains('visible');
+  todosPaneles.forEach(p => p.classList.remove('visible'));
+  todosBotones.forEach(b => b.classList.remove('active'));
+  if (!estabaVisible) { panel.classList.add('visible'); boton.classList.add('active'); }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await abrirIndexedDB();
+  cargarConfiguracion();
+  
+  const mesVisto = localStorage.getItem('programador_mes_visto');
+  const anioVisto = localStorage.getItem('programador_anio_visto');
+  if (mesVisto !== null && anioVisto !== null) {
+    document.getElementById('select-mes').value = mesVisto;
+    document.getElementById('input-anio').value = anioVisto;
+  } else {
+    const hoy = new Date();
+    const proximo = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 1);
+    document.getElementById('select-mes').value = proximo.getMonth();
+    document.getElementById('input-anio').value = proximo.getFullYear();
+  }
+  generarTabla();
+  inicializarZoom();
+});
+</script>
+</body>
+</html>
